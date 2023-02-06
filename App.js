@@ -27,7 +27,7 @@ const FirstScreen = () => {
 
 
   return (
-  <LinearGradient colors={['#C44EEE','#562574','#451E5C','30074A']} style={{flex:1}}>
+  <LinearGradient colors={['#C44EEE','#562574']} style={{flex:1}}>
     <SafeAreaView style={styles.container}>
       
   
