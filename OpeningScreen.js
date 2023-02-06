@@ -11,9 +11,8 @@ const OpeningScreen = ({ navigation }) => {
   
 //
 
-  const handleLogin = () => {
-    // Perform login logic here, such as sending a request to a server
-    console.log(`Username: ${username}, Password: ${password}`);
+  const handleButtons = () => {
+    //Code here for buttons
   };
 
 
