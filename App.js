@@ -1,114 +1,50 @@
-import React, { useState, useCallback } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Image, Button} from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useFonts, Inter_900Black } from '@expo-google-fonts/inter';
+//App.JS is the main file where the navigator will be. The screens will all connect here. No need to edit this
 
+// To see your specific screen that you are working on just change the initialRouteName to your screens name
 
-// Welcome Screen
-const FirstScreen = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  //const navigation = useNavigation();
-  
-//
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import OpeningScreen from './OpeningScreen';
+import SignInScreen from './SignInScreen';
+import SignUpScreen from './SignUpScreen';
+import ProfileScreen from './ProfileScreen';
+import HomeScreen from './HomeScreen';
+import BumpScreen from './BumpScreen';
 
-  const handleLogin = () => {
-    // Perform login logic here, such as sending a request to a server
-    console.log(`Username: ${username}, Password: ${password}`);
-  };
+const Stack = createStackNavigator();
 
-  let [fontsLoaded] = useFonts({
-    Inter_900Black,
-  });
-
-  if (!fontsLoaded) {
-    return null;
-  }
-
-
+const App = () => {
   return (
-  <LinearGradient colors={['#C44EEE','#562574']} style={{flex:1}}>
-    <SafeAreaView style={styles.container}>
-      
-  
-        <View style={styles.container}>
-          
-          <Text style={styles.title}>Bump</Text>
-
-          <Text style={styles.subtitle}>Real connections{"\n"}start with a Bump.</Text>
-
-          <Image style={styles.logoStyle} source={require('./assets/bumplogo.png')}/>
-          
-          <TouchableOpacity style={styles.buttonStyle}>
-            <Text style={styles.buttonText}>{'Sign In'}</Text>
-          </TouchableOpacity>
-        
-          <TouchableOpacity style={styles.buttonStyle}>
-            <Text style={styles.buttonText}>{'Create Account'}</Text>
-          </TouchableOpacity>
-  
-        
-        </View>
-      
-    </SafeAreaView>
-  </LinearGradient>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="OpeningScreen" screenOptions={{headerShown:false}}>
+        <Stack.Screen
+          name="OpeningScreen"
+          component={OpeningScreen}
+        />
+        <Stack.Screen
+          name="SignInScreen"
+          component={SignInScreen}
+        />
+        <Stack.Screen
+          name="SignUpScreen"
+          component={SignUpScreen}
+        />
+        <Stack.Screen
+          name="ProfileScreen"
+          component={ProfileScreen}
+        />
+        <Stack.Screen
+          name="HomeScreen"
+          component={HomeScreen}
+        />
+        <Stack.Screen
+          name="BumpScreen"
+          component={BumpScreen}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
 
-
-//Styles Sheet Please try to Label Descriptively,
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor:'transparent',
-    flex: 1,
-    justifyContent: 'center',
-    padding: 20,
-  },
-  title: {
-    fontWeight: 'bold',
-    textAlign:'center',
-    bottom:0,
-    fontFamily:'Inter_900Black',
-    flex:0.5,
-    fontSize:'70',
-    color:"#ffffff",
-    
-  },
-  subtitle: {
-    textAlign:'center',
-    justifyContent: 'center',
-    
-    fontSize:25, 
-    color: '#ffffff',
-    flex:0.2,
-    bottom:100,
-    
-  },
-  logoStyle: {
-    justifyContent: 'center', 
-    alignItems: 'center',
-    height:400,
-    width:400,
-    flex:0.8,
-    bottom:40,
-    alignSelf:'center',
-    resizeMode:'contain'
-  },
-  buttonStyle:{
-    backgroundColor: "#F8EEFE",
-    borderRadius: 25,
-    marginTop: 10,
-    borderWidth: 0,
-    borderColor: "#2F024B",
-    padding: 10,
-    alignItems: "center",
-    bottom: 30
-  },
-  buttonText:{
-    color: "#000000",
-    fontWeight:'bold', 
-    fontSize:20
-  },
-});
-
-export default FirstScreen;
+export default App;
