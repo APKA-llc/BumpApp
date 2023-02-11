@@ -1,6 +1,6 @@
 //Jacob
 import React, { useState, useCallback } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Image, Button} from 'react-native';
+import { ScrollView, View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Image, Button} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
 
@@ -14,15 +14,10 @@ const ProfileScreen = ({ navigation }) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.container}>
 
-      <TouchableOpacity 
-           style={styles.buttonStyle}
-            onPress={() => setCurrentGroup(currentGroup === 3 ? 1 : currentGroup + 1)}>
-            <Text style={styles.buttonText}>{'Continue'}</Text>
-          </TouchableOpacity>
       
-
+  
         {currentGroup === 1 && (
-          <View style={styles.container}>
+          <View style={styles.inputContainer}>
             <Text style = {styles.Text}>Enter Your Name</Text>
 
             <TextInput
@@ -36,8 +31,8 @@ const ProfileScreen = ({ navigation }) => {
         )}
 
         {currentGroup === 2 && (
-          <View style={styles.container}>
-            <Text style = {styles.Text}>Enter your favorite picture</Text>
+          <View style={styles.inputContainer}>
+            <Text style = {styles.Text}>Choose a photo</Text>
 
             <TextInput
               style={styles.input}
@@ -50,20 +45,33 @@ const ProfileScreen = ({ navigation }) => {
           </View>
         )}
 
-        {currentGroup === 3 && (
-          <View style={styles.container}>
-            <Text style = {styles.Text}>Tell Us About Yourself</Text>
-
-            <TextInput
-              style={styles.input}
-              placeholder="Need Large text box for bio"
-              placeholderTextColor="#ffff"
-              //Scroll View Large Text Box
-              //Needs proper data imput code
-              />
-
-          </View>
+        {currentGroup === 3 && (         
+              <View style={styles.inputContainer}>
+            
+                  <Text style = {styles.Text}>Introduce Yourself</Text>
+              
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Type Here"
+                    placeholderTextColor="#ffff"
+                    
+                    //Needs proper data imput code
+                    />
+              </View>
         )}
+      
+      {/* Currently set as an infinite loop */}
+          <TouchableOpacity 
+           style={styles.buttonStyle}
+            onPress={() => setCurrentGroup(currentGroup === 3 ? 1 : currentGroup + 1)}>
+            <Text style={styles.buttonText}>{'Continue'}</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+           style={styles.buttonStyle}
+            onPress={() => setCurrentGroup(currentGroup === 1 ? 3 : currentGroup - 1)}>
+            <Text style={styles.buttonText}>{'Return'}</Text>
+          </TouchableOpacity>
 
       </View>
     </SafeAreaView>
@@ -79,24 +87,29 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 20,
   },
-  Text: {
+  inputContainer: {
+    backgroundColor: 'transparent',
     flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  Text: {
     fontSize: 40,
-    marginTop: 225,
     textAlign: 'center',
     fontWeight: 'bold',
-    color:'#fff'
+    color: '#fff',
   },
   input: {
-    flex: 0.2,
-  borderWidth: 2,
-  borderRadius: 25,
-  borderColor: '#F8EEFE',
-  marginVertical: 15,
-  paddingHorizontal: 20,
-  bottom:275,
-  fontSize:26 ,
-  color:'#fff',
+    marginTop: 40,
+    borderWidth: 2,
+    borderRadius: 25,
+    borderColor: '#F8EEFE',
+    padding: 25,
+    paddingHorizontal: 50,
+    alignContent:'left',
+    fontSize: 26,
+    color: '#fff',
   },
   buttonStyle:{
     backgroundColor: "#F8EEFE",
