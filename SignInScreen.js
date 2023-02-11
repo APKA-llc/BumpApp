@@ -71,9 +71,9 @@ const styles = StyleSheet.create({
   title: {
     fontWeight: 'bold',
     textAlign:'center',
-    bottom:0,
+    marginTop:55,
     flex:0.7,
-    fontSize:'70',
+    fontSize:80,
     color:"#ffffff",
     
   },
@@ -81,6 +81,7 @@ const styles = StyleSheet.create({
     flex: 0.2,
     borderWidth: 1,
     borderColor: 'white',
+    borderRadius:20,
     marginVertical: 10,
     paddingHorizontal: 10,
     bottom:100,
