@@ -15,7 +15,7 @@ const BumpScreen = ({ navigation }) => {
         <View style={styles.container}>
 
           <Text>Code Goes Here</Text>
-        
+          <Image style={styles.logoStyle} source={require('./assets/bumplogo.png')}/>
         </View>
       
     </SafeAreaView>
@@ -30,6 +30,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 20,
+  },
+  logoStyle: {
+    justifyContent: 'center', 
+    alignItems: 'center',
+    height:400,
+    width:400,
+    flex:0.8,
+    bottom:40,
+    alignSelf:'center',
+    resizeMode:'contain'
   },
 });
 
