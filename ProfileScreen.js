@@ -1,81 +1,91 @@
-//Jacob
 import React, { useState, useCallback } from 'react';
 import { ScrollView, View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Image, Button} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-
-
+import { useNavigation } from '@react-navigation/native';
 
 // Profile Screen
-const ProfileScreen = ({ navigation }) => {
+const ProfileScreen = () => {
   const [currentGroup, setCurrentGroup] = useState(1);
+  const navigation = useNavigation();
+
+  let messageTop;
+  let messageBottom;
+
+  if (currentGroup === 3) {
+    messageTop = 'Finish';
+  } else {
+    messageTop = 'Continue';
+  }
+
+  if (currentGroup === 1) {
+    messageBottom = 'Exit';
+  } else {
+    messageBottom = 'Return';
+  }
+
+  const formComplete = () => {
+    if (currentGroup === 3) {
+      navigation.navigate('HomeScreen');
+    } else {
+      setCurrentGroup(currentGroup + 1);
+    }
+  };
+
+  const formEscape = () => {
+    if (currentGroup === 1) {
+      navigation.navigate('OpeningScreen');
+    } else {
+      setCurrentGroup(currentGroup - 1);
+    }
+  };
+
 
   return (
-  <LinearGradient colors={['#C44EEE','#562574']} style={{flex:1}}>
-    <SafeAreaView style={styles.container}>
-      <View style={styles.container}>
-
-      
-  
-        {currentGroup === 1 && (
-          <View style={styles.inputContainer}>
-            <Text style = {styles.Text}>Enter Your Name</Text>
-
-            <TextInput
-              style={styles.input}
-              placeholder="First Name Only"
-              placeholderTextColor="#ffff"
-              //Needs proper data imput code
+    <LinearGradient colors={['#C44EEE', '#562574']} style={{flex: 1}}>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
+          {currentGroup === 1 && (
+            <View style={styles.inputContainer}>
+              <Text style={styles.Text}>Enter Your Name</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="First Name Only"
+                placeholderTextColor="#ffff"
+                // TODO: Add proper data input code
               />
-
-          </View>
-        )}
-
-        {currentGroup === 2 && (
-          <View style={styles.inputContainer}>
-            <Text style = {styles.Text}>Choose a photo</Text>
-
-            <TextInput
-              style={styles.input}
-              placeholder="Select Photo"
-              placeholderTextColor="#ffff"
-              //How the hell do you select and crop and save a profile pic
-              //Needs proper data imput code
+            </View>
+          )}
+          {currentGroup === 2 && (
+            <View style={styles.inputContainer}>
+              <Text style={styles.Text}>Choose a photo</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Select Photo"
+                placeholderTextColor="#ffff"
+                // TODO: Add proper data input code
               />
-
-          </View>
-        )}
-
-        {currentGroup === 3 && (         
-              <View style={styles.inputContainer}>
-            
-                  <Text style = {styles.Text}>Introduce Yourself</Text>
-              
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Type Here"
-                    placeholderTextColor="#ffff"
-                    
-                    //Needs proper data imput code
-                    />
-              </View>
-        )}
-      
-      {/* Currently set as an infinite loop */}
-          <TouchableOpacity 
-           style={styles.buttonStyle}
-            onPress={() => setCurrentGroup(currentGroup === 3 ? 1 : currentGroup + 1)}>
-            <Text style={styles.buttonText}>{'Continue'}</Text>
+            </View>
+          )}
+          {currentGroup === 3 && (
+            <View style={styles.inputContainer}>
+              <Text style={styles.Text}>Introduce Yourself</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Type Here"
+                placeholderTextColor="#ffff"
+                // TODO: Add proper data input code
+              />
+            </View>
+          )}
+          <TouchableOpacity style={styles.buttonStyle} onPress={formComplete}>
+            <Text style={styles.buttonText}>{messageTop}</Text>
           </TouchableOpacity>
-
-          <TouchableOpacity 
-           style={styles.buttonStyle}
-            onPress={() => setCurrentGroup(currentGroup === 1 ? 3 : currentGroup - 1)}>
-            <Text style={styles.buttonText}>{'Return'}</Text>
+          <TouchableOpacity style={styles.buttonStyle} onPress={formEscape}>
+            <Text style={styles.buttonText}>{messageBottom}</Text>
           </TouchableOpacity>
-
-      </View>
-    </SafeAreaView>
-  </LinearGradient>
+        </View>
+      </SafeAreaView>
+    </LinearGradient>
   );
 };
 
