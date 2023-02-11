@@ -1,15 +1,15 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Image, Button} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 
 
 // Opening Screen
-const OpeningScreen = ({ navigation }) => {
+const OpeningScreen = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  //const navigation = useNavigation();
+  const navigation = useNavigation();
   
-//
 
   const handleButtons = () => {
     //Code here for buttons
@@ -30,11 +30,12 @@ const OpeningScreen = ({ navigation }) => {
 
           <Image style={styles.logoStyle} source={require('./assets/bumplogo.png')}/>
           
-          <TouchableOpacity style={styles.buttonStyle}>
+          <TouchableOpacity onPress={()=> navigation.navigate('SignInScreen')} style={styles.buttonStyle}>
             <Text style={styles.buttonText}>{'Sign In'}</Text>
+            
           </TouchableOpacity>
         
-          <TouchableOpacity style={styles.buttonStyle}>
+          <TouchableOpacity onPress={()=> navigation.navigate('SignUpScreen')} style={styles.buttonStyle}>
             <Text style={styles.buttonText}>{'Create Account'}</Text>
           </TouchableOpacity>
   
