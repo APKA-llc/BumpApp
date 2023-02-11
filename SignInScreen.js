@@ -2,29 +2,20 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Image, Button, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useFonts, Inter_900Black } from '@expo-google-fonts/inter';
+import { useNavigation } from '@react-navigation/native';
 
 
 // Sign in Screen
-const SignInScreen =  ({ navigation }) => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-  //const navigation = useNavigation();
-  
-//
+const SignInScreen =  () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const navigation = useNavigation();
 
   const handleSignIn = () => {
     // Perform login logic here, such as sending a request to a server
     //console.log(`Username: ${username}, Password: ${password}`);
   };
 
-  let [fontsLoaded] = useFonts({
-    Inter_900Black,
-  });
-
-  if (!fontsLoaded) {
-    return null;
-  }
   const handleDismiss = () => Keyboard.dismiss();
 
   return (
@@ -35,6 +26,7 @@ const SignInScreen =  ({ navigation }) => {
             <View style={styles.container}>
             
             <Text style={styles.title}>Sign In</Text>
+
             <KeyboardAvoidingView behavior="padding" style={styles.container}>
                 <TextInput
                     style={styles.input}
