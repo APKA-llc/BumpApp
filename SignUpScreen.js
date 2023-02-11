@@ -4,19 +4,23 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Imag
 import { LinearGradient } from 'expo-linear-gradient';
 import { useFonts, Inter_900Black } from '@expo-google-fonts/inter';
 import { useNavigation } from '@react-navigation/native';
+import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
+import { initializeApp } from 'firebase/app';
+import {app, auth} from "./firebaseConfig";
 
 // Sign up Screen
 const SignUpScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigation = useNavigation();
 
-  const handleSignIn = () => {
+  const handleSignUp = () => {
     // Perform login logic here, such as sending a request to a server
     //console.log(`Username: ${username}, Password: ${password}`);
+    createUserWithEmailAndPassword(auth, email, password);
   };
 
   const handleDismiss = () => Keyboard.dismiss();
+
 
   return (
   <LinearGradient colors={['#C44EEE','#562574']} style={{flex:1}}>
@@ -45,7 +49,7 @@ const SignUpScreen = () => {
                       value={password}
                       secureTextEntry={true}
                   />
-                  <TouchableOpacity style={styles.buttonStyle} onPress={handleSignIn}>
+                  <TouchableOpacity style={styles.buttonStyle} onPress={handleSignUp}>
                       <Text style={styles.buttonText}>Sign Up</Text>
                   </TouchableOpacity>
               </KeyboardAvoidingView>
