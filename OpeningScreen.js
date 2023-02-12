@@ -59,17 +59,17 @@ const styles = StyleSheet.create({
   title: {
     fontWeight: 'bold',
     textAlign:'center',
+    top:45,
     bottom:0,
     flex:0.7,
-    fontSize:'70',
+    fontSize:'85',
     color:"#ffffff",
     
   },
   subtitle: {
     textAlign:'center',
     justifyContent: 'center',
-    
-    fontSize:20, 
+    fontSize:25, 
     color: '#ffffff',
     flex:0.2,
     bottom:110,
