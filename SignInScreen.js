@@ -53,7 +53,8 @@ const SignInScreen =  () => {
             </View>
         </TouchableWithoutFeedback>
         
-      
+        <Text style={styles.tinyText}>APKA LLC</Text>
+
     </SafeAreaView>
   </LinearGradient>
   );
@@ -75,7 +76,11 @@ const styles = StyleSheet.create({
     flex:0.7,
     fontSize:80,
     color:"#ffffff",
-    
+  },
+  tinyText:{
+    color: "#ffff",
+    fontSize:15,
+    textAlign:'center'
   },
   input: {
     flex: 0.2,
