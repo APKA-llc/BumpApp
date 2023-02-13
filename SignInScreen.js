@@ -48,11 +48,6 @@ const SignInScreen =  () => {
                 <TouchableOpacity style={styles.buttonStyle} onPress={handleSignIn}>
                     <Text style={styles.buttonText}>Sign In</Text>
                 </TouchableOpacity>
-
-                <TouchableOpacity style={styles.buttonStyle} onPress={() => navigation.navigate('OpeningScreen')}>
-                    <Text style={styles.buttonText}>Back</Text>
-                </TouchableOpacity>
-
             </KeyboardAvoidingView>
         
             </View>
@@ -95,7 +90,7 @@ const styles = StyleSheet.create({
   buttonStyle:{
     backgroundColor: "#F8EEFE",
     borderRadius: 25,
-    marginTop: 10,
+    marginTop: 70,
     borderWidth: 0,
     borderColor: "#2F024B",
     padding: 10,
