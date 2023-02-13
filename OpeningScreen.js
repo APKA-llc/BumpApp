@@ -42,6 +42,8 @@ const OpeningScreen = () => {
         
         </View>
       
+        <Text style={styles.tinyText}>APKA LLC</Text>
+        
     </SafeAreaView>
   </LinearGradient>
   );
@@ -73,7 +75,11 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     flex:0.2,
     bottom:110,
-    
+  },
+  tinyText:{
+    color: "#ffff",
+    fontSize:15,
+    textAlign:'center'
   },
   logoStyle: {
     justifyContent: 'center', 
@@ -100,6 +106,7 @@ const styles = StyleSheet.create({
     fontWeight:'bold', 
     fontSize:20
   },
+  
 });
 
 export default OpeningScreen;

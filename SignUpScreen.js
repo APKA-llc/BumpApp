@@ -57,7 +57,8 @@ const SignUpScreen = () => {
               </View>
           </TouchableWithoutFeedback>
           
-        
+          <Text style={styles.tinyText}>APKA LLC</Text>
+
       </SafeAreaView>
     </LinearGradient>
   );
@@ -74,11 +75,15 @@ const styles = StyleSheet.create({
   title: {
     fontWeight: 'bold',
     textAlign:'center',
-    bottom:0,
+    marginTop:45,
     flex:0.7,
-    fontSize:'70',
+    fontSize:80,
     color:"#ffffff",
-    
+  },
+  tinyText:{
+    color: "#ffff",
+    fontSize:15,
+    textAlign:'center'
   },
   input: {
     flex: 0.2,
