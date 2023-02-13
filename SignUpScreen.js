@@ -12,6 +12,7 @@ import {app, auth} from "./firebaseConfig";
 const SignUpScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigation = useNavigation();
 
   const handleSignUp = () => {
     // Perform login logic here, such as sending a request to a server
@@ -52,6 +53,11 @@ const SignUpScreen = () => {
                   <TouchableOpacity style={styles.buttonStyle} onPress={handleSignUp}>
                       <Text style={styles.buttonText}>Sign Up</Text>
                   </TouchableOpacity>
+
+                  <TouchableOpacity style={styles.buttonStyle} onPress={() => navigation.navigate('OpeningScreen')}>
+                    <Text style={styles.buttonText}>Back</Text>
+                </TouchableOpacity>
+
               </KeyboardAvoidingView>
           
               </View>
@@ -84,6 +90,7 @@ const styles = StyleSheet.create({
     flex: 0.2,
     borderWidth: 1,
     borderColor: 'white',
+    borderRadius:20,
     marginVertical: 10,
     paddingHorizontal: 10,
     bottom:100,
@@ -92,7 +99,7 @@ const styles = StyleSheet.create({
   buttonStyle:{
     backgroundColor: "#F8EEFE",
     borderRadius: 25,
-    marginTop: 70,
+    marginTop: 10,
     borderWidth: 0,
     borderColor: "#2F024B",
     padding: 10,
