@@ -11,13 +11,18 @@ import SignUpScreen from './SignUpScreen';
 import ProfileScreen from './ProfileScreen';
 import HomeScreen from './HomeScreen';
 import BumpScreen from './BumpScreen';
+import MainHub from './MainHub';
 
 const Stack = createStackNavigator();
 
 const App = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="OpeningScreen" screenOptions={{headerShown:false}}>
+      <Stack.Navigator initialRouteName="MainHub" screenOptions={{headerShown:false}}>
+        <Stack.Screen
+          name="MainHub"
+          component={MainHub}
+        />
         <Stack.Screen
           name="OpeningScreen"
           component={OpeningScreen}
