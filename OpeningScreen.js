@@ -64,6 +64,7 @@ const styles = StyleSheet.create({
     top:45,
     bottom:0,
     flex:0.7,
+    
     fontSize:'85',
     color:"#ffffff",
     
@@ -73,7 +74,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     fontSize:25, 
     color: '#ffffff',
-    flex:0.2,
+    flex:0.1,
+    
     bottom:110,
   },
   tinyText:{
