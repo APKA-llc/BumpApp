@@ -7,13 +7,15 @@ import {signInWithEmailAndPassword} from "firebase/auth";
 import {auth} from "./firebaseConfig";
 import MainHub from './MainHub';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { Alert } from 'react-native';
+import Dialog, { DialogContent } from 'react-native-popup-dialog';
 
 // Sign in Screen
 const SignInScreen =  () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigation = useNavigation();
+  const [showErrorDialog, setShowErrorDialog] = useState(false);
 
   const saveUser = async (user) => {
     try {
@@ -22,9 +24,9 @@ const SignInScreen =  () => {
       console.log(error);
     }
   }
-
   
-
+  
+  
   const handleSignIn = () => {
 
     signInWithEmailAndPassword(auth, email, password)
@@ -36,8 +38,30 @@ const SignInScreen =  () => {
         // ...
       })
       .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
+        const { code, message } = error;
+        var errorMessage;
+
+        switch (code) {
+          case "auth/invalid-email":
+            errorMessage = "Invalid email address.";
+            break;
+          case "auth/user-disabled":
+            errorMessage = "This account has been disabled.";
+            break;
+          case "auth/user-not-found":
+            errorMessage = "Email address not found.";
+            break;
+          case "auth/wrong-password":
+            errorMessage = "Incorrect password.";
+            break;
+          default:
+            errorMessage = code;
+            break;
+        }
+        
+        Alert.alert('Error', errorMessage, [{ text: 'Try Again' }]);
+        setShowErrorDialog(true);
+
         console.log(errorMessage);
       });
   };
@@ -74,10 +98,22 @@ const SignInScreen =  () => {
                 <TouchableOpacity style={styles.buttonStyle} onPress={handleSignIn}>
                     <Text style={styles.buttonText}>Sign In</Text>
                 </TouchableOpacity>
+
+
             </KeyboardAvoidingView>
+            
         
             </View>
         </TouchableWithoutFeedback>
+
+        <Dialog
+          visible={showErrorDialog}
+          onTouchOutside={() => setShowErrorDialog(false)}>
+          <DialogContent>
+            <Text>Invalid email or password.</Text>
+          </DialogContent>
+        </Dialog>
+
         
         <Text style={styles.tinyText}>APKA LLC</Text>
 
