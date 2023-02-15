@@ -4,9 +4,8 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Imag
 import { LinearGradient } from 'expo-linear-gradient';
 import { useFonts, Inter_900Black } from '@expo-google-fonts/inter';
 import { useNavigation } from '@react-navigation/native';
-import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
-import { initializeApp } from 'firebase/app';
-import {app, auth} from "./firebaseConfig";
+import { createUserWithEmailAndPassword} from "firebase/auth";
+import {auth} from "./firebaseConfig";
 
 // Sign up Screen
 const SignUpScreen = () => {

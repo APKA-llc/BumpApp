@@ -19,4 +19,5 @@ const firebaseConfig  = {
   };
 const app = initializeApp(firebaseConfig); //initialize the firebase app
 const auth = getAuth(app); //initialize authentication
+auth.enablePersistence;
 export {app, auth};

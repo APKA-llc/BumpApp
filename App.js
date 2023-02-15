@@ -2,7 +2,7 @@
 
 // To see your specific screen that you are working on just change the initialRouteName to your screens name
 
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import OpeningScreen from './OpeningScreen';
@@ -11,23 +11,67 @@ import SignUpScreen from './SignUpScreen';
 import ProfileScreen from './ProfileScreen';
 import HomeScreen from './HomeScreen';
 import BumpScreen from './BumpScreen';
-import HomeTest from './HomeTest';
+import HomeTest from './hometest';
 import MainHub from './MainHub';
+import {auth, user} from "./firebaseConfig";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const Stack = createStackNavigator();
 
+
+
 const App = () => {
+  
+  const [loggedIn, setLoggedInStatus] = useState(null);
+
+  const checkUser = async () => {
+    try {
+      const user = await AsyncStorage.getItem('user');
+      if (user !== null) {
+        // The user is already signed in, navigate to HomeScreen
+        setLoggedInStatus(true);
+  
+       
+      } else {
+        // The user is not signed in, navigate to SignInScreen
+        setLoggedInStatus(false);
+        
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  useEffect(() => {
+    checkUser();
+  }, []);
+  //console.log(loggedIn)
+  if (loggedIn === null) {
+    return null;
+  }
+  var test = loggedIn ? "MainHub":"OpeningScreen"
+  console.log(test);
+  
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="MainHub" screenOptions={{headerShown:false}}>
+      <Stack.Navigator initialRouteName = {loggedIn ? "MainHub":"OpeningScreen"} screenOptions={{headerShown:false}}>
+
         <Stack.Screen
           name="OpeningScreen"
           component={OpeningScreen}
+          options={{
+            gestureEnabled: false,
+          }}
         />
         <Stack.Screen
           name="SignInScreen"
           component={SignInScreen}
         />
+        <Stack.Screen
+          name="MainHub"
+          component={MainHub}
+        />
+        
         <Stack.Screen
           name="SignUpScreen"
           component={SignUpScreen}
@@ -43,10 +87,6 @@ const App = () => {
         <Stack.Screen
           name="BumpScreen"
           component={BumpScreen}
-        />
-        <Stack.Screen
-          name="MainHub"
-          component={MainHub}
         />
       </Stack.Navigator>
     </NavigationContainer>
