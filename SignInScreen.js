@@ -3,6 +3,10 @@ import React, { useState, useCallback } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Image, Button, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
+import {signInWithEmailAndPassword} from "firebase/auth";
+import {auth} from "./firebaseConfig";
+import MainHub from './MainHub';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 // Sign in Screen
@@ -11,9 +15,31 @@ const SignInScreen =  () => {
   const [password, setPassword] = useState('');
   const navigation = useNavigation();
 
+  const saveUser = async (user) => {
+    try {
+      await AsyncStorage.setItem('user', JSON.stringify(user));
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  
+
   const handleSignIn = () => {
-    // Perform login logic here, such as sending a request to a server
-    //console.log(`Username: ${username}, Password: ${password}`);
+
+    signInWithEmailAndPassword(auth, email, password)
+      .then((user) => {
+        saveUser(user);
+        console.log('signed in');
+        
+        navigation.navigate(MainHub);
+        // ...
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorMessage);
+      });
   };
 
   const handleDismiss = () => Keyboard.dismiss();
