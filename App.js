@@ -11,7 +11,7 @@ import SignUpScreen from './SignUpScreen';
 import ProfileScreen from './ProfileScreen';
 import HomeScreen from './HomeScreen';
 import BumpScreen from './BumpScreen';
-import HomeTest from './HomeTest';
+import HomeTest from './hometest';
 import MainHub from './MainHub';
 import {auth, user} from "./firebaseConfig";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -87,10 +87,6 @@ const App = () => {
         <Stack.Screen
           name="BumpScreen"
           component={BumpScreen}
-        />
-        <Stack.Screen
-          name="MainHub"
-          component={MainHub}
         />
       </Stack.Navigator>
     </NavigationContainer>
