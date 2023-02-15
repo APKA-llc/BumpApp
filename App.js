@@ -54,7 +54,7 @@ const App = () => {
   
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName = {loggedIn ? "MainHub":"ProfileScreen"} screenOptions={{headerShown:false}}>
+      <Stack.Navigator initialRouteName = {loggedIn ? "MainHub":"OpeningScreen"} screenOptions={{headerShown:false}}>
 
         <Stack.Screen
           name="OpeningScreen"
