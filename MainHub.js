@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import HomeTest from './HomeTest';
+import HomeTest from './hometest';
 import BumpScreen from './BumpScreen';
 import SettingsScreen from './Settings';
 import Ionicons from 'react-native-vector-icons/Ionicons';
