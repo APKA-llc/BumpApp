@@ -11,6 +11,7 @@ import SignUpScreen from './SignUpScreen';
 import ProfileScreen from './ProfileScreen';
 import HomeScreen from './HomeScreen';
 import BumpScreen from './BumpScreen';
+import HomeTest from './HomeTest';
 import MainHub from './MainHub';
 
 const Stack = createStackNavigator();
@@ -19,10 +20,6 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="MainHub" screenOptions={{headerShown:false}}>
-        <Stack.Screen
-          name="MainHub"
-          component={MainHub}
-        />
         <Stack.Screen
           name="OpeningScreen"
           component={OpeningScreen}
@@ -46,6 +43,10 @@ const App = () => {
         <Stack.Screen
           name="BumpScreen"
           component={BumpScreen}
+        />
+        <Stack.Screen
+          name="MainHub"
+          component={MainHub}
         />
       </Stack.Navigator>
     </NavigationContainer>
