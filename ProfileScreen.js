@@ -1,15 +1,37 @@
 import React, { useState, useCallback } from 'react';
 import { ScrollView, View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Image, Button} from 'react-native';
-import {ImagePicker, Permissions} from 'expo';
+
 import { useNavigation } from '@react-navigation/native';
+import * as ImagePicker from 'expo-image-picker';
 
 // Profile Screen
 const ProfileScreen = () => {
   const [currentGroup, setCurrentGroup] = useState(1);
   const navigation = useNavigation();
+  //const [profilePic, setProfilePic] = useState(defaultProfilePic);
 
   let messageTop;
   let messageBottom;
+
+  const [image, setImage] = useState(null);
+
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
+
+
 
   if (currentGroup === 3) {
     messageTop = 'Finish';
@@ -54,6 +76,7 @@ const ProfileScreen = () => {
                 
                 <TextInput
                   style={styles.input}
+                  color="purple"
                   placeholder="First Name Only"
                   placeholderTextColor="purple"
                   // TODO: Add proper data input code
@@ -66,17 +89,12 @@ const ProfileScreen = () => {
             <View style={styles.TitleContainer}>
               <Text style={styles.Title}>Choose a photo</Text>
             </View>
-
             <View style={styles.inputContainer}>
-              
-                <TextInput
-                  style={styles.input}
-                  placeholder="Select Photo"
-                  placeholderTextColor="purple"
-                  // TODO: Add proper data input code
-                />
-              </View>
+              <Button title="Pick an image from camera roll" onPress={pickImage} />
+              {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
             </View>
+
+          </View>
           )}
           {currentGroup === 3 && (
            <View style = {styles.vanish}>
@@ -88,6 +106,7 @@ const ProfileScreen = () => {
                 
                 <TextInput
                   style={styles.input}
+                  color="purple"
                   placeholder="Type Here"
                   placeholderTextColor="purple"
                   // TODO: Add proper data input code
