@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { ScrollView, View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Image, Button} from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import {ImagePicker, Permissions} from 'expo';
 import { useNavigation } from '@react-navigation/native';
 
 // Profile Screen
@@ -41,51 +41,72 @@ const ProfileScreen = () => {
 
 
   return (
-    <LinearGradient colors={['#C44EEE', '#562574']} style={{flex: 1}}>
       <SafeAreaView style={styles.container}>
         <View style={styles.container}>
+
           {currentGroup === 1 && (
-            <View style={styles.inputContainer}>
-              <Text style={styles.Text}>Enter Your Name</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="First Name Only"
-                placeholderTextColor="#ffff"
-                // TODO: Add proper data input code
-              />
+            <View style = {styles.vanish}>
+              <View style={styles.TitleContainer}>
+                <Text style={styles.Title}>Enter Your Name</Text>
+              </View>
+
+              <View style={styles.inputContainer}>
+                
+                <TextInput
+                  style={styles.input}
+                  placeholder="First Name Only"
+                  placeholderTextColor="purple"
+                  // TODO: Add proper data input code
+                />
+              </View>
             </View>
           )}
           {currentGroup === 2 && (
+           <View style = {styles.vanish}>
+            <View style={styles.TitleContainer}>
+              <Text style={styles.Title}>Choose a photo</Text>
+            </View>
+
             <View style={styles.inputContainer}>
-              <Text style={styles.Text}>Choose a photo</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Select Photo"
-                placeholderTextColor="#ffff"
-                // TODO: Add proper data input code
-              />
+              
+                <TextInput
+                  style={styles.input}
+                  placeholder="Select Photo"
+                  placeholderTextColor="purple"
+                  // TODO: Add proper data input code
+                />
+              </View>
             </View>
           )}
           {currentGroup === 3 && (
+           <View style = {styles.vanish}>
+              <View style={styles.TitleContainer}>
+              <Text style={styles.Title}>Introduce Yourself</Text>
+              </View>
+
             <View style={styles.inputContainer}>
-              <Text style={styles.Text}>Introduce Yourself</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Type Here"
-                placeholderTextColor="#ffff"
-                // TODO: Add proper data input code
-              />
+                
+                <TextInput
+                  style={styles.input}
+                  placeholder="Type Here"
+                  placeholderTextColor="purple"
+                  // TODO: Add proper data input code
+                />
             </View>
+          </View>
           )}
-          <TouchableOpacity style={styles.buttonStyle} onPress={formComplete}>
-            <Text style={styles.buttonText}>{messageTop}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.buttonStyle} onPress={formEscape}>
-            <Text style={styles.buttonText}>{messageBottom}</Text>
-          </TouchableOpacity>
+
+            <View style = {styles.buttonContainer}>
+              <TouchableOpacity style={styles.buttonStyle} onPress={formComplete}>
+                <Text style={styles.buttonText}>{messageTop}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.buttonStyle} onPress={formEscape}>
+                <Text style={styles.buttonText}>{messageBottom}</Text>
+              </TouchableOpacity>
+            </View>
         </View>
       </SafeAreaView>
-    </LinearGradient>
+ 
   );
 };
 
@@ -97,44 +118,59 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 20,
   },
-  inputContainer: {
-    backgroundColor: 'transparent',
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
+  vanish:{
+    //backgroundColor:'green',
+    flex:2
+    
   },
-  Text: {
-    fontSize: 40,
+  TitleContainer:{
+    //backgroundColor:"blue",
+    flex:1,
+    justifyContent:"flex-end",
+    alignItems:'center',
+    
+  },
+  Title: {
+    fontSize: '40%',
     textAlign: 'center',
     fontWeight: 'bold',
-    color: '#fff',
+    color: 'purple',
+  },
+  inputContainer: {
+    //backgroundColor: 'yellow',
+    flex: 1,
+    justifyContent:'flex-start',
+    alignItems:'center',
+    marginVertical:'5%'
   },
   input: {
-    marginTop: 40,
     borderWidth: 2,
     borderRadius: 25,
-    borderColor: '#F8EEFE',
-    padding: 25,
-    paddingHorizontal: 50,
-    alignContent:'left',
-    fontSize: 26,
+    borderColor: 'purple',
+    alignContent:'center',
+    fontSize: "20%",
+    padding:'5%',
+    paddingHorizontal:'8%',
     color: '#fff',
   },
+  buttonContainer:{
+    //backgroundColor:'red',
+    flex:1,
+    justifyContent:"flex-end"
+
+  },
   buttonStyle:{
-    backgroundColor: "#F8EEFE",
+    backgroundColor: "purple",
     borderRadius: 25,
-    marginTop: 10,
-    borderWidth: 0,
-    borderColor: "#2F024B",
     padding: 10,
-    alignItems: "center",
-    bottom: 30
+    marginVertical:"1%"
+   
   },
   buttonText:{
-    color: "#000000",
+    color: "white",
     fontWeight:'bold', 
-    fontSize:20
+    fontSize:20,
+    textAlign:'center'
   },
 });
 
