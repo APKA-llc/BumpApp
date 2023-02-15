@@ -113,14 +113,14 @@ const styles = StyleSheet.create({
         marginLeft:"5%",
         marginRight:"5%",
         marginTop:"1%",
-        fontSize:25,
+        fontSize:"25%",
 
       },
       bio:{
         
         marginLeft: "5%",
         marginRight: "5%",
-        fontSize:25
+        fontSize:"25%"
       },
 });
 
