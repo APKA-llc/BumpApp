@@ -11,7 +11,7 @@
 1) Install Expo Go on phone:
 https://apps.apple.com/us/app/expo-go/id982107779
 2) Install VScode Extensions:
-  a) React-Native/React/Redux snippets 
+ 	a) React-Native/React/Redux snippets 
   b) React Native Tools
   c) Prettier - Code formatter
   d) Material Icon Theme
