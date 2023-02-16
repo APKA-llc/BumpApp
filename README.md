@@ -1,6 +1,6 @@
 # BumpApp
 
-## Steps for Setting Up React Native Enviornment
+## Steps for Setting Up React Native Environment
 1) Clone this project onto a local VS Code project.
 2) In the VSCode terminal for the project, run `npm install` to install npm.
 2) Also, in the VSCode Terminal, install expo-cli:
