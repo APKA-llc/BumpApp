@@ -1,8 +1,10 @@
 import React, { useState, useCallback } from 'react';
-import { ScrollView, View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Image, Button} from 'react-native';
-
+import { ScrollView, View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Image, Button, Keyboard, TouchableWithoutFeedback} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
+
+//Style Standardization
+let purpleStandard = '#7851A9'
 
 // Profile Screen
 const ProfileScreen = () => {
@@ -10,8 +12,9 @@ const ProfileScreen = () => {
   const navigation = useNavigation();
   //const [profilePic, setProfilePic] = useState(defaultProfilePic);
 
-  let messageTop;
-  let messageBottom;
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
+  };
 
   const [image, setImage] = useState(null);
 
@@ -31,22 +34,8 @@ const ProfileScreen = () => {
     }
   };
 
-
-
-  if (currentGroup === 3) {
-    messageTop = 'Finish';
-  } else {
-    messageTop = 'Continue';
-  }
-
-  if (currentGroup === 1) {
-    messageBottom = 'Exit';
-  } else {
-    messageBottom = 'Return';
-  }
-
   const formComplete = () => {
-    if (currentGroup === 3) {
+    if (currentGroup === 5) {
       navigation.navigate('HomeScreen');
     } else {
       setCurrentGroup(currentGroup + 1);
@@ -61,6 +50,15 @@ const ProfileScreen = () => {
     }
   };
 
+  let messageTop;
+  if (currentGroup === 6) {
+    messageTop = 'Finish';
+  } else {
+    messageTop = 'Continue';
+  }
+
+  let messageBottom;
+  messageBottom = 'Return';
 
   return (
       <SafeAreaView style={styles.container}>
@@ -76,41 +74,85 @@ const ProfileScreen = () => {
                 
                 <TextInput
                   style={styles.input}
-                  color="purple"
                   placeholder="First Name Only"
-                  placeholderTextColor="purple"
                   // TODO: Add proper data input code
                 />
               </View>
             </View>
           )}
+
           {currentGroup === 2 && (
+            <View style = {styles.vanish}>
+              <View style={styles.TitleContainer}>
+                <Text style={styles.Title}>What is your age?</Text>
+              </View>
+
+              <View style={styles.inputContainer}>
+                
+                <TextInput
+                  style={styles.input}
+                  placeholder="Years Old"
+                  
+                  // TODO: Add proper data input code
+                />
+             </View>
+            </View>
+          )}
+
+          {currentGroup === 3 && (
            <View style = {styles.vanish}>
             <View style={styles.TitleContainer}>
               <Text style={styles.Title}>Choose a photo</Text>
             </View>
+
             <View style={styles.inputContainer}>
-              <Button title="Pick an image from camera roll" onPress={pickImage} />
+              <TouchableOpacity style={styles.choosePhoto} onPress={pickImage}>
+                <Text style={styles.buttonText}>Select a Photo</Text>
+              </TouchableOpacity>
+
               {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
             </View>
 
           </View>
           )}
-          {currentGroup === 3 && (
+          {currentGroup === 4 && (
            <View style = {styles.vanish}>
+            <TouchableWithoutFeedback onPress={dismissKeyboard}>
               <View style={styles.TitleContainer}>
               <Text style={styles.Title}>Introduce Yourself</Text>
+              </View>
+            </TouchableWithoutFeedback>
+
+            <View style={styles.inputContainer}>
+                
+              <TextInput
+                style={styles.bioInput}
+                multiline
+                numberOfLines={5}
+              />
+            </View>
+          </View>
+          )}
+
+          {currentGroup === 5 && (
+           <View style = {styles.vanish}>
+              <View style={styles.TitleContainer}>
+              <Text style={styles.Title}>Questions</Text>
               </View>
 
             <View style={styles.inputContainer}>
                 
-                <TextInput
-                  style={styles.input}
-                  color="purple"
-                  placeholder="Type Here"
-                  placeholderTextColor="purple"
-                  // TODO: Add proper data input code
-                />
+                <ScrollView>
+                <Text style={styles.hingeQuestion}>My secret talent is...</Text>
+                <TextInput style={styles.hingeInput}/>
+                  
+                <Text style={styles.hingeQuestion}>The voices are telling me to...</Text>
+                <TextInput style={styles.hingeInput}/>
+
+                <Text style={styles.hingeQuestion}>My never ending nightmare is...</Text>
+                <TextInput style={styles.hingeInput}/>
+                </ScrollView>
+    
             </View>
           </View>
           )}
@@ -150,10 +192,11 @@ const styles = StyleSheet.create({
     
   },
   Title: {
-    fontSize: '40%',
+    fontSize: '45%',
     textAlign: 'center',
     fontWeight: 'bold',
-    color: 'purple',
+    color: purpleStandard,
+    marginBottom: '5%'
   },
   inputContainer: {
     //backgroundColor: 'yellow',
@@ -165,12 +208,25 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 2,
     borderRadius: 25,
-    borderColor: 'purple',
+    borderColor: purpleStandard,
     alignContent:'center',
     fontSize: "20%",
     padding:'5%',
     paddingHorizontal:'8%',
-    color: '#fff',
+    
+  },
+  bioInput: {
+    height: "80%",
+    width: "80%",
+    marginVertical: 10,
+    marginHorizontal: 20,
+    padding: 10,
+    backgroundColor: 'white',
+    borderWidth: 2,
+    borderRadius: 10,
+    borderColor: purpleStandard,
+    fontSize: 16,
+    textAlignVertical: 'top',
   },
   buttonContainer:{
     //backgroundColor:'red',
@@ -179,7 +235,7 @@ const styles = StyleSheet.create({
 
   },
   buttonStyle:{
-    backgroundColor: "purple",
+    backgroundColor: purpleStandard,
     borderRadius: 25,
     padding: 10,
     marginVertical:"1%"
@@ -191,6 +247,26 @@ const styles = StyleSheet.create({
     fontSize:20,
     textAlign:'center'
   },
+  choosePhoto:{
+    backgroundColor: purpleStandard,
+    borderRadius: 25,
+    padding: 15,
+    marginVertical:"1%"
+  },
+  hingeQuestion:{
+    fontSize:'25%',
+    marginBottom:'3%'
+  },
+  hingeInput:{
+    borderWidth: 2,
+    borderRadius: 25,
+    borderColor: purpleStandard,
+    alignContent:'center',
+    fontSize: "20%",
+    padding:'2%',
+    width:'50%',
+    marginBottom:"5%"
+  }
 });
 
 export default ProfileScreen;
