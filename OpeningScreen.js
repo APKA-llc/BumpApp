@@ -4,11 +4,13 @@ import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 
 
+
+
+
 // Opening Screen
 const OpeningScreen = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
   const navigation = useNavigation();
+
   
 
   const handleButtons = () => {

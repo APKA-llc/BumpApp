@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 
 
 
-const hometest = () => {
+const HomeTest = () => {
     const navigation = useNavigation();
 
 return (
@@ -14,18 +14,21 @@ return (
        
         <View style={styles.profilepiccontainer}>
             <Image style={styles.profilepic} source={require('./assets/matchprofilepic.jpg')}/>
-        </View>
+
+            <View style={styles.one}>
+                <Text style={styles.firstName}>Krish</Text>
+            </View>
+            
+          </View>
 
         <View style={styles.bottomHalf}>
 
-            <View style={styles.one}>
-                <Text style={styles.firstName}>Krish, 19</Text>
-            </View>
+            
 
             <View style={styles.two}>
-                <Text style={styles.description}>Sophomore Currently Studying Med</Text>
+                <Text style={styles.description}>19, Sophomore Currently Studying Med</Text>
                 <Text style={styles.bio}>   </Text>
-                <Text style={styles.bio}>I like art, pizza, and animals. I'm looking forward to making friends I can nerd out and relax with. If you get me started on cookout lore i will talk to you for hours and hours there is literally so much cookout lore.</Text> 
+                <Text style={styles.bio}>I like art, pizza, and animals. I'm looking forward to making friends I can nerd out and relax with. If you get me started on cookout lore i will talk to you for hours and hours.</Text> 
             </View>
 
             <View style={styles.three}>
@@ -50,9 +53,10 @@ return (
 const styles = StyleSheet.create({
     parentcontainer: {
         flex: 1,
+        backgroundColor:"#ffffff"
       },
       profilepiccontainer: {
-        flex: 1,
+        flex: 4,
         alignItems:'center',
       },
       profilepic:{
@@ -60,22 +64,26 @@ const styles = StyleSheet.create({
         width: '100%',
       },
       bottomHalf: {
-        flex: 1,
+        flex: 3,
       },
       one:{
-        backgroundColor:'red',
-        flex:1,
-        justifyContent: 'center'
+        //backgroundColor:'red',
+        position: 'absolute',
+        bottom: 0,
+        backgroundColor:"#a142eb",
+        borderRadius:15,
+        left:"5%",
+        padding:2
       },
       two:{
-        backgroundColor:'blue',
-        flex:4,
+        //backgroundColor:'blue',
+        flex:3,
         flexDirection:'column',
         padding: 10,
       },
       three:{
-        backgroundColor:'yellow',
-        flex:3,
+        //backgroundColor:'yellow',
+        flex:2,
       },
       swipebuttons: {
         flex: 3,
@@ -84,35 +92,37 @@ const styles = StyleSheet.create({
         alignItems: 'center',
       },
       reject: {
-        width: 86,
-        height: 86,
-        marginLeft:"7%",
+        width: 70,
+        height: 70,
+        marginLeft:"5%",
       },
       accept: {
-        width: 86,
-        height: 86,
+        width: 70,
+        height: 70,
         marginRight:"5%"
       },
 
       firstName:{
         flex:1,
-        fontFamily: 'Baskerville',
-        fontSize: 55,
-        fontWeight: '400',
-        marginLeft:10
+        fontSize: 40,
+        fontWeight: '500',
+        color:'white',
+        marginLeft:'5%'
       },
       description:{
-        fontFamily: 'Baskerville',
-        marginLeft:10,
+        
+        marginLeft:"5%",
+        marginRight:"5%",
         marginTop:"1%",
-        fontSize:25,
+        fontSize:"25%",
 
       },
       bio:{
-        fontFamily: 'Baskerville',
-        marginLeft:10,
-        fontSize:25
+        
+        marginLeft: "5%",
+        marginRight: "5%",
+        fontSize:"25%"
       },
 });
 
-export default hometest;
+export default HomeTest;

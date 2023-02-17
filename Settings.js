@@ -3,11 +3,34 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Imag
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {signOut} from "firebase/auth";
+import {auth} from "./firebaseConfig";
+import OpeningScreen from './OpeningScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Settings Screen
 const SettingsScreen = () => {
-    const navigation = useNavigation();
-    return (
+  const navigation = useNavigation();
+  const handleSignOut = () => {
+
+    signOut(auth).then(() => {
+      // Sign-out successful.
+      console.log("Signed Out!")
+    }).catch((error) => {
+      // An error happened.
+      console.log(error);
+    });
+    //Remove User From Storage
+    try {
+      AsyncStorage.removeItem('user');
+    } catch (error) {
+      console.log(error);
+    }
+    navigation.navigate(OpeningScreen);
+
+  };
+
+  return (
     <LinearGradient colors={['#C44EEE','#562574']} style={{flex:1}}>
         <SafeAreaView style={styles.parentcontainer}>
 
@@ -43,9 +66,13 @@ const SettingsScreen = () => {
 
             </View>
 
+            <TouchableOpacity style={styles.buttonStyle} onPress={handleSignOut}>
+                    <Text style={styles.buttonText}>Sign Out</Text>
+            </TouchableOpacity>
+
         </SafeAreaView>
     </LinearGradient>
-    );
+  );
 };
 
 //Styles Sheet Please try to Label Descriptively,

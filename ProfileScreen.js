@@ -1,30 +1,41 @@
 import React, { useState, useCallback } from 'react';
-import { ScrollView, View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Image, Button} from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import { ScrollView, View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Image, Button, Keyboard, TouchableWithoutFeedback} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import * as ImagePicker from 'expo-image-picker';
+
+//Style Standardization
+let purpleStandard = '#7851A9'
 
 // Profile Screen
 const ProfileScreen = () => {
   const [currentGroup, setCurrentGroup] = useState(1);
   const navigation = useNavigation();
+  //const [profilePic, setProfilePic] = useState(defaultProfilePic);
 
-  let messageTop;
-  let messageBottom;
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
+  };
 
-  if (currentGroup === 3) {
-    messageTop = 'Finish';
-  } else {
-    messageTop = 'Continue';
-  }
+  const [image, setImage] = useState(null);
 
-  if (currentGroup === 1) {
-    messageBottom = 'Exit';
-  } else {
-    messageBottom = 'Return';
-  }
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
 
   const formComplete = () => {
-    if (currentGroup === 3) {
+    if (currentGroup === 5) {
       navigation.navigate('HomeScreen');
     } else {
       setCurrentGroup(currentGroup + 1);
@@ -39,53 +50,124 @@ const ProfileScreen = () => {
     }
   };
 
+  let messageTop;
+  if (currentGroup === 6) {
+    messageTop = 'Finish';
+  } else {
+    messageTop = 'Continue';
+  }
+
+  let messageBottom;
+  messageBottom = 'Return';
 
   return (
-    <LinearGradient colors={['#C44EEE', '#562574']} style={{flex: 1}}>
       <SafeAreaView style={styles.container}>
         <View style={styles.container}>
+
           {currentGroup === 1 && (
-            <View style={styles.inputContainer}>
-              <Text style={styles.Text}>Enter Your Name</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="First Name Only"
-                placeholderTextColor="#ffff"
-                // TODO: Add proper data input code
-              />
+            <View style = {styles.vanish}>
+              <View style={styles.TitleContainer}>
+                <Text style={styles.Title}>Enter Your Name</Text>
+              </View>
+
+              <View style={styles.inputContainer}>
+                
+                <TextInput
+                  style={styles.input}
+                  placeholder="First Name Only"
+                  // TODO: Add proper data input code
+                />
+              </View>
             </View>
           )}
+
           {currentGroup === 2 && (
-            <View style={styles.inputContainer}>
-              <Text style={styles.Text}>Choose a photo</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Select Photo"
-                placeholderTextColor="#ffff"
-                // TODO: Add proper data input code
-              />
+            <View style = {styles.vanish}>
+              <View style={styles.TitleContainer}>
+                <Text style={styles.Title}>What is your age?</Text>
+              </View>
+
+              <View style={styles.inputContainer}>
+                
+                <TextInput
+                  style={styles.input}
+                  placeholder="Years Old"
+                  
+                  // TODO: Add proper data input code
+                />
+             </View>
             </View>
           )}
+
           {currentGroup === 3 && (
+           <View style = {styles.vanish}>
+            <View style={styles.TitleContainer}>
+              <Text style={styles.Title}>Choose a photo</Text>
+            </View>
+
             <View style={styles.inputContainer}>
-              <Text style={styles.Text}>Introduce Yourself</Text>
+              <TouchableOpacity style={styles.choosePhoto} onPress={pickImage}>
+                <Text style={styles.buttonText}>Select a Photo</Text>
+              </TouchableOpacity>
+
+              {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+            </View>
+
+          </View>
+          )}
+          {currentGroup === 4 && (
+           <View style = {styles.vanish}>
+            <TouchableWithoutFeedback onPress={dismissKeyboard}>
+              <View style={styles.TitleContainer}>
+              <Text style={styles.Title}>Introduce Yourself</Text>
+              </View>
+            </TouchableWithoutFeedback>
+
+            <View style={styles.inputContainer}>
+                
               <TextInput
-                style={styles.input}
-                placeholder="Type Here"
-                placeholderTextColor="#ffff"
-                // TODO: Add proper data input code
+                style={styles.bioInput}
+                multiline
+                numberOfLines={5}
               />
             </View>
+          </View>
           )}
-          <TouchableOpacity style={styles.buttonStyle} onPress={formComplete}>
-            <Text style={styles.buttonText}>{messageTop}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.buttonStyle} onPress={formEscape}>
-            <Text style={styles.buttonText}>{messageBottom}</Text>
-          </TouchableOpacity>
+
+          {currentGroup === 5 && (
+           <View style = {styles.vanish}>
+              <View style={styles.TitleContainer}>
+              <Text style={styles.Title}>Questions</Text>
+              </View>
+
+            <View style={styles.inputContainer}>
+                
+                <ScrollView>
+                <Text style={styles.hingeQuestion}>My secret talent is...</Text>
+                <TextInput style={styles.hingeInput}/>
+                  
+                <Text style={styles.hingeQuestion}>The voices are telling me to...</Text>
+                <TextInput style={styles.hingeInput}/>
+
+                <Text style={styles.hingeQuestion}>My never ending nightmare is...</Text>
+                <TextInput style={styles.hingeInput}/>
+                </ScrollView>
+    
+            </View>
+          </View>
+          )}
+
+            <View style = {styles.buttonContainer}>
+              <TouchableOpacity style={styles.buttonStyle} onPress={formComplete}>
+                <Text style={styles.buttonText}>{messageTop}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.buttonStyle} onPress={formEscape}>
+                <Text style={styles.buttonText}>{messageBottom}</Text>
+              </TouchableOpacity>
+            </View>
         </View>
       </SafeAreaView>
-    </LinearGradient>
+ 
   );
 };
 
@@ -97,45 +179,94 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 20,
   },
-  inputContainer: {
-    backgroundColor: 'transparent',
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
+  vanish:{
+    //backgroundColor:'green',
+    flex:2
+    
   },
-  Text: {
-    fontSize: 40,
+  TitleContainer:{
+    //backgroundColor:"blue",
+    flex:1,
+    justifyContent:"flex-end",
+    alignItems:'center',
+    
+  },
+  Title: {
+    fontSize: '45%',
     textAlign: 'center',
     fontWeight: 'bold',
-    color: '#fff',
+    color: purpleStandard,
+    marginBottom: '5%'
+  },
+  inputContainer: {
+    //backgroundColor: 'yellow',
+    flex: 1,
+    justifyContent:'flex-start',
+    alignItems:'center',
+    marginVertical:'5%'
   },
   input: {
-    marginTop: 40,
     borderWidth: 2,
     borderRadius: 25,
-    borderColor: '#F8EEFE',
-    padding: 25,
-    paddingHorizontal: 50,
-    alignContent:'left',
-    fontSize: 26,
-    color: '#fff',
+    borderColor: purpleStandard,
+    alignContent:'center',
+    fontSize: "20%",
+    padding:'5%',
+    paddingHorizontal:'8%',
+    
+  },
+  bioInput: {
+    height: "80%",
+    width: "80%",
+    marginVertical: 10,
+    marginHorizontal: 20,
+    padding: 10,
+    backgroundColor: 'white',
+    borderWidth: 2,
+    borderRadius: 10,
+    borderColor: purpleStandard,
+    fontSize: 16,
+    textAlignVertical: 'top',
+  },
+  buttonContainer:{
+    //backgroundColor:'red',
+    flex:1,
+    justifyContent:"flex-end"
+
   },
   buttonStyle:{
-    backgroundColor: "#F8EEFE",
+    backgroundColor: purpleStandard,
     borderRadius: 25,
-    marginTop: 10,
-    borderWidth: 0,
-    borderColor: "#2F024B",
     padding: 10,
-    alignItems: "center",
-    bottom: 30
+    marginVertical:"1%"
+   
   },
   buttonText:{
-    color: "#000000",
+    color: "white",
     fontWeight:'bold', 
-    fontSize:20
+    fontSize:20,
+    textAlign:'center'
   },
+  choosePhoto:{
+    backgroundColor: purpleStandard,
+    borderRadius: 25,
+    padding: 15,
+    marginVertical:"1%"
+  },
+  hingeQuestion:{
+    fontSize:'25%',
+    marginBottom:'3%'
+  },
+  hingeInput:{
+    borderWidth: 2,
+    borderRadius: 25,
+    borderColor: purpleStandard,
+    alignContent:'center',
+    fontSize: "20%",
+    padding:'2%',
+    width:'50%',
+    marginBottom:"5%"
+  }
 });
 
 export default ProfileScreen;

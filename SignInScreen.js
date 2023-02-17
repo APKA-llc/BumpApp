@@ -3,17 +3,67 @@ import React, { useState, useCallback } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Image, Button, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
-
+import {signInWithEmailAndPassword} from "firebase/auth";
+import {auth} from "./firebaseConfig";
+import MainHub from './MainHub';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Alert } from 'react-native';
+import Dialog, { DialogContent } from 'react-native-popup-dialog';
 
 // Sign in Screen
 const SignInScreen =  () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigation = useNavigation();
+  const [showErrorDialog, setShowErrorDialog] = useState(false);
 
+  const saveUser = async (user) => {
+    try {
+      await AsyncStorage.setItem('user', JSON.stringify(user));
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  
+  
+  
   const handleSignIn = () => {
-    // Perform login logic here, such as sending a request to a server
-    //console.log(`Username: ${username}, Password: ${password}`);
+
+    signInWithEmailAndPassword(auth, email, password)
+      .then((user) => {
+        saveUser(user);
+        console.log('signed in');
+        
+        navigation.navigate(MainHub);
+        // ...
+      })
+      .catch((error) => {
+        const { code, message } = error;
+        var errorMessage;
+
+        switch (code) {
+          case "auth/invalid-email":
+            errorMessage = "Invalid email address.";
+            break;
+          case "auth/user-disabled":
+            errorMessage = "This account has been disabled.";
+            break;
+          case "auth/user-not-found":
+            errorMessage = "Email address not found.";
+            break;
+          case "auth/wrong-password":
+            errorMessage = "Incorrect password.";
+            break;
+          default:
+            errorMessage = code;
+            break;
+        }
+        
+        Alert.alert('Error', errorMessage, [{ text: 'Try Again' }]);
+        setShowErrorDialog(true);
+
+        console.log(errorMessage);
+      });
   };
 
   const handleDismiss = () => Keyboard.dismiss();
@@ -48,10 +98,22 @@ const SignInScreen =  () => {
                 <TouchableOpacity style={styles.buttonStyle} onPress={handleSignIn}>
                     <Text style={styles.buttonText}>Sign In</Text>
                 </TouchableOpacity>
+
+
             </KeyboardAvoidingView>
+            
         
             </View>
         </TouchableWithoutFeedback>
+
+        <Dialog
+          visible={showErrorDialog}
+          onTouchOutside={() => setShowErrorDialog(false)}>
+          <DialogContent>
+            <Text>Invalid email or password.</Text>
+          </DialogContent>
+        </Dialog>
+
         
         <Text style={styles.tinyText}>APKA LLC</Text>
 
