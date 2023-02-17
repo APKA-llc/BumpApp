@@ -3,7 +3,7 @@ import { Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from './HomeScreen';
-import BumpScreen from './BumpScreen';
+import MyProfileScreen from './MyProfileScreen';
 import SettingsScreen from './Settings';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -20,15 +20,15 @@ export default function MainHub() {
             tabBarIcon: ({ focused, color, size }) => {
                 let iconName;
 
-                if (route.name === 'Home') {
-                    iconName = 'ios-home'
+                if (route.name === 'Explore') {
+                    iconName = 'people-outline'
 
                 } 
                 else if (route.name === 'Settings') {
                     iconName = 'ios-settings'
                 }
-                else if(route.name === 'Bump'){
-                    iconName = 'ios-alert'
+                else if(route.name === 'My Profile'){
+                    iconName = 'person-circle-outline'
                 }
 
                 // You can return any component that you like here!
@@ -40,8 +40,8 @@ export default function MainHub() {
         >
         
 
-        <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="Bump" component={BumpScreen} />
+        <Tab.Screen name="My Profile" component={MyProfileScreen} />
+        <Tab.Screen name="Explore" component={HomeScreen} />
         <Tab.Screen name="Settings" component={SettingsScreen}/>
       </Tab.Navigator>
   );

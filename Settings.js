@@ -2,17 +2,44 @@ import React, { useState, useCallback } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Image, Button} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 // Settings Screen
 const SettingsScreen = () => {
     const navigation = useNavigation();
     return (
     <LinearGradient colors={['#C44EEE','#562574']} style={{flex:1}}>
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={styles.parentcontainer}>
 
             <View style={styles.container}>
 
-            <Text>Settings Screen</Text>
+              <View style={styles.settingsButtonContainer}>
+                <Ionicons name={'log-out-outline'} size={40} color={'purple'} />
+                <TouchableOpacity onPress={() => navigation.navigate('BumpScreen')}>
+                  <Text style={styles.settingsButton}>Log Out</Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.settingsButtonContainer}>
+                <Ionicons name={'mail-outline'} size={40} color={'purple'} />
+                <TouchableOpacity onPress={() => navigation.navigate('BumpScreen')}>
+                  <Text style={styles.settingsButton}>Contact Us</Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.settingsButtonContainer}>
+                <Ionicons name={'reader-outline'} size={40} color={'purple'} />
+                <TouchableOpacity onPress={() => navigation.navigate('BumpScreen')}>
+                  <Text style={styles.settingsButton}>Give Feedback</Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.settingsButtonContainer}>
+                <Ionicons name={'help-circle-outline'} size={40} color={'purple'} />
+                <TouchableOpacity onPress={() => navigation.navigate('BumpScreen')}>
+                  <Text style={styles.settingsButton}>How to Use Bump</Text>
+                </TouchableOpacity>
+              </View>
 
             </View>
 
@@ -23,11 +50,22 @@ const SettingsScreen = () => {
 
 //Styles Sheet Please try to Label Descriptively,
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor:'transparent',
+  parentcontainer: {
+    backgroundColor:'white',
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
     padding: 20,
+  },
+  settingsButtonContainer: {
+    padding: 26,
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  settingsButton: {
+    fontSize: 32,
+    color: 'purple',
+    marginLeft: 20,
   },
 });
 

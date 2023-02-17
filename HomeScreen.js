@@ -1,113 +1,191 @@
-//mingkuan
 import React, { useState, useCallback } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Image, Button} from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import { View, Text, Dimensions, TouchableOpacity, StyleSheet, ScrollView, Image, Button} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
+const matchpic = './assets/matchprofilepic.jpg';
+const name = 'Krish';
+const age = 18;
+const yearAndMajor = 'Freshman Currently Studying CS';
+const displayBio = 'I like rizzing, touching grass, and Crosland. I\'m looking forward to making friends I can nerd out and relax with.'
 
+const hingePrompt1 = 'You get too political when...';
+const hingeAnswer1 = 'arguing why Nav is the best dining hall';
+const hingePrompt2 = 'Defund...';
+const hingeAnswer2 = 'big daata';
 
 // Home Screen
 const HomeScreen = () => {
   const navigation = useNavigation();
 
   return (
-  <LinearGradient colors={['#2e3262','#2e3262']} style={{flex:1}}>
-    <SafeAreaView style={styles.container}>
+    <ScrollView style={styles.parentcontainer}>
 
-      <View style={styles.firstnamecontainer}>
-        <Text style={styles.firstname}>Krish</Text>
+      <View style={styles.profilepiccontainer}>
+        <Image style={styles.profilepic} source={require(matchpic)}/>
       </View>
 
-      <Image style={styles.profilepic} source={require('./assets/matchprofilepic.jpg')}/>
+      <View style={styles.bottomHalf}>
 
-      <View style={styles.bio}>
+        <View style={styles.one}>
+          <Text style={styles.firstName}>{name}, {age}</Text>
+        </View>
 
-        <Text style={styles.subtitle}>Who is Krish?</Text>
+        <View style={styles.two}>
+          <Text style={styles.description}>{yearAndMajor}</Text>
+          <Text style={styles.bio}> </Text>
+          <Text style={styles.bio}>{displayBio}</Text>
+        </View>
+        <View style={styles.three}>
+          <View style={styles.hingeContainerTo}>
+            <Text style={styles.hingeTextTo}>Hey!</Text>
+          </View>
+          <View style={{marginTop: 10}}></View>
+          <View style={styles.hingeContainerFrom}>
+            <Text style={styles.hingeTextFrom}>Tell me about yourself!</Text>
+          </View>
+          <View style={{marginTop: 10}}></View>
+          <View style={styles.hingeContainerFrom}>
+            <Text style={styles.hingeTextFrom}>{hingePrompt1}</Text>
+          </View>
+          <View style={{marginTop: 10}}></View>
+          <View style={styles.hingeContainerTo}>
+            <Text style={styles.hingeTextTo}>{hingeAnswer1}</Text>
+          </View>
+          <View style={{marginTop: 10}}></View>
+          
+          <View style={styles.hingeContainerFrom}>
+            <Text style={styles.hingeTextFrom}>{hingePrompt2}</Text>
+          </View>
+          <View style={{marginTop: 10}}></View>
+          <View style={styles.hingeContainerTo}>
+            <Text style={styles.hingeTextTo}>{hingeAnswer2}</Text>
+          </View>
+          <View style={{marginTop: 10}}></View>
+          <View style={styles.hingeContainerTo}>
+            <Text style={styles.hingeTextTo}>Nice to meet you! Do you want to hang out?</Text>
+          </View>
+        </View>
+        
+        <View style={styles.four}>
+          <View style={styles.swipebuttons}>
+            <TouchableOpacity onPress={() => navigation.navigate('BumpScreen')}>
+              <Image style={styles.reject} source={require('./assets/xmark.webp')}/>
+            </TouchableOpacity>
 
-        <Text style={styles.intro}>Sophmore Currently Studying Med</Text>
-
-        <Text style={styles.hobbies}>I like art, pizza , and animals . Im looking forward to making friends I can nerd out and relax with.</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('BumpScreen')}>
+              <Image style={styles.accept} source={require('./assets/checkmark.webp')}/>
+            </TouchableOpacity>
+          </View>
+        </View>
 
       </View>
-
-      <View style={styles.swipebuttons}>
-        <TouchableOpacity onPress={() => navigation.navigate('BumpScreen')}>
-          <Image style={styles.reject} source={require('./assets/xmark.webp')}/>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => navigation.navigate('BumpScreen')}>
-          <Image style={styles.accept} source={require('./assets/checkmark.webp')}/>
-        </TouchableOpacity>
-      </View>
-      
-    </SafeAreaView>
-  </LinearGradient>
+    </ScrollView>
   );
 };
 
+const win = Dimensions.get('window');
+
 //Styles Sheet Please try to Label Descriptively,
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor:'transparent',
+  parentcontainer: {
+    flex: 1,
+    width: '100%',
+  },
+  profilepiccontainer: {
     flex: 1,
     alignItems: 'center',
-    padding: 20,
-  },
-  firstnamecontainer: {
-    flex: 1,
-    width: '80%',
-    justifyContent: 'flex-end',
-  },
-  firstname: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontFamily: 'Cochin',
-    fontSize: 36,
-    textAlign: 'left'
   },
   profilepic: {
-    marginTop: 12,
-    flex: 5,
-    width: '80%',
+    width: '100%',
+    height: win.height*(9/16),
   },
 
-  bio: {
-    marginTop: 36,
-    flex: 3,
-    width: '80%',
+  bottomHalf: {
+    flex: 1,
   },
-  subtitle: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 28,
+  one: {
+    justifyContent: 'center',
   },
-  intro: {
-    marginLeft: 14,
-    marginTop: 10,
-    color: 'white',
-    fontSize: 22,
+  two: {
+    flexDirection: 'column',
+    padding: 10,
   },
-  hobbies: {
-    marginLeft: 14,
-    marginTop: 14,
-    color: 'white',
-    fontSize: 22,
+  three: {
+    padding: 10,
+    marginBottom: 24,
+  },
+  four: {
+    alignItems: 'center',
+    marginBottom: 24,
   },
 
   swipebuttons: {
     flex: 3,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: 300,
+    width: '90%',
     alignItems: 'center',
   },
   reject: {
     width: 86,
-    height: 86
+    height: 88
   },
   accept: {
     width: 86,
-    height: 86
+    height: 88,
+  },
+
+  firstName: {
+    flex: 1,
+    fontFamily: 'Baskerville',
+    fontSize: 55,
+    fontWeight: '400',
+    marginLeft: 10,
+  },
+  description: {
+    fontFamily: 'Baskerville',
+    marginLeft: 10,
+    marginTop: '1%',
+    fontSize: 25,
+  },
+  bio: {
+    fontFamily: 'Baskerville',
+    marginLeft: 10,
+    fontSize: 25,
+  },
+  hingeContainerFrom: {
+    alignItems: 'flex-end',
+    paddingTop: 12,
+    paddingBottom: 12,
+    paddingLeft: 16,
+    paddingRight: 16,
+    borderWidth: 2,
+    borderColor: "purple",
+    borderRadius: 20,
+    marginTop: 2,
+    alignSelf: 'flex-end',
+    maxWidth: '80%',
+  },
+  hingeContainerTo: {
+    paddingTop: 12,
+    paddingBottom: 12,
+    paddingLeft: 16,
+    paddingRight: 16,
+    backgroundColor: "purple",
+    borderRadius: 20,
+    marginTop: 2,
+    alignSelf: 'flex-start',
+    maxWidth: '80%',
+  },
+  hingeTextFrom: {
+    fontFamily: 'Arial',
+    fontSize: 20,
+    color: 'purple',
+  },
+  hingeTextTo: {
+    fontFamily: 'Arial',
+    fontSize: 20,
+    color: 'white',
   },
 });
 

@@ -9,16 +9,15 @@ import { LinearGradient } from 'expo-linear-gradient';
 const BumpScreen = ({ navigation }) => {
 
   return (
-  <LinearGradient colors={['#C44EEE','#562574']} style={{flex:1}}>
     <SafeAreaView style={styles.container}>
+
+      <View style={styles.titlecontainer}>
+        <Text style={styles.title}>You've Bumped!</Text>
+      </View>
 
       <View style={styles.profilepiccontainer}>
 
         <Image style={styles.profilepic} source={require('./assets/alex.jpg')}/>
-
-        <View style={styles.titlecontainer}>
-          <Text style={styles.title}>You've Bumped!</Text>
-        </View>
 
         <View style={styles.namecontainer}>
           <Text style={styles.name}>Alex</Text>
@@ -28,7 +27,7 @@ const BumpScreen = ({ navigation }) => {
 
       <View style={styles.biocontainer}>
 
-        <Text style={styles.bio}>Enjoyer of photography, punk rock (playboy carti), and rowing. My question to you: do you got that boom boom pow?</Text>
+        <Text style={styles.bio}>Enjoyer of photography, punk rock (playboi carti), and rowing. My question to you: do you got that boom boom pow?</Text>
 
         <Text style={styles.bioprompt}>I geek out on</Text>
 
@@ -41,20 +40,32 @@ const BumpScreen = ({ navigation }) => {
       </View>
       
     </SafeAreaView>
-  </LinearGradient>
   );
 };
 
 //Styles Sheet Please try to Label Descriptively,
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'transparent',
+    backgroundColor: 'purple',
     flex: 1,
-    padding: 20,
   },
+  titlecontainer: {
+    width: '100%',
+    flex: 2,
+    backgroundColor: 'purple',
+    justifyContent: 'center',
+  },
+  title: {
+    fontSize: 52,
+    fontWeight: 'bold',
+    color: 'white',
+    textAlign: 'center',
+    fontFamily: 'Baskerville',
+  },
+
   profilepiccontainer: {
     width: '100%',
-    flex: 5,
+    flex: 11,
     alignItems: 'center',
   },
   profilepic: {
@@ -62,47 +73,44 @@ const styles = StyleSheet.create({
     height: '100%',
     position: 'relative',
   },
-  titlecontainer: {
-    position: 'absolute',
-    width: '80%',
-    marginTop: '3%',
-  },
-  title: {
-    fontSize: 52,
-    fontWeight: 'bold',
-    color: '#fd4d4d',
-    textAlign: 'center',
-  },
   namecontainer: {
     position: 'absolute',
-    left: 10,
-    bottom: 10,
+    left: 0,
+    bottom: 0,
+    paddingRight: 26,
+    paddingLeft: 12,
+    paddingVertical: 8,
+    backgroundColor: 'purple',
+    borderTopRightRadius: '100%',
   },
   name: {
     color: 'white',
     fontSize: 40,
     fontWeight: 'bold',
-  },
-  biocontainer: {
-    flex: 2,
-    padding: '3%',
+    fontFamily: 'Baskerville',
   },
 
+  biocontainer: {
+    flex: 5,
+    padding: '3%',
+    backgroundColor: 'white',
+    borderColor: 'purple',
+    borderWidth: 3,
+  },
   bio: {
-    color: 'white',
-    fontStyle: 'italic',
-    fontSize: 20,
+    fontSize: 22,
+    fontFamily: 'Baskerville',
   },
   bioresponse: {
     marginTop: '1%',
-    color: 'white',
-    fontStyle: 'italic',
-    fontSize: 16,
+    fontSize: 18,
+    fontFamily: 'Baskerville',
   },
   bioprompt: {
+    fontWeight: 'bold',
     marginTop: '5%',
-    color: 'white',
-    fontSize: 18,
+    fontSize: 20,
+    fontFamily: 'Baskerville',
   }
 });
 

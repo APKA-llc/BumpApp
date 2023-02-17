@@ -23,9 +23,9 @@ return (
             </View>
 
             <View style={styles.two}>
-                <Text style={styles.description}>Sophmore Currently Studying Med</Text>
+                <Text style={styles.description}>Sophomore Currently Studying Med</Text>
                 <Text style={styles.bio}>   </Text>
-                <Text style={styles.bio}>I like art, pizza , and animals . Im looking forward to making friends I can nerd out and relax with. If you get me started on cookout lore i will talk to you for hours and hours there is literally so much cookout lore.</Text> 
+                <Text style={styles.bio}>I like art, pizza, and animals. I'm looking forward to making friends I can nerd out and relax with. If you get me started on cookout lore i will talk to you for hours and hours there is literally so much cookout lore.</Text> 
             </View>
 
             <View style={styles.three}>
@@ -63,17 +63,18 @@ const styles = StyleSheet.create({
         flex: 1,
       },
       one:{
-        //backgroundColor:'red',
+        backgroundColor:'red',
         flex:1,
         justifyContent: 'center'
       },
       two:{
-        //backgroundColor:'blue',
+        backgroundColor:'blue',
         flex:4,
         flexDirection:'column',
+        padding: 10,
       },
       three:{
-        //backgroundColor:'yellow',
+        backgroundColor:'yellow',
         flex:3,
       },
       swipebuttons: {
