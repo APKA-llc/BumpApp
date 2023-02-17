@@ -38,7 +38,7 @@ const SettingsScreen = () => {
 
               <View style={styles.settingsButtonContainer}>
                 <Ionicons name={'log-out-outline'} size={40} color={'purple'} />
-                <TouchableOpacity onPress={() => navigation.navigate('BumpScreen')}>
+                <TouchableOpacity onPress={handleSignOut}>
                   <Text style={styles.settingsButton}>Log Out</Text>
                 </TouchableOpacity>
               </View>
@@ -65,11 +65,6 @@ const SettingsScreen = () => {
               </View>
 
             </View>
-
-            <TouchableOpacity style={styles.buttonStyle} onPress={handleSignOut}>
-                    <Text style={styles.buttonText}>Sign Out</Text>
-            </TouchableOpacity>
-
         </SafeAreaView>
     </LinearGradient>
   );
