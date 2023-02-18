@@ -11,7 +11,6 @@ import SignUpScreen from './SignUpScreen';
 import ProfileScreen from './ProfileScreen';
 import HomeScreen from './HomeScreen';
 import BumpScreen from './BumpScreen';
-import HomeTest from './HomeTest';
 import MainHub from './MainHub';
 import {auth, user} from "./firebaseConfig";
 import AsyncStorage from '@react-native-async-storage/async-storage';
