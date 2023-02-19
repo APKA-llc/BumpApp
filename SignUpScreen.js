@@ -7,6 +7,9 @@ import { useNavigation } from '@react-navigation/native';
 import { createUserWithEmailAndPassword} from "firebase/auth";
 import {auth} from "./firebaseConfig";
 
+//Style Standardization
+let purpleStandard = '#7851A9'
+
 // Sign up Screen
 const SignUpScreen = () => {
   const [email, setEmail] = useState('');
@@ -22,7 +25,6 @@ const SignUpScreen = () => {
 
 
   return (
-  <LinearGradient colors={['#C44EEE','#562574']} style={{flex:1}}>
       <SafeAreaView style={styles.container}>
         
           <TouchableWithoutFeedback onPress={handleDismiss}>
@@ -34,7 +36,7 @@ const SignUpScreen = () => {
                   <TextInput
                       style={styles.input}
                       placeholder="Email"
-                      placeholderTextColor="#fff"
+                      placeholderTextColor={purpleStandard}
                       onChangeText={text => setEmail(text)}
                       value={email}
                       autoCapitalize="none"
@@ -43,7 +45,7 @@ const SignUpScreen = () => {
                   <TextInput
                       style={styles.input}
                       placeholder="Password"
-                      placeholderTextColor="#fff"
+                      placeholderTextColor={purpleStandard}
                       onChangeText={text => setPassword(text)}
                       value={password}
                       secureTextEntry={true}
@@ -59,7 +61,6 @@ const SignUpScreen = () => {
           <Text style={styles.tinyText}>APKA LLC</Text>
 
       </SafeAreaView>
-    </LinearGradient>
   );
 };
 
@@ -77,36 +78,36 @@ const styles = StyleSheet.create({
     marginTop:45,
     flex:0.7,
     fontSize:80,
-    color:"#ffffff",
+    color:purpleStandard,
   },
   tinyText:{
-    color: "#ffff",
+    color: purpleStandard,
     fontSize:15,
     textAlign:'center'
   },
   input: {
     flex: 0.2,
     borderWidth: 1,
-    borderColor: 'white',
+    borderColor: purpleStandard,
     borderRadius:20,
     marginVertical: 10,
     paddingHorizontal: 10,
     bottom:100,
-    color:'white',
+    color: purpleStandard,
   },
   buttonStyle:{
-    backgroundColor: "#F8EEFE",
+    backgroundColor: purpleStandard,
     borderRadius: 25,
     marginTop: 70,
     borderWidth: 0,
-    borderColor: "#2F024B",
+    borderColor: purpleStandard,
     padding: 10,
     alignItems: "center",
     bottom: 30
   },
 
   buttonText:{
-    color: "#000000",
+    color: "white",
     fontWeight:'bold', 
     fontSize:20
   },
