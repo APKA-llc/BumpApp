@@ -67,7 +67,7 @@ const SignUpScreen = () => {
 //Styles Sheet Please try to Label Descriptively,
 const styles = StyleSheet.create({
   container: {
-    backgroundColor:'transparent',
+    backgroundColor:'white',
     flex: 1,
     justifyContent: 'center',
     padding: 20,
