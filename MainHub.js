@@ -43,8 +43,8 @@ export default function MainHub() {
         >
         
 
-        <Tab.Screen name="My Profile" component={MyProfileScreen} />
         <Tab.Screen name="Explore" component={HomeScreen} />
+        <Tab.Screen name="My Profile" component={MyProfileScreen} />
         <Tab.Screen name="Settings" component={SettingsScreen}/>
       </Tab.Navigator>
   );

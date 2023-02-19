@@ -1,10 +1,78 @@
 import React, { useState, useCallback } from 'react';
-import { ScrollView, View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Image, Button, Keyboard, TouchableWithoutFeedback} from 'react-native';
+import { ScrollView, View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Image, FlatList, Keyboard, TouchableWithoutFeedback} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 
 //Style Standardization
-let purpleStandard = '#7851A9'
+let purpleStandard = '#7851A9';
+
+// display hinge question selection & full prompt
+let numSelected = 0;
+let currentFullPrompt = 'Please Select a Prompt';
+
+//list of hinge prompts
+const hingePrompts = [
+  {
+    id: 1,
+    prompt: 'Most British Thing',
+    fullPrompt: 'The most british thing I do on the daily ____',
+    selected: false,
+  },
+  {
+    id: 2,
+    prompt: 'I\'m a Hardcore',
+    fullPrompt: 'I\'m a hardcore ____',
+    selected: false,
+  },
+  {
+    id: 3,
+    prompt: 'Fan of',
+    fullPrompt: 'If ____ has a million fans, I am one of them. If ____ has 10 fans, I am one of them. If ____ only has one fan, then that one fan is me. If ____ has no fans, that mean I am no longer on the earth. If the world is against ____, I am against the world.',
+    selected: false,
+  },
+  {
+    id: 4,
+    prompt: 'Secret Talent',
+    fullPrompt: 'My secret talent ____',
+    selected: false,
+  },
+  {
+    id: 5,
+    prompt: 'Dying Wish',
+    fullPrompt: 'My dying wish is ____',
+    selected: false,
+  },
+  {
+    id: 6,
+    prompt: 'Most Irrational Fear',
+    fullPrompt: 'My most irrational fear ____',
+    selected: false,
+  },
+  {
+    id: 7,
+    prompt: 'Never-ending Nightmare',
+    fullPrompt: 'The most british thing I do on the daily____',
+    selected: false,
+  },
+  {
+    id: 8,
+    prompt: 'At a Party',
+    fullPrompt: 'If you find me at a party, I\'m the one ____',
+    selected: false,
+  },
+  {
+    id: 9,
+    prompt: 'Geek Out',
+    fullPrompt: 'I geek out on ____',
+    selected: false,
+  },
+  {
+    id: 10,
+    prompt: 'Cheddar News',
+    fullPrompt: 'Cheddar News is ____',
+    selected: false,
+  },
+];
 
 // Profile Screen
 const ProfileScreen = () => {
@@ -16,8 +84,8 @@ const ProfileScreen = () => {
     Keyboard.dismiss();
   };
 
+  // image picker
   const [image, setImage] = useState(null);
-
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -27,13 +95,12 @@ const ProfileScreen = () => {
       quality: 1,
     });
 
-    console.log(result);
-
     if (!result.canceled) {
       setImage(result.assets[0].uri);
     }
   };
 
+  // form is complete if currentGroup is 7 (we are on the 7th page)
   const formComplete = () => {
     if (currentGroup === 7) {
       navigation.navigate('HomeScreen');
@@ -42,6 +109,7 @@ const ProfileScreen = () => {
     }
   };
 
+  // if going "Back" from the first page, then go to the OpeningScreen
   const formEscape = () => {
     if (currentGroup === 1) {
       navigation.navigate('OpeningScreen');
@@ -50,6 +118,7 @@ const ProfileScreen = () => {
     }
   };
 
+  // update continue/back button messages
   let messageTop;
   let messageBottom;
   if (currentGroup === 7) {
@@ -57,15 +126,35 @@ const ProfileScreen = () => {
     messageBottom = 'Revise';
   } else {
     messageTop = 'Continue';
-    messageBottom = 'Return';
+    messageBottom = 'Back';
   }
 
-  const numSelected = 0;
+  // updates FlatList when a prompt is selected
+  const [selectedItems, setSelectedItems] = useState([]);
 
-  const [hingeSelected, setHingeSelected] = useState(false);
-  const toggleHingePrompt = () => {
-    setHingeSelected(!hingeSelected);
-  }
+  const handleOptionPress = (item) => {
+    setSelectedItems((selectedItems) => {
+      if (selectedItems.find((selectedItem) => selectedItem.id === item.id)) { // check whether the tapped item is already selected
+        numSelected--;
+        if (numSelected === 0) {
+          currentFullPrompt = 'Please Select a Prompt'
+        }
+        return selectedItems.filter((selectedItem) => selectedItem.id !== item.id);
+      }
+      // if the tapped item is not selected
+      if (numSelected < 3) { // if the limit has not been reached, then select the tapped item
+        numSelected++;
+        currentFullPrompt = item.fullPrompt;
+        return [...selectedItems, item];
+      }
+      // the limit has been reached, so nothing should be done
+      return selectedItems;
+    });
+  };
+
+  const isItemSelected = (item) => {
+    return selectedItems.find((selectedItem) => selectedItem.id === item.id);
+  };
 
   return (
       <SafeAreaView style={styles.container}>
@@ -149,48 +238,28 @@ const ProfileScreen = () => {
               </View>
 
               <View style={styles.promptScrollView}>
-                <ScrollView showsVerticalScrollIndicator={false}>
-
-                  <TouchableOpacity style={[styles.promptContainer, hingeSelected ? styles.promptSelected : styles.promptUnselected]} onPress={toggleHingePrompt}>
-                    <Text style={[styles.hingeQuestion, hingeSelected ? styles.hingeSelected : styles.hingeUnselected]}>Most British Thing</Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity style={[styles.promptContainer, hingeSelected ? styles.promptSelected : styles.promptUnselected]} onPress={toggleHingePrompt}>
-                    <Text style={[styles.hingeQuestion, hingeSelected ? styles.hingeSelected : styles.hingeUnselected]}>I'm a Hardcore</Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity style={[styles.promptContainer, hingeSelected ? styles.promptSelected : styles.promptUnselected]} onPress={toggleHingePrompt}>
-                    <Text style={[styles.hingeQuestion, hingeSelected ? styles.hingeSelected : styles.hingeUnselected]}>Fan of</Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity style={[styles.promptContainer, hingeSelected ? styles.promptSelected : styles.promptUnselected]} onPress={toggleHingePrompt}>
-                    <Text style={[styles.hingeQuestion, hingeSelected ? styles.hingeSelected : styles.hingeUnselected]}>Secret Talent</Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity style={[styles.promptContainer, hingeSelected ? styles.promptSelected : styles.promptUnselected]} onPress={toggleHingePrompt}>
-                    <Text style={[styles.hingeQuestion, hingeSelected ? styles.hingeSelected : styles.hingeUnselected]}>Dying Wish</Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity style={[styles.promptContainer, hingeSelected ? styles.promptSelected : styles.promptUnselected]} onPress={toggleHingePrompt}>
-                    <Text style={[styles.hingeQuestion, hingeSelected ? styles.hingeSelected : styles.hingeUnselected]}>Most Irrational Fear</Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity style={[styles.promptContainer, hingeSelected ? styles.promptSelected : styles.promptUnselected]} onPress={toggleHingePrompt}>
-                    <Text style={[styles.hingeQuestion, hingeSelected ? styles.hingeSelected : styles.hingeUnselected]}>Never-ending Nightmare</Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity style={[styles.promptContainer, hingeSelected ? styles.promptSelected : styles.promptUnselected]} onPress={toggleHingePrompt}>
-                    <Text style={[styles.hingeQuestion, hingeSelected ? styles.hingeSelected : styles.hingeUnselected]}>At a Party</Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity style={[styles.promptContainer, hingeSelected ? styles.promptSelected : styles.promptUnselected]} onPress={toggleHingePrompt}>
-                    <Text style={[styles.hingeQuestion, hingeSelected ? styles.hingeSelected : styles.hingeUnselected]}>Geek Out</Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity style={[styles.promptContainer, hingeSelected ? styles.promptSelected : styles.promptUnselected]} onPress={toggleHingePrompt}>
-                    <Text style={[styles.hingeQuestion, hingeSelected ? styles.hingeSelected : styles.hingeUnselected]}>Cheddar News</Text>
-                  </TouchableOpacity>
-                </ScrollView>
+                <FlatList
+                  data={hingePrompts}
+                  renderItem={({item}) => {
+                    const isSelected = isItemSelected(item);
+                    return (
+                      <TouchableOpacity
+                        style={[
+                          styles.promptContainer,
+                          {backgroundColor: isSelected ? purpleStandard : 'white'},
+                        ]}
+                        onPress={() => handleOptionPress(item)}
+                      >
+                        <Text style={[styles.hingeQuestion, {color: isSelected ? 'white' : purpleStandard}]}>
+                          {item.prompt}
+                        </Text>
+                      </TouchableOpacity>
+                    )
+                  }}
+                  keyExtractor={(item) => item.id.toString()}
+                  extraData={selectedItems}
+                  showsVerticalScrollIndicator={false}
+                />
               </View>
             </View>
           )}
@@ -229,10 +298,10 @@ const ProfileScreen = () => {
           <View style = {styles.buttonContainer}>
             {currentGroup === 5 && (
               <View style={styles.promptCard}>
-                <View style={styles.fullPromptContainer}>
-                  <Text style={styles.fullPromptText}>If you see me at a party, I'm the one...</Text>
-                </View>
                 <Text style={styles.fullPromptSubtitle}>Full Prompt</Text>
+                <View style={styles.fullPromptContainer}>
+                  <Text adjustsFontSizeToFit style={styles.fullPromptText}>{currentFullPrompt}</Text>
+                </View>
                 <Text style={styles.promptSelection}>{numSelected}/3 SELECTED</Text>
               </View>
             )}
@@ -305,8 +374,7 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
   },
   buttonContainer:{
-    //backgroundColor:'red',
-    flex: 1,
+    flex: 3,
     justifyContent: "flex-end",
   },
   buttonStyle:{
@@ -331,12 +399,6 @@ const styles = StyleSheet.create({
     fontSize:'18%',
     fontWeight: '500',
   },
-  hingeSelected: {
-    color: 'white',
-  },
-  hingeUnselected: {
-    color: purpleStandard,
-  },
   promptContainer: {
     alignItems: 'center',
     width: '100%',
@@ -344,13 +406,7 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: purpleStandard,
     borderRadius: '24%',
-    marginBottom: 24,
-  },
-  promptSelected: {
-    backgroundColor: purpleStandard,
-  },
-  promptUnselected: {
-    backgroundColor: 'white',
+    marginBottom: '8.25%',
   },
   hingeInput:{
     borderWidth: 2,
@@ -364,7 +420,7 @@ const styles = StyleSheet.create({
   },
 
   hingePromptPageContainer: {
-    flex: 2,
+    flex: 5,
     alignItems: 'center',
   },
   promptScrollView: {
@@ -379,30 +435,33 @@ const styles = StyleSheet.create({
     borderTopColor: purpleStandard,
     borderTopWidth: 2,
   },
+  fullPromptSubtitle: {
+    flex: 1,
+    color: '#9e9e9e',
+    marginTop: '2%',
+  },
   fullPromptContainer: {
+    flex: 4,
     borderWidth: 3,
     borderRadius: 20,
     borderColor: '#9e9e9e',
     width: '96%',
     paddingHorizontal: '5%',
-    paddingVertical: '8%',
+    // paddingVertical: '8%',
     alignItems: 'center',
-    marginTop: '2%',
+    justifyContent: 'center',
   },
   fullPromptText: {
     color: purpleStandard,
     fontSize: 18,
     fontWeight: '700',
   },
-  fullPromptSubtitle: {
-    color: '#9e9e9e',
-    marginVertical: '3%',
-  },
   promptSelection: {
+    flex: 1,
     color: '#9e9e9e',
     fontWeight: '700',
     fontSize: '16%',
-    flex: 1,
+    marginTop: '2%',
   }
 });
 
