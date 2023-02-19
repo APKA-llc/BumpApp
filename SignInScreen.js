@@ -10,6 +10,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
 import Dialog, { DialogContent } from 'react-native-popup-dialog';
 
+//Style Standardization
+let purpleStandard = '#7851A9'
+
 // Sign in Screen
 const SignInScreen =  () => {
   const [email, setEmail] = useState('');
@@ -69,7 +72,7 @@ const SignInScreen =  () => {
   const handleDismiss = () => Keyboard.dismiss();
 
   return (
-  <LinearGradient colors={['#C44EEE','#562574']} style={{flex:1}}>
+
     <SafeAreaView style={styles.container}>
       
         <TouchableWithoutFeedback onPress={handleDismiss}>
@@ -81,7 +84,7 @@ const SignInScreen =  () => {
                 <TextInput
                     style={styles.input}
                     placeholder="Email"
-                    placeholderTextColor="#fff"
+                    placeholderTextColor= {purpleStandard}
                     onChangeText={text => setEmail(text)}
                     value={email}
                     autoCapitalize="none"
@@ -90,17 +93,20 @@ const SignInScreen =  () => {
                 <TextInput
                     style={styles.input}
                     placeholder="Password"
-                    placeholderTextColor="#fff"
+                    placeholderTextColor= {purpleStandard}
                     onChangeText={text => setPassword(text)}
                     value={password}
                     secureTextEntry={true}
                 />
+
+                 </KeyboardAvoidingView>
+                 
                 <TouchableOpacity style={styles.buttonStyle} onPress={handleSignIn}>
                     <Text style={styles.buttonText}>Sign In</Text>
                 </TouchableOpacity>
 
 
-            </KeyboardAvoidingView>
+           
             
         
             </View>
@@ -118,7 +124,7 @@ const SignInScreen =  () => {
         <Text style={styles.tinyText}>APKA LLC</Text>
 
     </SafeAreaView>
-  </LinearGradient>
+  
   );
 };
 
@@ -126,7 +132,7 @@ const SignInScreen =  () => {
 //Styles Sheet Please try to Label Descriptively,
 const styles = StyleSheet.create({
   container: {
-    backgroundColor:'transparent',
+    backgroundColor:'white',
     flex: 1,
     justifyContent: 'center',
     padding: 20,
@@ -137,25 +143,25 @@ const styles = StyleSheet.create({
     marginTop:55,
     flex:0.7,
     fontSize:80,
-    color:"#ffffff",
+    color: purpleStandard,
   },
   tinyText:{
-    color: "#ffff",
+    color: purpleStandard,
     fontSize:15,
     textAlign:'center'
   },
   input: {
     flex: 0.2,
     borderWidth: 1,
-    borderColor: 'white',
+    borderColor: purpleStandard,
     borderRadius:20,
     marginVertical: 10,
     paddingHorizontal: 10,
     bottom:100,
-    color:'white',
+    color: purpleStandard,
   },
   buttonStyle:{
-    backgroundColor: "#F8EEFE",
+    backgroundColor: purpleStandard,
     borderRadius: 25,
     marginTop: 70,
     borderWidth: 0,
@@ -166,7 +172,7 @@ const styles = StyleSheet.create({
   },
 
   buttonText:{
-    color: "#000000",
+    color: "white",
     fontWeight:'bold', 
     fontSize:20
   },
