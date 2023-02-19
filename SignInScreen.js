@@ -98,12 +98,15 @@ const SignInScreen =  () => {
                     value={password}
                     secureTextEntry={true}
                 />
+
+                 </KeyboardAvoidingView>
+                 
                 <TouchableOpacity style={styles.buttonStyle} onPress={handleSignIn}>
                     <Text style={styles.buttonText}>Sign In</Text>
                 </TouchableOpacity>
 
 
-            </KeyboardAvoidingView>
+           
             
         
             </View>

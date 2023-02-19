@@ -50,16 +50,21 @@ const SignUpScreen = () => {
                       value={password}
                       secureTextEntry={true}
                   />
+                   <Text style={styles.text}>Must register with a valid college email. {'\n'}{'\n'} Georgia Tech only, More colleges coming soon!</Text>
+                   
+                  </KeyboardAvoidingView>
+
                   <TouchableOpacity style={styles.buttonStyle} onPress={handleSignUp}>
                       <Text style={styles.buttonText}>Sign Up</Text>
                   </TouchableOpacity>
-              </KeyboardAvoidingView>
-          
+              
+
+             
+
               </View>
           </TouchableWithoutFeedback>
           
           <Text style={styles.tinyText}>APKA LLC</Text>
-
       </SafeAreaView>
   );
 };
@@ -80,6 +85,12 @@ const styles = StyleSheet.create({
     fontSize:80,
     color:purpleStandard,
   },
+  text:{
+    fontSize:"15%",
+    color: purpleStandard,
+    textAlign: 'center',
+    
+  },
   tinyText:{
     color: purpleStandard,
     fontSize:15,
@@ -90,9 +101,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: purpleStandard,
     borderRadius:20,
-    marginVertical: 10,
+    marginVertical: 8,
     paddingHorizontal: 10,
-    bottom:100,
+    bottom:"10%",
     color: purpleStandard,
   },
   buttonStyle:{
