@@ -4,11 +4,8 @@ import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 
 //Style Standardization
-let purpleStandard = '#7851A9';
-
-// display hinge question selection & full prompt
-let numSelected = 0;
-let currentFullPrompt = 'Please Select a Prompt';
+const purpleStandard = '#7851A9';
+const lightGrayStandard = '#d3d3d3';
 
 //list of hinge prompts
 const hingePrompts = [
@@ -27,7 +24,7 @@ const hingePrompts = [
   {
     id: 3,
     prompt: 'Fan of',
-    fullPrompt: 'If ____ has a million fans, I am one of them. If ____ has 10 fans, I am one of them. If ____ only has one fan, then that one fan is me. If ____ has no fans, that mean I am no longer on the earth. If the world is against ____, I am against the world.',
+    fullPrompt: 'If ____ has a million fans, I am one of them. If ____ has 10 fans, I am one of them. If ____ only has one fan, then that one fan is me.',
     selected: false,
   },
   {
@@ -80,6 +77,11 @@ const ProfileScreen = () => {
   const navigation = useNavigation();
   //const [profilePic, setProfilePic] = useState(defaultProfilePic);
 
+  // display hinge question selection & full prompt
+  const [numSelected, setNumSelected] = useState(0);
+  const [currentFullPrompt, setCurrentFullPrompt] = useState('Please Select a Prompt');
+
+  // hides keyboard
   const dismissKeyboard = () => {
     Keyboard.dismiss();
   };
@@ -135,16 +137,16 @@ const ProfileScreen = () => {
   const handleOptionPress = (item) => {
     setSelectedItems((selectedItems) => {
       if (selectedItems.find((selectedItem) => selectedItem.id === item.id)) { // check whether the tapped item is already selected
-        numSelected--;
+        setNumSelected(numSelected - 1);
         if (numSelected === 0) {
-          currentFullPrompt = 'Please Select a Prompt'
+          setCurrentFullPrompt('Please Select a Prompt');
         }
         return selectedItems.filter((selectedItem) => selectedItem.id !== item.id);
       }
       // if the tapped item is not selected
       if (numSelected < 3) { // if the limit has not been reached, then select the tapped item
-        numSelected++;
-        currentFullPrompt = item.fullPrompt;
+        setNumSelected(numSelected + 1);
+        setCurrentFullPrompt(item.fullPrompt);
         return [...selectedItems, item];
       }
       // the limit has been reached, so nothing should be done
@@ -155,6 +157,15 @@ const ProfileScreen = () => {
   const isItemSelected = (item) => {
     return selectedItems.find((selectedItem) => selectedItem.id === item.id);
   };
+
+  // check if the user can continue to the next page
+  const canContinue = () => {
+    if (currentGroup === 5) {
+      return numSelected === 3;
+    }
+    // add more conditions for the other pages here (to be discussed)
+    return true;
+  }
 
   return (
       <SafeAreaView style={styles.container}>
@@ -237,7 +248,7 @@ const ProfileScreen = () => {
                 <Text style={styles.title}>Choose Prompts</Text>
               </View>
 
-              <View style={styles.promptScrollView}>
+              <View style={styles.promptView}>
                 <FlatList
                   data={hingePrompts}
                   renderItem={({item}) => {
@@ -257,7 +268,6 @@ const ProfileScreen = () => {
                     )
                   }}
                   keyExtractor={(item) => item.id.toString()}
-                  extraData={selectedItems}
                   showsVerticalScrollIndicator={false}
                 />
               </View>
@@ -265,29 +275,31 @@ const ProfileScreen = () => {
           )}
 
           {currentGroup === 6 && ( // write hinge responses
-           <View style = {styles.vanish}>
+           <View style = {styles.hingePromptPageContainer}>
               <View style={styles.titleContainer}>
               <Text style={styles.title}>Answer Prompts</Text>
               </View>
 
-            <View style={styles.inputContainer}>
-                
-                <ScrollView>
-                <Text style={styles.hingeQuestion}>My secret talent is...</Text>
-                <TextInput style={styles.hingeInput}/>
-                  
-                <Text style={styles.hingeQuestion}>The voices are telling me to...</Text>
-                <TextInput style={styles.hingeInput}/>
-
-                <Text style={styles.hingeQuestion}>My never ending nightmare is...</Text>
-                <TextInput style={styles.hingeInput}/>
-                </ScrollView>
-    
+            <View style={styles.answersView}>
+              <FlatList
+                data={selectedItems}
+                renderItem={({item}) => {
+                  return (
+                    <View style={styles.answerPromptContainer}>
+                      <Text style={[styles.hingePrompt, styles.hingeQuestion]}>{item.fullPrompt}</Text>
+                      <TextInput style={styles.hingeInput}/>
+                    </View>
+                  )
+                }}
+                keyExtractor={(item) => item.id.toString()}
+                showsVerticalScrollIndicator={false}
+                scrollEnabled={false}
+                />
             </View>
           </View>
           )}
 
-          {currentGroup === 7 && ( // preview profile --- show MyProfileScreen here (not sure how to do that yet)
+          {currentGroup === 7 && ( // preview profile --- copy of MyProfileScreen
           <View style = {styles.vanish}>
               <View style={styles.titleContainer}>
               <Text style={styles.title}>Preview Profile</Text>
@@ -295,7 +307,7 @@ const ProfileScreen = () => {
           </View>
           )}
 
-          <View style = {styles.buttonContainer}>
+          <View style = {[styles.buttonContainer, {flex: currentGroup === 5 ? 3 : 1}]}>
             {currentGroup === 5 && (
               <View style={styles.promptCard}>
                 <Text style={styles.fullPromptSubtitle}>Full Prompt</Text>
@@ -305,7 +317,14 @@ const ProfileScreen = () => {
                 <Text style={styles.promptSelection}>{numSelected}/3 SELECTED</Text>
               </View>
             )}
-            <TouchableOpacity style={styles.buttonStyle} onPress={formComplete}>
+            <TouchableOpacity
+              style={[
+                styles.buttonStyle,
+                {backgroundColor: currentGroup === 5 && numSelected < 3 ? lightGrayStandard : purpleStandard},
+              ]}
+              onPress={formComplete}
+              disabled={currentGroup === 5 && numSelected < 3}
+            >
               <Text style={styles.buttonText}>{messageTop}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.buttonStyle} onPress={formEscape}>
@@ -321,20 +340,18 @@ const ProfileScreen = () => {
 //Styles Sheet Please try to Label Descriptively,
 const styles = StyleSheet.create({
   container: {
-    backgroundColor:'transparent',
+    backgroundColor: 'transparent',
     flex: 1,
     justifyContent: 'center',
     padding: 20,
   },
   vanish:{
-    //backgroundColor:'green',
-    flex:2
+    flex: 3
   },
   titleContainer:{
-    //backgroundColor:"blue",
-    flex:1,
-    justifyContent:"flex-end",
-    alignItems:'center',
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
   },
   title: {
     fontSize: '45%',
@@ -344,20 +361,19 @@ const styles = StyleSheet.create({
     marginBottom: '5%'
   },
   inputContainer: {
-    //backgroundColor: 'yellow',
     flex: 1,
-    justifyContent:'flex-start',
-    alignItems:'center',
-    marginVertical:'5%'
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    marginVertical: '5%'
   },
   input: {
     borderWidth: 2,
     borderRadius: 25,
     borderColor: purpleStandard,
-    alignContent:'center',
+    alignContent: 'center',
     fontSize: "20%",
-    padding:'5%',
-    paddingHorizontal:'8%',
+    padding: '5%',
+    paddingHorizontal: '8%',
     
   },
   bioInput: {
@@ -373,8 +389,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlignVertical: 'top',
   },
+
   buttonContainer:{
-    flex: 3,
     justifyContent: "flex-end",
   },
   buttonStyle:{
@@ -408,6 +424,10 @@ const styles = StyleSheet.create({
     borderRadius: '24%',
     marginBottom: '8.25%',
   },
+  hingePrompt: {
+    textAlign: 'center',
+    marginBottom: '5%',
+  },
   hingeInput:{
     borderWidth: 2,
     borderRadius: 25,
@@ -423,9 +443,19 @@ const styles = StyleSheet.create({
     flex: 5,
     alignItems: 'center',
   },
-  promptScrollView: {
+  promptView: {
     flex: 5,
     width: '90%',
+  },
+  answersView: {
+    flex: 6,
+    width: '90%',
+    alignItems: 'center',
+    marginTop: '20%',
+  },
+  answerPromptContainer: {
+    alignItems: 'center',
+    marginVertical: '4%',
   },
 
   promptCard: {
@@ -447,7 +477,7 @@ const styles = StyleSheet.create({
     borderColor: '#9e9e9e',
     width: '96%',
     paddingHorizontal: '5%',
-    // paddingVertical: '8%',
+    paddingVertical: '3%',
     alignItems: 'center',
     justifyContent: 'center',
   },
