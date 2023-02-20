@@ -5,6 +5,9 @@ import { firestore, storage} from './firebaseConfig';
 import { collection, getDocs, getFirestore, query, orderBy, where, doc, getDoc } from "firebase/firestore"; 
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
+//Style Standardization
+const purpleStandard = '#7851A9';
+const lightGrayStandard = '#d3d3d3';
 
 // Home Screen
 const HomeScreen = () => {
@@ -159,12 +162,12 @@ const HomeScreen = () => {
         
         <View style={styles.four}>
           <View style={styles.swipebuttons}>
-            <TouchableOpacity onPress={() => navigation.navigate('BumpScreen')}>
-              <Image style={styles.reject} source={require('./assets/xmark.webp')}/>
+            <TouchableOpacity style={styles.buttonStyle} onPress={() => navigation.navigate('BumpScreen')}>
+              <Text style={styles.buttonText}>Maybe Later</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => navigation.navigate('BumpScreen')}>
-              <Image style={styles.accept} source={require('./assets/checkmark.webp')}/>
+            <TouchableOpacity style={styles.buttonStyle} onPress={() => navigation.navigate('BumpScreen')}>
+              <Text style={styles.buttonText}>Sure!</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -208,6 +211,8 @@ const styles = StyleSheet.create({
   four: {
     alignItems: 'center',
     marginBottom: 24,
+    borderTopWidth: 2,
+    borderTopColor: purpleStandard,
   },
 
   swipebuttons: {
@@ -216,14 +221,22 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '90%',
     alignItems: 'center',
+    marginTop: '5%',
   },
-  reject: {
-    width: 86,
-    height: 88
-  },
-  accept: {
-    width: 86,
+  buttonStyle: {
+    borderRadius: '100%',
+    borderWidth: 3,
+    borderColor: purpleStandard,
+    width: '40%',
     height: 88,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    color: purpleStandard,
+    fontSize: '20%',
+    fontWeight: '500',
+    textAlign: 'center',
   },
 
   firstName: {
@@ -262,7 +275,7 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
     paddingLeft: 16,
     paddingRight: 16,
-    backgroundColor: "purple",
+    backgroundColor: purpleStandard,
     borderRadius: 20,
     marginTop: 2,
     alignSelf: 'flex-start',
@@ -271,7 +284,7 @@ const styles = StyleSheet.create({
   hingeTextFrom: {
     fontFamily: 'Arial',
     fontSize: 20,
-    color: 'purple',
+    color: purpleStandard,
   },
   hingeTextTo: {
     fontFamily: 'Arial',
