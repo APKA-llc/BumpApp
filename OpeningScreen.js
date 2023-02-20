@@ -1,8 +1,11 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Image, Button} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
+import * as Location from 'expo-location';
 
+import { firestore} from './firebaseConfig';
+import {getDatabase, ref, set} from "firebase/database";
 
 
 
@@ -10,13 +13,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 // Opening Screen
 const OpeningScreen = () => {
   const navigation = useNavigation();
-
   
-
-  const handleButtons = () => {
-    //Code here for buttons
-  };
-
 
 
   return (

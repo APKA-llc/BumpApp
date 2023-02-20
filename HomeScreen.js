@@ -1,27 +1,118 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { View, Text, Dimensions, TouchableOpacity, StyleSheet, ScrollView, Image, Button} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { firestore, storage} from './firebaseConfig';
+import { collection, getDocs, getFirestore, query, orderBy, where, doc, getDoc } from "firebase/firestore"; 
+import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
-const matchpic = './assets/matchprofilepic.jpg';
-const name = 'Krish';
-const age = 18;
-const yearAndMajor = 'Freshman Currently Studying CS';
-const displayBio = 'I like rizzing, touching grass, and Crosland. I\'m looking forward to making friends I can nerd out and relax with.'
-
-const hingePrompt1 = 'You get too political when...';
-const hingeAnswer1 = 'arguing why Nav is the best dining hall';
-const hingePrompt2 = 'Defund...';
-const hingeAnswer2 = 'big daata';
 
 // Home Screen
 const HomeScreen = () => {
+
+  const [name, setName] = useState('');
+  const [age, setAge] = useState('');
+  const [yearAndMajor, setYearAndMajor] = useState('');
+  const [displayBio, setDisplayBio] = useState('');
+  const [hingePrompt1, setHingePrompt1] = useState('');
+  const [hingeAnswer1, setHingeAnswer1] = useState('');
+  const [hingePrompt2, setHingePrompt2] = useState('');
+  const [hingeAnswer2, setHingeAnswer2] = useState('');
+  const [photoURL, setPhotoURL] = useState('');
+  const [photoName, setPhotoName] = useState('');
+  const [photoLoaded, setPhotoLoaded] = useState(false);
+
+
   const navigation = useNavigation();
+
+  
+  
+  const getRandomUser = async () => {
+    const usersRef = collection(firestore, 'users');
+  
+    let numUsers = 0;
+    await getDocs(usersRef).then((querySnapshot) => {
+      numUsers = querySnapshot.size;
+    } );
+  
+    // Generate a random number between 1 and numUsers
+    const randomUser = Math.floor(Math.random() * numUsers) + 1;
+    setPhotoName('users/' + randomUser.toString() + '.jpg');
+    console.log('users/' + randomUser.toString() + '.jpg');
+    const querySnapshot = await getDocs(query(usersRef, where('__name__', '==', randomUser.toString())));
+    if (querySnapshot.empty) {
+      throw new Error(`No user found with name "${randomUser}"`);
+    }
+    //console.log(querySnapshot.docs[0].data())
+    return querySnapshot.docs[0].data();
+  };
+  
+  // create function set data not async
+  const setData = async () => {
+    let user = await getRandomUser();
+    setName(user.Name);
+    setAge(user.Age);
+    setYearAndMajor(user.YearMajor);
+    setDisplayBio(user.Biography);
+  
+  
+    const QA1 = user.QA[Math.floor(Math.random() * 11)];
+    const dashIndex1 = QA1.indexOf('-');
+    const QA2 = user.QA[Math.floor(Math.random() * 11)];
+    const dashIndex2 = QA2.indexOf('-');
+    
+    const question1 = QA1.substring(0, dashIndex1).trim();
+    const answer1 = QA1.substring(dashIndex1 + 1).trim();
+    const question2 = QA2.substring(0, dashIndex2).trim();
+    const answer2 = QA2.substring(dashIndex2 + 1).trim();
+    
+    setHingePrompt1(question1);
+    setHingeAnswer1(answer1);
+    setHingePrompt2(question2);
+    setHingeAnswer2(answer2);
+  
+    
+  
+    //get document name of user
+    //user.doc
+    
+  }
+
+  const getPhoto = async (photoName) => {
+    const storageRef = ref(storage, photoName);
+    const url = await getDownloadURL(storageRef);
+    console.log(url);
+    setPhotoURL(url);
+    //console.log(photoURL);
+    return url;
+  };
+  
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        await setData();
+        
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (photoName && !photoLoaded) {
+      getPhoto(photoName);
+      //setPhotoLoaded(true);
+    }
+  }, [photoName, photoLoaded]);
+
+
 
   return (
     <ScrollView style={styles.parentcontainer}>
 
       <View style={styles.profilepiccontainer}>
-        <Image style={styles.profilepic} source={require(matchpic)}/>
+        <Image style={styles.profilepic} source={{ uri: photoURL }}/>
       </View>
 
       <View style={styles.bottomHalf}>

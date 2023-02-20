@@ -2,10 +2,11 @@ import { initializeApp } from 'firebase/app';
 
 // Optionally import the services that you want to use
 import {getAuth} from "firebase/auth";
+import { getDatabase } from 'firebase/database';
 // import {...} from "firebase/database";
-// import {...} from "firebase/firestore";
+import {getFirestore} from "firebase/firestore";
 // import {...} from "firebase/functions";
-// import {...} from "firebase/storage";
+ import {getStorage} from "firebase/storage";
 
 // Initialize Firebase
 const firebaseConfig  = {
@@ -18,6 +19,11 @@ const firebaseConfig  = {
     measurementId: "G-RNHZ8Q4645"
   };
 const app = initializeApp(firebaseConfig); //initialize the firebase app
+const firestore = getFirestore(app); //initialize firestore
+const storage = getStorage(app); //initialize storage
+
 const auth = getAuth(app); //initialize authentication
+const db = getDatabase(app);
+
 auth.enablePersistence;
-export {app, auth};
+export {app, auth, db, firestore, storage};
