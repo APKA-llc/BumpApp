@@ -11,18 +11,53 @@ import SignUpScreen from './SignUpScreen';
 import ProfileScreen from './ProfileScreen';
 import HomeScreen from './HomeScreen';
 import BumpScreen from './BumpScreen';
-import HomeTest from './HomeTest';
 import MainHub from './MainHub';
 import {auth, user} from "./firebaseConfig";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { setupBackgroundFetch } from './backgroundFetch';
+import * as BackgroundFetch from "expo-background-fetch"
+import * as TaskManager from "expo-task-manager"
 
 
 const Stack = createStackNavigator();
+
+/*const TASK_NAME = "BACKGROUND_TASK"
+
+TaskManager.defineTask(TASK_NAME, () => {
+  try {
+    // fetch data here...
+    const receivedNewData = "Simulated fetch " + Math.random()
+    console.log("My task ", receivedNewData)
+    return receivedNewData
+      ? BackgroundFetch.Result.NewData
+      : BackgroundFetch.Result.NoData
+  } catch (err) {
+    return BackgroundFetch.Result.Failed
+  }
+})
+
+const RegisterBackgroundTask = async () => {
+  try {
+    await BackgroundFetch.registerTaskAsync(TASK_NAME, {
+      minimumInterval: 5, // seconds,
+    })
+    console.log("Task registered")
+  } catch (err) {
+    console.log("Task Register failed:", err)
+  }
+}*/
+
+
+
 
 
 
 const App = () => {
   
+
+
+
+
   const [loggedIn, setLoggedInStatus] = useState(null);
 
   const checkUser = async () => {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import HomeTest from './HomeTest';
+import HomeTest from './hometest';
 import HomeScreen from './HomeScreen';
 import MyProfileScreen from './MyProfileScreen';
 import SettingsScreen from './Settings';
@@ -44,8 +44,8 @@ export default function MainHub() {
         >
         
 
-        <Tab.Screen name="My Profile" component={MyProfileScreen} />
         <Tab.Screen name="Explore" component={HomeScreen} />
+        <Tab.Screen name="My Profile" component={MyProfileScreen} />
         <Tab.Screen name="Settings" component={SettingsScreen}/>
       </Tab.Navigator>
   );
