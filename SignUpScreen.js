@@ -7,6 +7,9 @@ import { useNavigation } from '@react-navigation/native';
 import { createUserWithEmailAndPassword} from "firebase/auth";
 import {auth} from "./firebaseConfig";
 
+//Style Standardization
+let purpleStandard = '#7851A9'
+
 // Sign up Screen
 const SignUpScreen = () => {
   const [email, setEmail] = useState('');
@@ -22,7 +25,6 @@ const SignUpScreen = () => {
 
 
   return (
-  <LinearGradient colors={['#C44EEE','#562574']} style={{flex:1}}>
       <SafeAreaView style={styles.container}>
         
           <TouchableWithoutFeedback onPress={handleDismiss}>
@@ -34,7 +36,7 @@ const SignUpScreen = () => {
                   <TextInput
                       style={styles.input}
                       placeholder="Email"
-                      placeholderTextColor="#fff"
+                      placeholderTextColor={purpleStandard}
                       onChangeText={text => setEmail(text)}
                       value={email}
                       autoCapitalize="none"
@@ -43,30 +45,34 @@ const SignUpScreen = () => {
                   <TextInput
                       style={styles.input}
                       placeholder="Password"
-                      placeholderTextColor="#fff"
+                      placeholderTextColor={purpleStandard}
                       onChangeText={text => setPassword(text)}
                       value={password}
                       secureTextEntry={true}
                   />
+                   <Text style={styles.text}>Must register with a valid college email. {'\n'}{'\n'} Georgia Tech only, More colleges coming soon!</Text>
+                   
+                  </KeyboardAvoidingView>
+
                   <TouchableOpacity style={styles.buttonStyle} onPress={handleSignUp}>
                       <Text style={styles.buttonText}>Sign Up</Text>
                   </TouchableOpacity>
-              </KeyboardAvoidingView>
-          
+              
+
+             
+
               </View>
           </TouchableWithoutFeedback>
           
           <Text style={styles.tinyText}>APKA LLC</Text>
-
       </SafeAreaView>
-    </LinearGradient>
   );
 };
 
 //Styles Sheet Please try to Label Descriptively,
 const styles = StyleSheet.create({
   container: {
-    backgroundColor:'transparent',
+    backgroundColor:'white',
     flex: 1,
     justifyContent: 'center',
     padding: 20,
@@ -77,36 +83,42 @@ const styles = StyleSheet.create({
     marginTop:45,
     flex:0.7,
     fontSize:80,
-    color:"#ffffff",
+    color:purpleStandard,
+  },
+  text:{
+    fontSize:"15%",
+    color: purpleStandard,
+    textAlign: 'center',
+    
   },
   tinyText:{
-    color: "#ffff",
+    color: purpleStandard,
     fontSize:15,
     textAlign:'center'
   },
   input: {
     flex: 0.2,
     borderWidth: 1,
-    borderColor: 'white',
+    borderColor: purpleStandard,
     borderRadius:20,
-    marginVertical: 10,
+    marginVertical: 8,
     paddingHorizontal: 10,
-    bottom:100,
-    color:'white',
+    bottom:"10%",
+    color: purpleStandard,
   },
   buttonStyle:{
-    backgroundColor: "#F8EEFE",
+    backgroundColor: purpleStandard,
     borderRadius: 25,
     marginTop: 70,
     borderWidth: 0,
-    borderColor: "#2F024B",
+    borderColor: purpleStandard,
     padding: 10,
     alignItems: "center",
     bottom: 30
   },
 
   buttonText:{
-    color: "#000000",
+    color: "white",
     fontWeight:'bold', 
     fontSize:20
   },
