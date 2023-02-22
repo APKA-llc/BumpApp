@@ -8,6 +8,7 @@ import {auth} from "./firebaseConfig";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
 import Dialog, { DialogContent } from 'react-native-popup-dialog';
+import MainHub from './MainHub';
 
 //Style Standardization
 const purpleStandard = '#7851A9';
@@ -31,7 +32,7 @@ const inputPhoneNumberPage = 10;
 
 
 // ====================================================================================================================================//
-
+/*
 // placeholder data for preview profile
 const college = 'Georgia Institute of Technology';
 const name = 'Alex';
@@ -50,8 +51,10 @@ const hingeResponse2 = 'The inevitable heat death of the universe';
 const hingeResponse3 = 'To trek through Antarctica (not joking lol)';
 
 const phoneNumber = '123-456-7890';
+*/
 
 // ====================================================================================================================================//
+
 
 
 
@@ -128,6 +131,20 @@ const ProfileScreen = () => {
   // page flow ---- check if the user can continue to the next page
   const [emailVerified, setEmailVerified] = useState(false);
   const [passChooseHingePage, setPassChooseHingePage] = useState(false);
+
+  const [college, setCollege] = useState(null);
+  const [name, setName] = useState(null);
+  const [age, setAge] = useState(null);
+  const [year, setYear] = useState(null);
+  const [major, setMajor] = useState(null);
+  const [displayBio, setDisplayBio] = useState(null);
+  const [hingePrompt1, setHingePrompt1] = useState(null);
+  const [hingePrompt2, setHingePrompt2] = useState(null);
+  const [hingePrompt3, setHingePrompt3] = useState(null);
+  const [hingeResponse1, setHingeResponse1] = useState(null);
+  const [hingeResponse2, setHingeResponse2] = useState(null);
+  const [hingeResponse3, setHingeResponse3] = useState(null);
+  const [phoneNumber, setPhoneNumber] = useState(null);
   
   const canContinue = () => {
     if (currentGroup === emailVerificationPage) {
@@ -172,7 +189,7 @@ const ProfileScreen = () => {
     .catch((error) => {
       const { code, message } = error;
       var errorMessage;
-
+      
       switch (code) {
         case "auth/invalid-email":
           errorMessage = "Invalid email address.";
@@ -183,8 +200,11 @@ const ProfileScreen = () => {
         case "auth/user-not-found":
           errorMessage = "Email address not found.";
           break;
-        case "auth/wrong-password":
-          errorMessage = "Incorrect password.";
+        case "auth/weak-password":
+          errorMessage = "Password is weak. Enter at least 6 characters.";
+          break;
+        case "auth/email-already-in-use":
+          errorMessage = "An account with this email already exists.";
           break;
         default:
           errorMessage = code;
@@ -237,16 +257,77 @@ const ProfileScreen = () => {
   // form is complete if currentGroup is 7 (we are on the 7th page)
   const formComplete = () => {
     if (currentGroup === inputPhoneNumberPage) {
-      navigation.navigate('HomeScreen');
+      navigation.navigate(MainHub);
     } else {
+      if(currentGroup === inputFirstNamePage){
+        if(name == null || name == '') {
+          Alert.alert('Error', 'Please enter your name.', [{ text: 'Try Again' }]);
+          return;
+        }
+      }
+      else if(currentGroup === inputAgePage){
+        if(age == null || age == '') {
+          Alert.alert('Error', 'Please enter your age.', [{ text: 'Try Again' }]);
+          return;
+        }
+
+        // make sure the age is above 18
+        if(age < 18) {
+          Alert.alert('Error', 'You must be at least 18 years old to use this app.', [{ text: 'Try Again' }]);
+          return;
+        }
+        // make sure the age is valid
+        if(age > 100 ||age % 1 != 0) {
+          Alert.alert('Error', 'Please enter a valid age.', [{ text: 'Try Again' }]);
+          return;
+        }
+      }
+      else if(currentGroup === inputYearAndMajorPage){
+        if(year == null || year == '') {
+          Alert.alert('Error', 'Please enter your year.', [{ text: 'Try Again' }]);
+          return;
+        }
+        if(major == null || major == '') {
+          Alert.alert('Error', 'Please enter your major.', [{ text: 'Try Again' }]);
+          return;
+        }
+      }
+      else if(currentGroup === inputBioPage){
+        if(displayBio == null || displayBio == '') {
+          Alert.alert('Error', 'Please enter your bio.', [{ text: 'Try Again' }]);
+          return;
+        }
+        // if the bio is more than 200 characters say its too long
+        if(displayBio.length > 100) {
+          Alert.alert('Error', 'Bio is too long. Please enter a bio that is less than 100 characters.', [{ text: 'Try Again' }]);
+          return;
+        }
+      }
+      else if(currentGroup === answerHingePromptsPage){
+        if(hingeResponse1 == null || hingeResponse1 == '') {
+          Alert.alert('Error', 'Please enter your answer for the first prompt.', [{ text: 'Try Again' }]);
+          return;
+        }
+        if(hingeResponse2 == null || hingeResponse2 == '') {
+          Alert.alert('Error', 'Please enter your answer for the second prompt.', [{ text: 'Try Again' }]);
+          return;
+        }
+        if(hingeResponse3 == null || hingeResponse3 == '') {
+          Alert.alert('Error', 'Please enter your answer for the third prompt.', [{ text: 'Try Again' }]);
+          return;
+        }
+      }
+      
       setCurrentGroup(currentGroup + 1);
+      
+      
     }
   };
 
   // if going "Back" from the first page, then go to the OpeningScreen
   const formEscape = () => {
     if (currentGroup === chooseCollegePage) {
-      navigation.navigate('OpeningScreen');
+      navigation.navigate(MainHub);
     } else {
       setCurrentGroup(currentGroup - 1);
     }
@@ -363,7 +444,9 @@ const ProfileScreen = () => {
                 <TextInput
                   style={styles.input}
                   placeholder="First Name Only"
-                  // TODO: Add proper data input code
+                  defaultValue={name ? name : ''}
+                  onChangeText={(text) => setName(text)}
+                  // TODO: Add proper data input code. I think i did this with the 2 lines above - ayush
                 />
               </View>
             </View>
@@ -380,8 +463,11 @@ const ProfileScreen = () => {
                 <TextInput
                   style={styles.input}
                   placeholder="Years Old"
-                  
-                  // TODO: Add proper data input code
+                  keyboardType="numeric"
+                  returnKeyType="done"
+                  defaultValue={age ? age : ''}
+                  onChangeText={(text) => setAge(text)}
+                
                 />
              </View>
             </View>
@@ -414,7 +500,9 @@ const ProfileScreen = () => {
                 <TextInput
                   style={styles.input}
                   placeholder="e.g. Freshman"
-                  // TODO: Add proper data input code
+                  defaultValue={year ? year : ''}
+                  onChangeText={(text) => setYear(text)}
+                  
                 />
               </View>
 
@@ -426,7 +514,9 @@ const ProfileScreen = () => {
                 <TextInput
                   style={styles.input}
                   placeholder="e.g. Computer Science"
-                  // TODO: Add proper data input code
+                  defaultValue={major ? major : ''}
+                  onChangeText={(text) => setMajor(text)}
+                 
                 />
               </View>
             </View>
@@ -447,6 +537,9 @@ const ProfileScreen = () => {
                 multiline
                 numberOfLines={5}
                 placeholder="Write Your Bio"
+                defaultValue={displayBio ? displayBio : ''}
+                onChangeText={(text) => setDisplayBio(text)}
+              
               />
             </View>
           </View>
@@ -490,22 +583,35 @@ const ProfileScreen = () => {
               <Text style={styles.title}>Answer Prompts</Text>
               </View>
 
-            <View style={styles.answersView}>
-              <FlatList
-                data={selectedItems}
-                renderItem={({item}) => {
-                  return (
-                    <View style={styles.answerPromptContainer}>
-                      <Text style={[styles.hingePrompt, styles.hingeQuestion]}>{item.fullPrompt}</Text>
-                      <TextInput style={styles.hingeInput}/>
-                    </View>
-                  )
-                }}
-                keyExtractor={(item) => item.id.toString()}
-                showsVerticalScrollIndicator={false}
-                scrollEnabled={false}
-                />
-            </View>
+              <View style={styles.answersView}>
+                <View style={styles.answerPromptContainer}>
+                  <Text style={[styles.hingePrompt, styles.hingeQuestion]}>{selectedItems[0].fullPrompt}</Text>
+                  <TextInput
+                    style={styles.hingeInput}
+                    placeholder="Enter Response"
+                    defaultValue={hingeResponse1 ? hingeResponse1 : ''}
+                    onChangeText={(text) => setHingeResponse1(text)}
+                  />
+                </View>
+                <View style={styles.answerPromptContainer}>
+                  <Text style={[styles.hingePrompt, styles.hingeQuestion]}>{selectedItems[1].fullPrompt}</Text>
+                  <TextInput
+                    style={styles.hingeInput}
+                    placeholder="Enter Response"
+                    defaultValue={hingeResponse2 ? hingeResponse2 : ''}
+                    onChangeText={(text) => setHingeResponse2(text)}
+                  />
+                </View>
+                <View style={styles.answerPromptContainer}>
+                  <Text style={[styles.hingePrompt, styles.hingeQuestion]}>{selectedItems[2].fullPrompt}</Text>
+                  <TextInput
+                    style={styles.hingeInput}
+                    placeholder="Enter Response"
+                    defaultValue={hingeResponse3 ? hingeResponse3 : ''}
+                    onChangeText={(text) => setHingeResponse3(text)}
+                  />
+                </View>
+              </View>
           </View>
           )}
 
