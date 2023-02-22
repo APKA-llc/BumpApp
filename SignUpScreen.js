@@ -6,7 +6,11 @@ import { useFonts, Inter_900Black } from '@expo-google-fonts/inter';
 import { useNavigation } from '@react-navigation/native';
 import { createUserWithEmailAndPassword} from "firebase/auth";
 import {auth} from "./firebaseConfig";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { Alert } from 'react-native';
+import Dialog, { DialogContent } from 'react-native-popup-dialog';
+import ProfileScreen from './ProfileScreen';
 //Style Standardization
 let purpleStandard = '#7851A9'
 
@@ -14,12 +18,57 @@ let purpleStandard = '#7851A9'
 const SignUpScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigation = useNavigation();
+
+  const saveUser = async (user) => {
+    try {
+      await AsyncStorage.setItem('user', JSON.stringify(user));
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   const handleSignUp = () => {
     // Perform login logic here, such as sending a request to a server
     //console.log(`Username: ${username}, Password: ${password}`);
-    createUserWithEmailAndPassword(auth, email, password);
+    createUserWithEmailAndPassword(auth, email, password)
+    .then((user) => {
+      saveUser(user);
+      console.log('signed up');
+      
+      navigation.navigate(ProfileScreen);
+      // ...
+    })
+    .catch((error) => {
+      const { code, message } = error;
+      var errorMessage;
+
+      switch (code) {
+        case "auth/invalid-email":
+          errorMessage = "Invalid email address.";
+          break;
+        case "auth/user-disabled":
+          errorMessage = "This account has been disabled.";
+          break;
+        case "auth/user-not-found":
+          errorMessage = "Email address not found.";
+          break;
+        case "auth/wrong-password":
+          errorMessage = "Incorrect password.";
+          break;
+        default:
+          errorMessage = code;
+          break;
+      }
+      
+      Alert.alert('Error', errorMessage, [{ text: 'Try Again' }]);
+      //setShowErrorDialog(true);
+
+      console.log(errorMessage);
+    });
+    
   };
+
 
   const handleDismiss = () => Keyboard.dismiss();
 

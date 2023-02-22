@@ -63,7 +63,7 @@ const SignInScreen =  () => {
         }
         
         Alert.alert('Error', errorMessage, [{ text: 'Try Again' }]);
-        setShowErrorDialog(true);
+        //setShowErrorDialog(true);
 
         console.log(errorMessage);
       });
