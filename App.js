@@ -48,12 +48,10 @@ const App = () => {
   if (loggedIn === null) {
     return null;
   }
-  var test = loggedIn ? "MainHub":"OpeningScreen"
-  console.log(test);
   
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName = {loggedIn ? "MainHub":"OpeningScreen"} screenOptions={{headerShown:false}}>
+      <Stack.Navigator initialRouteName = {loggedIn ? "MainHub" : "OpeningScreen"} screenOptions={{headerShown:false}}>
 
         <Stack.Screen
           name="OpeningScreen"

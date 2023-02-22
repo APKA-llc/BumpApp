@@ -1,14 +1,59 @@
 import React, { useState, useCallback } from 'react';
-import { ScrollView, View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Image, FlatList, Keyboard, TouchableWithoutFeedback} from 'react-native';
+import { ScrollView, View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Image, FlatList, Keyboard, TouchableWithoutFeedback, Dimensions} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 
 //Style Standardization
 const purpleStandard = '#7851A9';
+const darkGrayStandard = '#9e9e9e';
 const lightGrayStandard = '#d3d3d3';
 
-//list of hinge prompts
-const hingePrompts = [
+// page numbers
+const chooseCollegePage = 1;
+const inputFirstNamePage = 2;
+const inputAgePage = 3;
+const choosePicPage = 4;
+const inputYearAndMajorPage = 5;
+const inputBioPage = 6;
+const chooseHingePromptsPage = 7;
+const answerHingePromptsPage = 8;
+const previewProfilePage = 9;
+const inputPhoneNumberPage = 10;
+
+
+
+
+// ====================================================================================================================================//
+
+// placeholder data for preview profile
+const college = 'Georgia Institute of Technology';
+const name = 'Alex';
+const age = 19;
+// profilepic variable is called "image" (see code below)
+const year = 'Freshman';
+const major = 'Computer Science';
+const displayBio = 'Enjoyer of photography, Enjoyer of photography, punk rock (playboi carti), and rowing. My question to you: do you got that boom boom pow?';
+
+const hingePrompt1 = 'hinge1';
+const hingePrompt2 = 'hinge2';
+const hingePrompt3 = 'hinge3';
+
+const hingeResponse1 = 'VHS/Hi8 cameras';
+const hingeResponse2 = 'The inevitable heat death of the universe';
+const hingeResponse3 = 'To trek through Antarctica (not joking lol)';
+
+const phoneNumber = '123-456-7890';
+
+// ====================================================================================================================================//
+
+
+
+
+
+
+
+// list of 10 hinge prompts
+const hinge = [
   {
     id: 1,
     prompt: 'Most British Thing',
@@ -93,7 +138,7 @@ const ProfileScreen = () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      aspect: [4, 3],
+      aspect: [4, 5],
       quality: 1,
     });
 
@@ -104,7 +149,7 @@ const ProfileScreen = () => {
 
   // form is complete if currentGroup is 7 (we are on the 7th page)
   const formComplete = () => {
-    if (currentGroup === 7) {
+    if (currentGroup === inputPhoneNumberPage) {
       navigation.navigate('HomeScreen');
     } else {
       setCurrentGroup(currentGroup + 1);
@@ -113,7 +158,7 @@ const ProfileScreen = () => {
 
   // if going "Back" from the first page, then go to the OpeningScreen
   const formEscape = () => {
-    if (currentGroup === 1) {
+    if (currentGroup === chooseCollegePage) {
       navigation.navigate('OpeningScreen');
     } else {
       setCurrentGroup(currentGroup - 1);
@@ -123,9 +168,11 @@ const ProfileScreen = () => {
   // update continue/back button messages
   let messageTop;
   let messageBottom;
-  if (currentGroup === 7) {
-    messageTop = 'Finish';
+  if (currentGroup === previewProfilePage) {
+    messageTop = 'Finalize';
     messageBottom = 'Revise';
+  } else if (currentGroup === inputPhoneNumberPage) {
+    messageTop = 'Finalize';
   } else {
     messageTop = 'Continue';
     messageBottom = 'Back';
@@ -153,14 +200,20 @@ const ProfileScreen = () => {
       return selectedItems;
     });
   };
-
   const isItemSelected = (item) => {
     return selectedItems.find((selectedItem) => selectedItem.id === item.id);
   };
 
+  // records the hinge response (INCOMPLETE)
+  // const [hingeResponse1, setHingeResponse1] = useState('');
+  // const [hingeResponse2, setHingeResponse2] = useState('');
+  // const [hingeResponse3, setHingeResponse3] = useState('');
+
+  const yearAndMajor = year + " Currently Studying " + major;
+
   // check if the user can continue to the next page
   const canContinue = () => {
-    if (currentGroup === 5) {
+    if (currentGroup === chooseHingePromptsPage) {
       return numSelected === 3;
     }
     // add more conditions for the other pages here (to be discussed)
@@ -171,7 +224,24 @@ const ProfileScreen = () => {
       <SafeAreaView style={styles.container}>
         <View style={styles.container}>
 
-          {currentGroup === 1 && ( // enter first name
+        {currentGroup === chooseCollegePage && ( // choose college
+            <View style = {styles.vanish}>
+              <View style={styles.titleContainer}>
+                <Text style={styles.title}>Select Your College</Text>
+              </View>
+
+              <View style={styles.inputContainer}>
+                
+                <TextInput
+                  style={styles.input}
+                  placeholder="This will be a dropdown soon"
+                  // TODO: Add proper data input code
+                />
+              </View>
+            </View>
+          )}
+
+          {currentGroup === inputFirstNamePage && ( // enter first name
             <View style = {styles.vanish}>
               <View style={styles.titleContainer}>
                 <Text style={styles.title}>Enter Your Name</Text>
@@ -188,7 +258,7 @@ const ProfileScreen = () => {
             </View>
           )}
 
-          {currentGroup === 2 && ( // choose age
+          {currentGroup === inputAgePage && ( // choose age
             <View style = {styles.vanish}>
               <View style={styles.titleContainer}>
                 <Text style={styles.title}>What is your age?</Text>
@@ -206,7 +276,7 @@ const ProfileScreen = () => {
             </View>
           )}
 
-          {currentGroup === 3 && ( // pick profile pic
+          {currentGroup === choosePicPage && ( // pick profile pic
            <View style = {styles.vanish}>
             <View style={styles.titleContainer}>
               <Text style={styles.title}>Choose a photo</Text>
@@ -217,12 +287,41 @@ const ProfileScreen = () => {
                 <Text style={styles.buttonText}>Select a Photo</Text>
               </TouchableOpacity>
 
-              {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+              {image && <Image source={{ uri: image }} style={styles.imageStyle} />}
             </View>
 
           </View>
           )}
-          {currentGroup === 4 && ( // write your introduction/bio
+
+          {currentGroup === inputYearAndMajorPage && ( // input year and major
+            <View style = {styles.vanish}>
+              <View style={styles.titleContainer}>
+                <Text style={styles.title}>Enter Your Year in College</Text>
+              </View>
+
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="e.g. Freshman"
+                  // TODO: Add proper data input code
+                />
+              </View>
+
+              <View style={styles.titleContainer}>
+                <Text style={styles.title}>Enter Your Major</Text>
+              </View>
+
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="e.g. Computer Science"
+                  // TODO: Add proper data input code
+                />
+              </View>
+            </View>
+          )}
+
+          {currentGroup === inputBioPage && ( // write your introduction/bio
            <View style = {styles.vanish}>
             <TouchableWithoutFeedback onPress={dismissKeyboard}>
               <View style={styles.titleContainer}>
@@ -242,7 +341,7 @@ const ProfileScreen = () => {
           </View>
           )}
 
-          {currentGroup === 5 && ( // choose hinge questions
+          {currentGroup === chooseHingePromptsPage && ( // choose hinge questions
             <View style = {styles.hingePromptPageContainer}>
               <View style={styles.titleContainer}>
                 <Text style={styles.title}>Choose Prompts</Text>
@@ -250,7 +349,7 @@ const ProfileScreen = () => {
 
               <View style={styles.promptView}>
                 <FlatList
-                  data={hingePrompts}
+                  data={hinge}
                   renderItem={({item}) => {
                     const isSelected = isItemSelected(item);
                     return (
@@ -274,7 +373,7 @@ const ProfileScreen = () => {
             </View>
           )}
 
-          {currentGroup === 6 && ( // write hinge responses
+          {currentGroup === answerHingePromptsPage && ( // write hinge responses
            <View style = {styles.hingePromptPageContainer}>
               <View style={styles.titleContainer}>
               <Text style={styles.title}>Answer Prompts</Text>
@@ -299,16 +398,86 @@ const ProfileScreen = () => {
           </View>
           )}
 
-          {currentGroup === 7 && ( // preview profile --- copy of MyProfileScreen
-          <View style = {styles.vanish}>
-              <View style={styles.titleContainer}>
-              <Text style={styles.title}>Preview Profile</Text>
+          {currentGroup === previewProfilePage && ( // preview profile --- copy of MyProfileScreen
+          <View style = {styles.previewProfileContainer}>
+              <View style={styles.previewScrollContainer}>
+                <ScrollView showsVerticalScrollIndicator={false}>
+
+                  <View style={styles.profilepiccontainer}>
+                    <Image style={styles.profilepic} source={{uri: image}}/>
+                  </View>
+
+                  <View style={styles.bottomHalf}>
+
+                    <View style={styles.one}>
+                      <Text style={styles.firstName}>{name}, {age}</Text>
+                    </View>
+
+                    <View style={styles.two}>
+                      <Text style={styles.description}>{yearAndMajor}</Text>
+                      <Text style={styles.bio}> </Text>
+                      <Text style={styles.bio}>{displayBio}</Text>
+                    </View>
+
+                    <View style={styles.three}>
+                      <View style={styles.hingeContainerFrom}>
+                        <Text style={styles.hingeTextFrom}>Hey!</Text>
+                      </View>
+                      <View style={{marginTop: 10}}></View>
+
+                      <View style={styles.hingeContainerTo}>
+                        <Text style={styles.hingeTextTo}>{selectedItems[0].fullPrompt}</Text>
+                      </View>
+                      <View style={{marginTop: 10}}></View>
+                      <View style={styles.hingeContainerFrom}>
+                        <Text style={styles.hingeTextFrom}>{hingeResponse1}</Text>
+                      </View>
+                      <View style={{marginTop: 10}}></View>
+
+                      <View style={styles.hingeContainerTo}>
+                        <Text style={styles.hingeTextTo}>{selectedItems[1].fullPrompt}</Text>
+                      </View>
+                      <View style={{marginTop: 10}}></View>
+                      <View style={styles.hingeContainerFrom}>
+                        <Text style={styles.hingeTextFrom}>{hingeResponse2}</Text>
+                      </View>
+                      <View style={{marginTop: 10}}></View>
+
+                      <View style={styles.hingeContainerTo}>
+                        <Text style={styles.hingeTextTo}>{selectedItems[2].fullPrompt}</Text>
+                      </View>
+                      <View style={{marginTop: 10}}></View>
+                      <View style={styles.hingeContainerFrom}>
+                        <Text style={styles.hingeTextFrom}>{hingeResponse3}</Text>
+                      </View>
+                      <View style={{marginTop: 10}}></View>
+
+                    </View>
+                  </View>
+                </ScrollView>
               </View>
           </View>
           )}
 
-          <View style = {[styles.buttonContainer, {flex: currentGroup === 5 ? 3 : 1}]}>
-            {currentGroup === 5 && (
+          {currentGroup === inputPhoneNumberPage && ( // input phone number
+            <View style = {styles.vanish}>
+              <View style={styles.titleContainer}>
+                <Text style={styles.title}>Please Enter Your Phone Number</Text>
+              </View>
+
+              <View style={styles.inputContainer}>
+                
+                <TextInput
+                  style={styles.input}
+                  placeholder="***-***-***"
+                  // TODO: Add proper data input code
+                />
+              </View>
+            </View>
+          )}
+
+          <View style = {[styles.buttonContainer, {flex: currentGroup === chooseHingePromptsPage ? 3 : 1}]}>
+            {currentGroup === chooseHingePromptsPage && (
               <View style={styles.promptCard}>
                 <Text style={styles.fullPromptSubtitle}>Full Prompt</Text>
                 <View style={styles.fullPromptContainer}>
@@ -317,19 +486,26 @@ const ProfileScreen = () => {
                 <Text style={styles.promptSelection}>{numSelected}/3 SELECTED</Text>
               </View>
             )}
+            {currentGroup === previewProfilePage &&(
+              <View style={styles.previewHeadingContainer}>
+                <Text style={styles.previewHeading}>Scroll to Preview Profile</Text>
+              </View>
+            )}
             <TouchableOpacity
               style={[
                 styles.buttonStyle,
-                {backgroundColor: currentGroup === 5 && numSelected < 3 ? lightGrayStandard : purpleStandard},
+                {backgroundColor: currentGroup === chooseHingePromptsPage && numSelected < 3 ? lightGrayStandard : purpleStandard},
               ]}
               onPress={formComplete}
-              disabled={currentGroup === 5 && numSelected < 3}
+              disabled={currentGroup === chooseHingePromptsPage && numSelected < 3}
             >
               <Text style={styles.buttonText}>{messageTop}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.buttonStyle} onPress={formEscape}>
-              <Text style={styles.buttonText}>{messageBottom}</Text>
-            </TouchableOpacity>
+            {currentGroup !== inputPhoneNumberPage && (
+              <TouchableOpacity style={styles.buttonStyle} onPress={formEscape}>
+                <Text style={styles.buttonText}>{messageBottom}</Text>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
       </SafeAreaView>
@@ -467,14 +643,14 @@ const styles = StyleSheet.create({
   },
   fullPromptSubtitle: {
     flex: 1,
-    color: '#9e9e9e',
+    color: darkGrayStandard,
     marginTop: '2%',
   },
   fullPromptContainer: {
     flex: 4,
     borderWidth: 3,
     borderRadius: 20,
-    borderColor: '#9e9e9e',
+    borderColor: darkGrayStandard,
     width: '96%',
     paddingHorizontal: '5%',
     paddingVertical: '3%',
@@ -488,11 +664,113 @@ const styles = StyleSheet.create({
   },
   promptSelection: {
     flex: 1,
-    color: '#9e9e9e',
+    color: darkGrayStandard,
     fontWeight: '700',
     fontSize: '16%',
     marginTop: '2%',
-  }
+  },
+  imageStyle: {
+    aspectRatio: 4/5,
+    height: '80%',
+    marginTop: '8%'
+  },
+
+
+
+
+
+  previewHeadingContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: '2%',
+  },
+  previewHeading: {
+    textAlign: 'center',
+    fontSize: '14%',
+    color: darkGrayStandard,
+  },
+  previewProfileContainer: {
+    flex: 5,
+  },
+  previewScrollContainer: {
+    flex: 7,
+  },
+  profilepiccontainer: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  profilepic: {
+    width: '100%',
+    aspectRatio: 4/5,
+  },
+
+  bottomHalf: {
+    flex: 1,
+  },
+  one: {
+    justifyContent: 'center',
+  },
+  two: {
+    flexDirection: 'column',
+    padding: 10,
+  },
+  three: {
+    padding: 10,
+    marginBottom: 24,
+  },
+
+  firstName: {
+    flex: 1,
+    fontFamily: 'Baskerville',
+    fontSize: 55,
+    fontWeight: '400',
+    marginLeft: 10,
+  },
+  description: {
+    fontFamily: 'Baskerville',
+    marginLeft: 10,
+    marginTop: '1%',
+    fontSize: 25,
+  },
+  bio: {
+    fontFamily: 'Baskerville',
+    marginLeft: 10,
+    fontSize: 25,
+  },
+  hingeContainerFrom: {
+    alignItems: 'flex-end',
+    paddingTop: 12,
+    paddingBottom: 12,
+    paddingLeft: 16,
+    paddingRight: 16,
+    borderWidth: 2,
+    borderColor: purpleStandard,
+    borderRadius: 20,
+    marginTop: 2,
+    alignSelf: 'flex-end',
+    maxWidth: '80%',
+  },
+  hingeContainerTo: {
+    paddingTop: 12,
+    paddingBottom: 12,
+    paddingLeft: 16,
+    paddingRight: 16,
+    backgroundColor: purpleStandard,
+    borderRadius: 20,
+    marginTop: 2,
+    alignSelf: 'flex-start',
+    maxWidth: '80%',
+  },
+  hingeTextFrom: {
+    fontFamily: 'Arial',
+    fontSize: 20,
+    color: purpleStandard,
+  },
+  hingeTextTo: {
+    fontFamily: 'Arial',
+    fontSize: 20,
+    color: 'white',
+  },
 });
 
 export default ProfileScreen;
