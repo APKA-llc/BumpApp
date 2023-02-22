@@ -1,7 +1,13 @@
 import React, { useState, useCallback } from 'react';
-import { ScrollView, View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Image, FlatList, Keyboard, TouchableWithoutFeedback, Dimensions} from 'react-native';
+import { ScrollView, View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Image, FlatList, Keyboard, TouchableWithoutFeedback, Dimensions, KeyboardAvoidingView} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
+import { useFonts, Inter_900Black } from '@expo-google-fonts/inter';
+import { createUserWithEmailAndPassword} from "firebase/auth";
+import {auth} from "./firebaseConfig";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Alert } from 'react-native';
+import Dialog, { DialogContent } from 'react-native-popup-dialog';
 
 //Style Standardization
 const purpleStandard = '#7851A9';
@@ -9,7 +15,8 @@ const darkGrayStandard = '#9e9e9e';
 const lightGrayStandard = '#d3d3d3';
 
 // page numbers
-const chooseCollegePage = 1;
+const chooseCollegePage = 0;
+const emailVerificationPage = 1;
 const inputFirstNamePage = 2;
 const inputAgePage = 3;
 const choosePicPage = 4;
@@ -118,6 +125,86 @@ const hinge = [
 
 // Profile Screen
 const ProfileScreen = () => {
+  // page flow ---- check if the user can continue to the next page
+  const [emailVerified, setEmailVerified] = useState(false);
+  const [passChooseHingePage, setPassChooseHingePage] = useState(false);
+  
+  const canContinue = () => {
+    if (currentGroup === emailVerificationPage) {
+      return emailVerified;
+    }
+
+    // add more conditions for the other pages here (to be discussed)
+
+    else if (currentGroup === chooseHingePromptsPage) {
+      setPassChooseHingePage(numSelected === 3);
+      return passChooseHingePage;
+    } else {
+      return true;
+    }
+  }
+
+
+
+  // email verification process
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const saveUser = async (user) => {
+    try {
+      await AsyncStorage.setItem('user', JSON.stringify(user));
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const handleSignUp = () => {
+    // Perform login logic here, such as sending a request to a server
+    //console.log(`Username: ${username}, Password: ${password}`);
+    createUserWithEmailAndPassword(auth, email, password)
+    .then((user) => {
+      saveUser(user);
+      console.log('signed up');
+      
+      setEmailVerified(true);
+      formComplete();
+    })
+    .catch((error) => {
+      const { code, message } = error;
+      var errorMessage;
+
+      switch (code) {
+        case "auth/invalid-email":
+          errorMessage = "Invalid email address.";
+          break;
+        case "auth/user-disabled":
+          errorMessage = "This account has been disabled.";
+          break;
+        case "auth/user-not-found":
+          errorMessage = "Email address not found.";
+          break;
+        case "auth/wrong-password":
+          errorMessage = "Incorrect password.";
+          break;
+        default:
+          errorMessage = code;
+          break;
+      }
+      
+      Alert.alert('Error', errorMessage, [{ text: 'Try Again' }]);
+      //setShowErrorDialog(true);
+
+      console.log(errorMessage);
+    });
+
+  };
+
+  const handleDismiss = () => Keyboard.dismiss();
+
+
+
+
+
   const [currentGroup, setCurrentGroup] = useState(1);
   const navigation = useNavigation();
   //const [profilePic, setProfilePic] = useState(defaultProfilePic);
@@ -211,20 +298,11 @@ const ProfileScreen = () => {
 
   const yearAndMajor = year + " Currently Studying " + major;
 
-  // check if the user can continue to the next page
-  const canContinue = () => {
-    if (currentGroup === chooseHingePromptsPage) {
-      return numSelected === 3;
-    }
-    // add more conditions for the other pages here (to be discussed)
-    return true;
-  }
-
   return (
       <SafeAreaView style={styles.container}>
         <View style={styles.container}>
 
-        {currentGroup === chooseCollegePage && ( // choose college
+          {currentGroup === chooseCollegePage && ( // choose college
             <View style = {styles.vanish}>
               <View style={styles.titleContainer}>
                 <Text style={styles.title}>Select Your College</Text>
@@ -237,8 +315,41 @@ const ProfileScreen = () => {
                   placeholder="This will be a dropdown soon"
                   // TODO: Add proper data input code
                 />
+                <Text style={styles.text}>More colleges coming soon!</Text>
               </View>
             </View>
+          )}
+
+          {currentGroup === emailVerificationPage && (
+            <TouchableWithoutFeedback onPress={handleDismiss}>
+              <View style={styles.vanish}>
+                <View style={styles.titleContainer}>
+                  <Text style={styles.title}>Create Account</Text>
+                </View>
+                
+                <KeyboardAvoidingView behavior="padding" style={styles.inputContainer}>
+                  <TextInput
+                      style={styles.emailVerificationInput}
+                      placeholder="Email"
+                      placeholderTextColor={purpleStandard}
+                      onChangeText={text => setEmail(text)}
+                      value={email}
+                      autoCapitalize="none"
+                      keyboardType="email-address"
+                  />
+                  <TextInput
+                      style={styles.emailVerificationInput}
+                      placeholder="Password"
+                      placeholderTextColor={purpleStandard}
+                      onChangeText={text => setPassword(text)}
+                      value={password}
+                      secureTextEntry={true}
+                  />
+                  <Text style={styles.text}>Must register with a valid college email.</Text>
+                  
+                </KeyboardAvoidingView>
+              </View>
+            </TouchableWithoutFeedback>
           )}
 
           {currentGroup === inputFirstNamePage && ( // enter first name
@@ -477,6 +588,7 @@ const ProfileScreen = () => {
           )}
 
           <View style = {[styles.buttonContainer, {flex: currentGroup === chooseHingePromptsPage ? 3 : 1}]}>
+
             {currentGroup === chooseHingePromptsPage && (
               <View style={styles.promptCard}>
                 <Text style={styles.fullPromptSubtitle}>Full Prompt</Text>
@@ -486,26 +598,38 @@ const ProfileScreen = () => {
                 <Text style={styles.promptSelection}>{numSelected}/3 SELECTED</Text>
               </View>
             )}
+
             {currentGroup === previewProfilePage &&(
               <View style={styles.previewHeadingContainer}>
                 <Text style={styles.previewHeading}>Scroll to Preview Profile</Text>
               </View>
             )}
-            <TouchableOpacity
-              style={[
-                styles.buttonStyle,
-                {backgroundColor: currentGroup === chooseHingePromptsPage && numSelected < 3 ? lightGrayStandard : purpleStandard},
-              ]}
-              onPress={formComplete}
-              disabled={currentGroup === chooseHingePromptsPage && numSelected < 3}
-            >
-              <Text style={styles.buttonText}>{messageTop}</Text>
-            </TouchableOpacity>
-            {currentGroup !== inputPhoneNumberPage && (
+
+            {currentGroup !== emailVerificationPage && (
+              <TouchableOpacity
+                style={[
+                  styles.buttonStyle,
+                  {backgroundColor: currentGroup === emailVerificationPage && !emailVerified || currentGroup === chooseHingePromptsPage && numSelected < 3 ? lightGrayStandard : purpleStandard},
+                ]}
+                onPress={formComplete}
+                disabled={currentGroup === emailVerificationPage && !emailVerified || currentGroup === chooseHingePromptsPage && numSelected < 3}
+              >
+                <Text style={styles.buttonText}>{messageTop}</Text>
+              </TouchableOpacity>
+            )}
+
+            {currentGroup !== inputPhoneNumberPage && currentGroup !== emailVerificationPage && (
               <TouchableOpacity style={styles.buttonStyle} onPress={formEscape}>
                 <Text style={styles.buttonText}>{messageBottom}</Text>
               </TouchableOpacity>
             )}
+
+            {currentGroup === emailVerificationPage && (
+              <TouchableOpacity style={styles.buttonStyle} onPress={handleSignUp}>
+                <Text style={styles.buttonText}>Sign Up</Text>
+              </TouchableOpacity>
+            )}
+
           </View>
         </View>
       </SafeAreaView>
@@ -522,12 +646,17 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   vanish:{
-    flex: 3
+    flex: 3,
   },
   titleContainer:{
     flex: 1,
     justifyContent: 'flex-end',
     alignItems: 'center',
+  },
+  text:{
+    fontSize:"15%",
+    color: purpleStandard,
+    textAlign: 'center',
   },
   title: {
     fontSize: '45%',
@@ -550,7 +679,15 @@ const styles = StyleSheet.create({
     fontSize: "20%",
     padding: '5%',
     paddingHorizontal: '8%',
-    
+  },
+  emailVerificationInput: {
+    flex: 0.2,
+    borderWidth: 1,
+    borderColor: purpleStandard,
+    borderRadius: 20,
+    marginBottom: '6%',
+    paddingHorizontal: '16%',
+    color: purpleStandard,
   },
   bioInput: {
     height: "80%",

@@ -7,7 +7,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import OpeningScreen from './OpeningScreen';
 import SignInScreen from './SignInScreen';
-import SignUpScreen from './SignUpScreen';
 import ProfileScreen from './ProfileScreen';
 import HomeScreen from './HomeScreen';
 import BumpScreen from './BumpScreen';
@@ -69,10 +68,6 @@ const App = () => {
           component={MainHub}
         />
 
-        <Stack.Screen
-          name="SignUpScreen"
-          component={SignUpScreen}
-        />
         <Stack.Screen
           name="ProfileScreen"
           component={ProfileScreen}

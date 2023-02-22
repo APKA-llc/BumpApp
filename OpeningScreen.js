@@ -34,7 +34,7 @@ const OpeningScreen = () => {
             
           </TouchableOpacity>
         
-          <TouchableOpacity onPress={()=> navigation.navigate('SignUpScreen')} style={styles.buttonStyle}>
+          <TouchableOpacity onPress={()=> navigation.navigate('ProfileScreen')} style={styles.buttonStyle}>
             <Text style={styles.buttonText}>{'Create Account'}</Text>
           </TouchableOpacity>
   
