@@ -3,12 +3,13 @@ import React, { useState, useCallback } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Image, Button, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
-import {signInWithEmailAndPassword} from "firebase/auth";
+import {signInWithEmailAndPassword, user, getIdToken} from "firebase/auth";
 import {auth} from "./firebaseConfig";
 import MainHub from './MainHub';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
 import Dialog, { DialogContent } from 'react-native-popup-dialog';
+
 
 //Style Standardization
 let purpleStandard = '#7851A9'
