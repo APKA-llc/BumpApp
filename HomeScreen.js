@@ -28,8 +28,8 @@ const HomeScreen = () => {
   const navigation = useNavigation();
 
   
-  
-  const getRandomUser = async () => {
+  // OLD: Based on numbers
+  /*const getRandomUser = async () => {
     const usersRef = collection(firestore, 'users');
   
     let numUsers = 0;
@@ -47,20 +47,45 @@ const HomeScreen = () => {
     }
     //console.log(querySnapshot.docs[0].data())
     return querySnapshot.docs[0].data();
+  };*/
+
+  const getRandomUser = async () => {
+    const usersRef = collection(firestore, 'users');
+  
+    const querySnapshot = await getDocs(usersRef);
+    const numUsers = querySnapshot.size;
+  
+    // Generate a random number between 0 and numUsers - 1
+    const randomIndex = Math.floor(Math.random() * numUsers);
+    
+    // Get the document at the randomly generated index
+    const randomDoc = querySnapshot.docs[randomIndex];
+    const randomUserId = randomDoc.id;
+
+    setPhotoName('users/' + randomUserId + '.jpg');
+    console.log('users/' + randomUserId + '.jpg');
+  
+    const userDoc = await getDoc(doc(usersRef, randomUserId));
+    if (!userDoc.exists()) {
+      throw new Error(`No user found with ID "${randomUserId}"`);
+    }
+    
+    return userDoc.data();
   };
   
   // create function set data not async
   const setData = async () => {
     let user = await getRandomUser();
-    setName(user.Name);
-    setAge(user.Age);
-    setYearAndMajor(user.YearMajor);
-    setDisplayBio(user.Biography);
+    setName(user.name);
+    setAge(user.age);
+    // user.year currently studying user.major
+    setYearAndMajor(user.year + ' Currently Studying ' + user.major);
+    setDisplayBio(user.displayBio);
   
   
-    const QA1 = user.QA[Math.floor(Math.random() * 11)];
+    const QA1 = user.QA[Math.floor(Math.random() * 3)];
     const dashIndex1 = QA1.indexOf('-');
-    const QA2 = user.QA[Math.floor(Math.random() * 11)];
+    const QA2 = user.QA[Math.floor(Math.random() * 3)];
     const dashIndex2 = QA2.indexOf('-');
     
     const question1 = QA1.substring(0, dashIndex1).trim();

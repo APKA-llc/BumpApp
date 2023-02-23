@@ -2,13 +2,18 @@ import React, { useState, useCallback } from 'react';
 import { ScrollView, View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Image, FlatList, Keyboard, TouchableWithoutFeedback, Dimensions, KeyboardAvoidingView} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
+import { launchImageLibrary } from 'react-native-image-picker';
 import { useFonts, Inter_900Black } from '@expo-google-fonts/inter';
-import { createUserWithEmailAndPassword} from "firebase/auth";
-import {auth} from "./firebaseConfig";
+import { createUserWithEmailAndPassword, getAuth, user, getIdToken} from "firebase/auth";
+import {auth, firestore, storage} from "./firebaseConfig";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
 import Dialog, { DialogContent } from 'react-native-popup-dialog';
 import MainHub from './MainHub';
+import { collection, doc, setDoc, addDoc } from "firebase/firestore"; 
+import { getStorage, ref, getDownloadURL, getMetadata, uploadBytes, putFile} from "firebase/storage";
+
+
 
 //Style Standardization
 const purpleStandard = '#7851A9';
@@ -145,6 +150,7 @@ const ProfileScreen = () => {
   const [hingeResponse2, setHingeResponse2] = useState(null);
   const [hingeResponse3, setHingeResponse3] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState(null);
+  const [image, setImage] = useState(null);
   
   const canContinue = () => {
     if (currentGroup === emailVerificationPage) {
@@ -161,7 +167,51 @@ const ProfileScreen = () => {
     }
   }
 
+  async function createNewUser() {
+    var firestoreDone, storageDone = false;
+    const db = firestore;
+    const rawUser = await AsyncStorage.getItem('user');
+    const userCred = JSON.parse(rawUser);
+    const userEmail = userCred.email;
+    const userId = userCred.uid;
+    //console.log(userEmail);
+    const userRef = doc(db, "users", userId.toString());
+    setDoc(userRef, {
+      id: userId,
+      name: name,
+      age: age,
+      year: year,
+      major: major,
+      displayBio: displayBio,
+      // Array called QA with 3 'hingePrompt - hingeResponse' strings concatenated
+      QA: [selectedItems[0].fullPrompt + '-' + hingeResponse1, selectedItems[1].fullPrompt + '-' + hingeResponse2, selectedItems[2].fullPrompt + '-' + hingeResponse3],
+      phoneNumber: phoneNumber,
+      email: userEmail
+    })
+    .then(() => {
+      console.log("Document written with ID: ", userId);
+      firestoreDone = true;
+    })
+    .catch((error) => {
+      console.error("Error adding document: ", error);
+    });
 
+
+    //Upload the users profile picture to firebase storage in the users folder with the image name being the users id. use the image variable to get the image
+    const storageRef = ref(storage, 'users/');
+    const imageRef = ref(storageRef, userId.toString() + '.jpg');
+    const response = await fetch(image);
+    const blob = await response.blob();
+    uploadBytes(imageRef, blob)
+    .then((snapshot) => {
+      console.log('Uploaded file!');
+      storageDone = true;
+    })
+    .catch((error) => {
+      console.error("Error uploading: ", error);
+    });
+    
+  }
 
   // email verification process
   const [email, setEmail] = useState('');
@@ -170,6 +220,7 @@ const ProfileScreen = () => {
   const saveUser = async (user) => {
     try {
       await AsyncStorage.setItem('user', JSON.stringify(user));
+      console.log(user)
     } catch (error) {
       console.log(error);
     }
@@ -179,8 +230,8 @@ const ProfileScreen = () => {
     // Perform login logic here, such as sending a request to a server
     //console.log(`Username: ${username}, Password: ${password}`);
     createUserWithEmailAndPassword(auth, email, password)
-    .then((user) => {
-      saveUser(user);
+    .then((userCred) => {
+      saveUser(userCred.user);
       console.log('signed up');
       
       setEmailVerified(true);
@@ -238,8 +289,8 @@ const ProfileScreen = () => {
     Keyboard.dismiss();
   };
 
-  // image picker
-  const [image, setImage] = useState(null);
+  // image picker with expo (old)
+  
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -254,10 +305,31 @@ const ProfileScreen = () => {
     }
   };
 
+  // image picker with react native (new) - will need to use when transfering
+
+  /*const pickImage = () => {
+    launchImageLibrary(
+      {
+        mediaType: 'photo',
+        includeBase64: false,
+        maxHeight: 600,
+        maxWidth: 800,
+        quality: 1,
+      },
+      (response) => {
+        if (!response.didCancel && !response.error) {
+          setImage(response.uri);
+        }
+      }
+    );
+  };*/
+
   // form is complete if currentGroup is 7 (we are on the 7th page)
-  const formComplete = () => {
+  const formComplete = async () => {
     if (currentGroup === inputPhoneNumberPage) {
+      await createNewUser();
       navigation.navigate(MainHub);
+      
     } else {
       if(currentGroup === inputFirstNamePage){
         if(name == null || name == '') {
@@ -298,8 +370,8 @@ const ProfileScreen = () => {
           return;
         }
         // if the bio is more than 200 characters say its too long
-        if(displayBio.length > 100) {
-          Alert.alert('Error', 'Bio is too long. Please enter a bio that is less than 100 characters.', [{ text: 'Try Again' }]);
+        if(displayBio.length > 150) {
+          Alert.alert('Error', 'Bio is too long. Please enter a bio that is less than 150 characters.', [{ text: 'Try Again' }]);
           return;
         }
       }
@@ -327,7 +399,8 @@ const ProfileScreen = () => {
   // if going "Back" from the first page, then go to the OpeningScreen
   const formEscape = () => {
     if (currentGroup === chooseCollegePage) {
-      navigation.navigate(MainHub);
+      
+      //navigation.navigate(MainHub);
     } else {
       setCurrentGroup(currentGroup - 1);
     }
