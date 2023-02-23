@@ -1,6 +1,4 @@
-import React, { useState, useCallback } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView,Switch, Image, Button} from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {signOut} from "firebase/auth";
@@ -33,17 +31,7 @@ const SettingsScreen = () => {
 
   };
 
-  //Switch Button Functions NEEDS PROPER DATA CODE
-    const [notificationsEnabled, setNotificationsEnabled] = useState(false);
-    const [locationEnabled, setLocationEnabled] = useState(false);
   
-    const toggleNotificationsSwitch = () => {
-      setNotificationsEnabled(previousState => !previousState);
-    };
-  
-    const toggleLocationSwitch = () => {
-      setLocationEnabled(previousState => !previousState);
-    };
 
 return (
     
@@ -77,33 +65,6 @@ return (
                 <TouchableOpacity onPress={() => navigation.navigate('BumpScreen')}>
                   <Text style={styles.settingsButton}>How to Use Bump</Text>
                 </TouchableOpacity>
-              </View>
-
-              <View style={styles.settingsButtonContainer}>
-                <Switch 
-                  trackColor={{false: '#767577', true: purpleStandard}}
-                  thumbColor={notificationsEnabled ? '#f4f3f4' : '#f4f3f4'}
-                  ios_backgroundColor="#3e3e3e"
-                  onValueChange={toggleNotificationsSwitch}
-                  value={notificationsEnabled}
-                />
-                <Text style={styles.settingsButton}>Push Notifications</Text>
-              </View>
-
-              <View style={styles.settingsButtonContainer}>
-                <Switch 
-                  trackColor={{false: '#767577', true: purpleStandard}}
-                  thumbColor={locationEnabled ? '#f4f3f4' : '#f4f3f4'}
-                  ios_backgroundColor="#3e3e3e"
-                  onValueChange={toggleLocationSwitch}
-                  value={locationEnabled}
-                 />
-          
-                 <Text style={styles.settingsButton}>Location Services</Text>
-              </View>
-
-              <View style={styles.settingsButtonContainer}>
-                <Text style={styles.subText}>Having both enabled is essential {"\n"} for Bump to function properly.</Text>
               </View>
 
             </View>
