@@ -1,11 +1,11 @@
 //ayush
 import React, { useState, useCallback } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Image, Button, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard} from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import {signInWithEmailAndPassword, user, getIdToken} from "firebase/auth";
 import {auth} from "./firebaseConfig";
 import MainHub from './MainHub';
+import OpeningScreen from './OpeningScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
 import Dialog, { DialogContent } from 'react-native-popup-dialog';
@@ -77,7 +77,7 @@ const SignInScreen =  () => {
     <SafeAreaView style={styles.container}>
       
         <TouchableWithoutFeedback onPress={handleDismiss}>
-            <View style={styles.container}>
+          <View style={styles.container}>
             
             <Text style={styles.title}>Sign In</Text>
 
@@ -99,18 +99,23 @@ const SignInScreen =  () => {
                     value={password}
                     secureTextEntry={true}
                 />
-
-                 </KeyboardAvoidingView>
+            </KeyboardAvoidingView>
                  
-                <TouchableOpacity style={styles.buttonStyle} onPress={handleSignIn}>
-                    <Text style={styles.buttonText}>Sign In</Text>
-                </TouchableOpacity>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity style={styles.buttonStyle} onPress={handleSignIn}>
+                  <Text style={styles.buttonText}>Sign In</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.buttonStyle} onPress={() => navigation.navigate(OpeningScreen)}>
+                <Text style={styles.buttonText}>Back</Text>
+              </TouchableOpacity>
+            </View>
 
 
            
             
         
-            </View>
+          </View>
         </TouchableWithoutFeedback>
 
         <Dialog
@@ -134,7 +139,7 @@ const SignInScreen =  () => {
 const styles = StyleSheet.create({
   container: {
     backgroundColor:'white',
-    flex: 1,
+    flex: 3,
     justifyContent: 'center',
     padding: 20,
   },
@@ -161,21 +166,21 @@ const styles = StyleSheet.create({
     bottom:100,
     color: purpleStandard,
   },
+  buttonContainer: {
+    flex: 1,
+    justifyContent: "flex-end",
+  },
   buttonStyle:{
     backgroundColor: purpleStandard,
     borderRadius: 25,
-    marginTop: 70,
-    borderWidth: 0,
-    borderColor: "#2F024B",
     padding: 10,
-    alignItems: "center",
-    bottom: 30
+    marginVertical: "1%"
   },
-
   buttonText:{
     color: "white",
     fontWeight:'bold', 
-    fontSize:20
+    fontSize: 20,
+    textAlign: 'center',
   },
 });
 

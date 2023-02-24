@@ -8,6 +8,8 @@ import { firestore} from './firebaseConfig';
 import {getDatabase, ref, set} from "firebase/database";
 
 
+//Style Standardization
+const purpleStandard = '#7851A9';
 
 
 // Opening Screen
@@ -17,7 +19,6 @@ const OpeningScreen = () => {
 
 
   return (
-  <LinearGradient colors={['#C44EEE','#562574']} style={{flex:1}}>
     <SafeAreaView style={styles.container}>
       
   
@@ -44,7 +45,6 @@ const OpeningScreen = () => {
         <Text style={styles.tinyText}>APKA LLC</Text>
         
     </SafeAreaView>
-  </LinearGradient>
   );
 };
 
@@ -52,7 +52,7 @@ const OpeningScreen = () => {
 //Styles Sheet Please try to Label Descriptively,
 const styles = StyleSheet.create({
   container: {
-    backgroundColor:'transparent',
+    backgroundColor: purpleStandard,
     flex: 1,
     justifyContent: 'center',
     padding: 20,
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
     bottom: 30
   },
   buttonText:{
-    color: "#000000",
+    color: purpleStandard,
     fontWeight:'bold', 
     fontSize:20
   },

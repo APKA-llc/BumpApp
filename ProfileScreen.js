@@ -12,7 +12,7 @@ import Dialog, { DialogContent } from 'react-native-popup-dialog';
 import MainHub from './MainHub';
 import { collection, doc, setDoc, addDoc } from "firebase/firestore"; 
 import { getStorage, ref, getDownloadURL, getMetadata, uploadBytes, putFile} from "firebase/storage";
-
+import SelectDropdown from 'react-native-select-dropdown';
 
 
 //Style Standardization
@@ -32,39 +32,6 @@ const chooseHingePromptsPage = 7;
 const answerHingePromptsPage = 8;
 const previewProfilePage = 9;
 const inputPhoneNumberPage = 10;
-
-
-
-
-// ====================================================================================================================================//
-/*
-// placeholder data for preview profile
-const college = 'Georgia Institute of Technology';
-const name = 'Alex';
-const age = 19;
-// profilepic variable is called "image" (see code below)
-const year = 'Freshman';
-const major = 'Computer Science';
-const displayBio = 'Enjoyer of photography, Enjoyer of photography, punk rock (playboi carti), and rowing. My question to you: do you got that boom boom pow?';
-
-const hingePrompt1 = 'hinge1';
-const hingePrompt2 = 'hinge2';
-const hingePrompt3 = 'hinge3';
-
-const hingeResponse1 = 'VHS/Hi8 cameras';
-const hingeResponse2 = 'The inevitable heat death of the universe';
-const hingeResponse3 = 'To trek through Antarctica (not joking lol)';
-
-const phoneNumber = '123-456-7890';
-*/
-
-// ====================================================================================================================================//
-
-
-
-
-
-
 
 
 // list of 10 hinge prompts
@@ -131,11 +98,12 @@ const hinge = [
   },
 ];
 
+// colleges that offer Bump (just GT for now)
+const collegesThatBump = ["Georgia Tech"];
+
 // Profile Screen
 const ProfileScreen = () => {
   // page flow ---- check if the user can continue to the next page
-  const [emailVerified, setEmailVerified] = useState(false);
-  const [passChooseHingePage, setPassChooseHingePage] = useState(false);
 
   const [college, setCollege] = useState(null);
   const [name, setName] = useState(null);
@@ -143,29 +111,11 @@ const ProfileScreen = () => {
   const [year, setYear] = useState(null);
   const [major, setMajor] = useState(null);
   const [displayBio, setDisplayBio] = useState(null);
-  const [hingePrompt1, setHingePrompt1] = useState(null);
-  const [hingePrompt2, setHingePrompt2] = useState(null);
-  const [hingePrompt3, setHingePrompt3] = useState(null);
   const [hingeResponse1, setHingeResponse1] = useState(null);
   const [hingeResponse2, setHingeResponse2] = useState(null);
   const [hingeResponse3, setHingeResponse3] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState(null);
   const [image, setImage] = useState(null);
-  
-  const canContinue = () => {
-    if (currentGroup === emailVerificationPage) {
-      return emailVerified;
-    }
-
-    // add more conditions for the other pages here (to be discussed)
-
-    else if (currentGroup === chooseHingePromptsPage) {
-      setPassChooseHingePage(numSelected === 3);
-      return passChooseHingePage;
-    } else {
-      return true;
-    }
-  }
 
   async function createNewUser() {
     var firestoreDone, storageDone = false;
@@ -233,8 +183,6 @@ const ProfileScreen = () => {
     .then((userCred) => {
       saveUser(userCred.user);
       console.log('signed up');
-      
-      setEmailVerified(true);
       formComplete();
     })
     .catch((error) => {
@@ -276,7 +224,7 @@ const ProfileScreen = () => {
 
 
 
-  const [currentGroup, setCurrentGroup] = useState(1);
+  const [currentGroup, setCurrentGroup] = useState(0);
   const navigation = useNavigation();
   //const [profilePic, setProfilePic] = useState(defaultProfilePic);
 
@@ -327,10 +275,20 @@ const ProfileScreen = () => {
   // form is complete if currentGroup is 7 (we are on the 7th page)
   const formComplete = async () => {
     if (currentGroup === inputPhoneNumberPage) {
+      if(phoneNumber == null || !(/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im.test(phoneNumber))) {
+        Alert.alert('Error', 'Please enter a valid phone number.', [{ text: 'Try Again' }]);
+        return;
+      }
       await createNewUser();
       navigation.navigate(MainHub);
       
     } else {
+      if (currentGroup === chooseCollegePage) {
+        if (college === null) {
+          Alert.alert('Error', 'Please select your college.', [{ text: 'Try Again' }]);
+          return;
+        }
+      }
       if(currentGroup === inputFirstNamePage){
         if(name == null || name == '') {
           Alert.alert('Error', 'Please enter your name.', [{ text: 'Try Again' }]);
@@ -343,13 +301,13 @@ const ProfileScreen = () => {
           return;
         }
 
-        // make sure the age is above 18
-        if(age < 18) {
-          Alert.alert('Error', 'You must be at least 18 years old to use this app.', [{ text: 'Try Again' }]);
+        // make sure the age is above 17
+        if(age < 17) {
+          Alert.alert('Error', 'You must be at least 17 years old to use this app.', [{ text: 'Try Again' }]);
           return;
         }
         // make sure the age is valid
-        if(age > 100 ||age % 1 != 0) {
+        if(age > 100 || age % 1 != 0) {
           Alert.alert('Error', 'Please enter a valid age.', [{ text: 'Try Again' }]);
           return;
         }
@@ -399,8 +357,7 @@ const ProfileScreen = () => {
   // if going "Back" from the first page, then go to the OpeningScreen
   const formEscape = () => {
     if (currentGroup === chooseCollegePage) {
-      
-      //navigation.navigate(MainHub);
+      navigation.navigate(MainHub);
     } else {
       setCurrentGroup(currentGroup - 1);
     }
@@ -408,18 +365,16 @@ const ProfileScreen = () => {
 
   // update continue/back button messages
   let messageTop;
-  let messageBottom;
+  let messageBottom = 'Back';
   if (currentGroup === previewProfilePage) {
     messageTop = 'Finalize';
-    messageBottom = 'Revise';
   } else if (currentGroup === inputPhoneNumberPage) {
-    messageTop = 'Finalize';
+    messageTop = 'Finish';
   } else {
     messageTop = 'Continue';
-    messageBottom = 'Back';
   }
 
-  // updates FlatList when a prompt is selected
+  // an array containing the hinge prompts the user selects
   const [selectedItems, setSelectedItems] = useState([]);
 
   const handleOptionPress = (item) => {
@@ -453,366 +408,361 @@ const ProfileScreen = () => {
   const yearAndMajor = year + " Currently Studying " + major;
 
   return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.container}>
+    <View style={styles.container}>
 
-          {currentGroup === chooseCollegePage && ( // choose college
-            <View style = {styles.vanish}>
-              <View style={styles.titleContainer}>
-                <Text style={styles.title}>Select Your College</Text>
-              </View>
-
-              <View style={styles.inputContainer}>
-                
-                <TextInput
-                  style={styles.input}
-                  placeholder="This will be a dropdown soon"
-                  // TODO: Add proper data input code
-                />
-                <Text style={styles.text}>More colleges coming soon!</Text>
-              </View>
-            </View>
-          )}
-
-          {currentGroup === emailVerificationPage && (
-            <TouchableWithoutFeedback onPress={handleDismiss}>
-              <View style={styles.vanish}>
-                <View style={styles.titleContainer}>
-                  <Text style={styles.title}>Create Account</Text>
-                </View>
-                
-                <KeyboardAvoidingView behavior="padding" style={styles.inputContainer}>
-                  <TextInput
-                      style={styles.emailVerificationInput}
-                      placeholder="Email"
-                      placeholderTextColor={purpleStandard}
-                      onChangeText={text => setEmail(text)}
-                      value={email}
-                      autoCapitalize="none"
-                      keyboardType="email-address"
-                  />
-                  <TextInput
-                      style={styles.emailVerificationInput}
-                      placeholder="Password"
-                      placeholderTextColor={purpleStandard}
-                      onChangeText={text => setPassword(text)}
-                      value={password}
-                      secureTextEntry={true}
-                  />
-                  <Text style={styles.text}>Must register with a valid college email.</Text>
-                  
-                </KeyboardAvoidingView>
-              </View>
-            </TouchableWithoutFeedback>
-          )}
-
-          {currentGroup === inputFirstNamePage && ( // enter first name
-            <View style = {styles.vanish}>
-              <View style={styles.titleContainer}>
-                <Text style={styles.title}>Enter Your Name</Text>
-              </View>
-
-              <View style={styles.inputContainer}>
-                
-                <TextInput
-                  style={styles.input}
-                  placeholder="First Name Only"
-                  defaultValue={name ? name : ''}
-                  onChangeText={(text) => setName(text)}
-                  // TODO: Add proper data input code. I think i did this with the 2 lines above - ayush
-                />
-              </View>
-            </View>
-          )}
-
-          {currentGroup === inputAgePage && ( // choose age
-            <View style = {styles.vanish}>
-              <View style={styles.titleContainer}>
-                <Text style={styles.title}>What is your age?</Text>
-              </View>
-
-              <View style={styles.inputContainer}>
-                
-                <TextInput
-                  style={styles.input}
-                  placeholder="Years Old"
-                  keyboardType="numeric"
-                  returnKeyType="done"
-                  defaultValue={age ? age : ''}
-                  onChangeText={(text) => setAge(text)}
-                
-                />
-             </View>
-            </View>
-          )}
-
-          {currentGroup === choosePicPage && ( // pick profile pic
-           <View style = {styles.vanish}>
-            <View style={styles.titleContainer}>
-              <Text style={styles.title}>Choose a photo</Text>
-            </View>
-
-            <View style={styles.inputContainer}>
-              <TouchableOpacity style={styles.choosePhoto} onPress={pickImage}>
-                <Text style={styles.buttonText}>Select a Photo</Text>
-              </TouchableOpacity>
-
-              {image && <Image source={{ uri: image }} style={styles.imageStyle} />}
-            </View>
-
+      {currentGroup === chooseCollegePage && ( // choose college
+        <View style = {styles.vanish}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>Select Your College</Text>
           </View>
-          )}
 
-          {currentGroup === inputYearAndMajorPage && ( // input year and major
-            <View style = {styles.vanish}>
-              <View style={styles.titleContainer}>
-                <Text style={styles.title}>Enter Your Year in College</Text>
-              </View>
+          <View style={styles.inputContainer}>
+            
+            <SelectDropdown
+              data={collegesThatBump}
+              onSelect={(item, index) => {
+                setCollege(item);
+              }}
+              defaultButtonText={"Tap to Select"}
+              buttonTextAfterSelection={(item, index) => {return college}}
+              buttonStyle={styles.dropdownBox}
+              buttonTextStyle={{color: purpleStandard, textAlign: 'center'}}
+            />
+            <Text style={styles.text}>More colleges coming soon!</Text>
+          </View>
+        </View>
+      )}
 
-              <View style={styles.inputContainer}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="e.g. Freshman"
-                  defaultValue={year ? year : ''}
-                  onChangeText={(text) => setYear(text)}
-                  
-                />
-              </View>
-
-              <View style={styles.titleContainer}>
-                <Text style={styles.title}>Enter Your Major</Text>
-              </View>
-
-              <View style={styles.inputContainer}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="e.g. Computer Science"
-                  defaultValue={major ? major : ''}
-                  onChangeText={(text) => setMajor(text)}
-                 
-                />
-              </View>
+      {currentGroup === emailVerificationPage && (
+        <TouchableWithoutFeedback onPress={handleDismiss}>
+          <View style={styles.vanish}>
+            <View style={styles.titleContainer}>
+              <Text style={styles.title}>Create Account</Text>
             </View>
-          )}
-
-          {currentGroup === inputBioPage && ( // write your introduction/bio
-           <View style = {styles.vanish}>
-            <TouchableWithoutFeedback onPress={dismissKeyboard}>
-              <View style={styles.titleContainer}>
-              <Text style={styles.title}>Introduce Yourself</Text>
-              </View>
-            </TouchableWithoutFeedback>
-
-            <View style={styles.inputContainer}>
-                
+            
+            <KeyboardAvoidingView behavior="padding" style={styles.inputContainer}>
               <TextInput
-                style={styles.bioInput}
-                multiline
-                numberOfLines={5}
-                placeholder="Write Your Bio"
-                defaultValue={displayBio ? displayBio : ''}
-                onChangeText={(text) => setDisplayBio(text)}
+                  style={styles.input}
+                  placeholder="Email"
+                  placeholderTextColor={purpleStandard}
+                  onChangeText={text => setEmail(text)}
+                  value={email}
+                  autoCapitalize="none"
+                  keyboardType="email-address"
+              />
+              <TextInput
+                  style={styles.input}
+                  placeholder="Password"
+                  placeholderTextColor={purpleStandard}
+                  onChangeText={text => setPassword(text)}
+                  value={password}
+                  secureTextEntry={true}
+              />
+              <Text style={styles.text}>Must register with a valid college email.</Text>
+              <Text style={styles.text}>Email will be verified.</Text>
               
+            </KeyboardAvoidingView>
+          </View>
+        </TouchableWithoutFeedback>
+      )}
+
+      {currentGroup === inputFirstNamePage && ( // enter first name
+        <View style = {styles.vanish}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>Enter Your Name</Text>
+          </View>
+
+          <View style={styles.inputContainer}>
+            
+            <TextInput
+              style={styles.input}
+              placeholder="First Name Only"
+              defaultValue={name ? name : ''}
+              onChangeText={(text) => setName(text)}
+              // TODO: Add proper data input code. I think i did this with the 2 lines above - ayush
+            />
+          </View>
+        </View>
+      )}
+
+      {currentGroup === inputAgePage && ( // choose age
+        <View style = {styles.vanish}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>What is your age?</Text>
+          </View>
+
+          <View style={styles.inputContainer}>
+            
+            <TextInput
+              style={styles.input}
+              placeholder="Years Old"
+              keyboardType="numeric"
+              returnKeyType="done"
+              defaultValue={age ? age : ''}
+              onChangeText={(text) => setAge(text)}
+            
+            />
+          </View>
+        </View>
+      )}
+
+      {currentGroup === choosePicPage && ( // pick profile pic
+        <View style = {styles.vanish}>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>Choose a photo</Text>
+        </View>
+
+        <View style={styles.inputContainer}>
+          <TouchableOpacity style={styles.choosePhoto} onPress={pickImage}>
+            <Text style={styles.buttonText}>Select a Photo</Text>
+          </TouchableOpacity>
+
+          {image && <Image source={{ uri: image }} style={styles.imageStyle} />}
+        </View>
+
+      </View>
+      )}
+
+      {currentGroup === inputYearAndMajorPage && ( // input year and major
+        <View style = {styles.vanish}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>Enter Your Year in College</Text>
+          </View>
+
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="e.g. First-year"
+              defaultValue={year ? year : ''}
+              onChangeText={(text) => setYear(text)}
+              
+            />
+          </View>
+
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>Enter Your Major</Text>
+          </View>
+
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="e.g. Computer Science"
+              defaultValue={major ? major : ''}
+              onChangeText={(text) => setMajor(text)}
+              
+            />
+          </View>
+        </View>
+      )}
+
+      {currentGroup === inputBioPage && ( // write your introduction/bio
+        <View style = {styles.vanish}>
+        <TouchableWithoutFeedback onPress={dismissKeyboard}>
+          <View style={styles.titleContainer}>
+          <Text style={styles.title}>Introduce Yourself</Text>
+          </View>
+        </TouchableWithoutFeedback>
+
+        <View style={styles.inputContainer}>
+            
+          <TextInput
+            style={styles.bioInput}
+            multiline
+            numberOfLines={5}
+            placeholder="Write Your Bio"
+            defaultValue={displayBio ? displayBio : ''}
+            onChangeText={(text) => setDisplayBio(text)}
+          />
+        </View>
+      </View>
+      )}
+
+      {currentGroup === chooseHingePromptsPage && ( // choose hinge questions
+        <View style = {styles.hingePromptPageContainer}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>Choose Prompts</Text>
+          </View>
+
+          <View style={styles.promptView}>
+            <FlatList
+              data={hinge}
+              renderItem={({item}) => {
+                const isSelected = isItemSelected(item);
+                return (
+                  <TouchableOpacity
+                    style={[
+                      styles.promptContainer,
+                      {backgroundColor: isSelected ? purpleStandard : 'white'},
+                    ]}
+                    onPress={() => handleOptionPress(item)}
+                  >
+                    <Text style={[styles.hingeQuestion, {color: isSelected ? 'white' : purpleStandard}]}>
+                      {item.prompt}
+                    </Text>
+                  </TouchableOpacity>
+                )
+              }}
+              keyExtractor={(item) => item.id.toString()}
+              showsVerticalScrollIndicator={false}
+            />
+          </View>
+        </View>
+      )}
+
+      {currentGroup === answerHingePromptsPage && ( // write hinge responses
+        <View style = {styles.hingePromptPageContainer}>
+          <View style={styles.titleContainer}>
+          <Text style={styles.title}>Answer Prompts</Text>
+          </View>
+
+          <View style={styles.answersView}>
+            <View style={styles.answerPromptContainer}>
+              <Text style={[styles.hingePrompt, styles.hingeQuestion]}>{selectedItems[0].fullPrompt}</Text>
+              <TextInput
+                style={styles.hingeInput}
+                placeholder="Enter Response"
+                defaultValue={hingeResponse1 ? hingeResponse1 : ''}
+                onChangeText={(text) => setHingeResponse1(text)}
+              />
+            </View>
+            <View style={styles.answerPromptContainer}>
+              <Text style={[styles.hingePrompt, styles.hingeQuestion]}>{selectedItems[1].fullPrompt}</Text>
+              <TextInput
+                style={styles.hingeInput}
+                placeholder="Enter Response"
+                defaultValue={hingeResponse2 ? hingeResponse2 : ''}
+                onChangeText={(text) => setHingeResponse2(text)}
+              />
+            </View>
+            <View style={styles.answerPromptContainer}>
+              <Text style={[styles.hingePrompt, styles.hingeQuestion]}>{selectedItems[2].fullPrompt}</Text>
+              <TextInput
+                style={styles.hingeInput}
+                placeholder="Enter Response"
+                defaultValue={hingeResponse3 ? hingeResponse3 : ''}
+                onChangeText={(text) => setHingeResponse3(text)}
               />
             </View>
           </View>
-          )}
+      </View>
+      )}
 
-          {currentGroup === chooseHingePromptsPage && ( // choose hinge questions
-            <View style = {styles.hingePromptPageContainer}>
-              <View style={styles.titleContainer}>
-                <Text style={styles.title}>Choose Prompts</Text>
+      {currentGroup === previewProfilePage && ( // preview profile --- copy of MyProfileScreen
+        <View style = {styles.previewProfileContainer}>
+          <View style={styles.previewScrollContainer}>
+            <ScrollView showsVerticalScrollIndicator={false}>
+
+              <View style={styles.profilepiccontainer}>
+                <Image style={styles.profilepic} source={{uri: image}}/>
               </View>
 
-              <View style={styles.promptView}>
-                <FlatList
-                  data={hinge}
-                  renderItem={({item}) => {
-                    const isSelected = isItemSelected(item);
-                    return (
-                      <TouchableOpacity
-                        style={[
-                          styles.promptContainer,
-                          {backgroundColor: isSelected ? purpleStandard : 'white'},
-                        ]}
-                        onPress={() => handleOptionPress(item)}
-                      >
-                        <Text style={[styles.hingeQuestion, {color: isSelected ? 'white' : purpleStandard}]}>
-                          {item.prompt}
-                        </Text>
-                      </TouchableOpacity>
-                    )
-                  }}
-                  keyExtractor={(item) => item.id.toString()}
-                  showsVerticalScrollIndicator={false}
-                />
-              </View>
-            </View>
-          )}
+              <View style={styles.bottomHalf}>
 
-          {currentGroup === answerHingePromptsPage && ( // write hinge responses
-           <View style = {styles.hingePromptPageContainer}>
-              <View style={styles.titleContainer}>
-              <Text style={styles.title}>Answer Prompts</Text>
-              </View>
-
-              <View style={styles.answersView}>
-                <View style={styles.answerPromptContainer}>
-                  <Text style={[styles.hingePrompt, styles.hingeQuestion]}>{selectedItems[0].fullPrompt}</Text>
-                  <TextInput
-                    style={styles.hingeInput}
-                    placeholder="Enter Response"
-                    defaultValue={hingeResponse1 ? hingeResponse1 : ''}
-                    onChangeText={(text) => setHingeResponse1(text)}
-                  />
+                <View style={styles.one}>
+                  <Text style={styles.firstName}>{name}, {age}</Text>
                 </View>
-                <View style={styles.answerPromptContainer}>
-                  <Text style={[styles.hingePrompt, styles.hingeQuestion]}>{selectedItems[1].fullPrompt}</Text>
-                  <TextInput
-                    style={styles.hingeInput}
-                    placeholder="Enter Response"
-                    defaultValue={hingeResponse2 ? hingeResponse2 : ''}
-                    onChangeText={(text) => setHingeResponse2(text)}
-                  />
-                </View>
-                <View style={styles.answerPromptContainer}>
-                  <Text style={[styles.hingePrompt, styles.hingeQuestion]}>{selectedItems[2].fullPrompt}</Text>
-                  <TextInput
-                    style={styles.hingeInput}
-                    placeholder="Enter Response"
-                    defaultValue={hingeResponse3 ? hingeResponse3 : ''}
-                    onChangeText={(text) => setHingeResponse3(text)}
-                  />
-                </View>
-              </View>
-          </View>
-          )}
 
-          {currentGroup === previewProfilePage && ( // preview profile --- copy of MyProfileScreen
-          <View style = {styles.previewProfileContainer}>
-              <View style={styles.previewScrollContainer}>
-                <ScrollView showsVerticalScrollIndicator={false}>
+                <View style={styles.two}>
+                  <Text style={styles.description}>{yearAndMajor}</Text>
+                  <Text style={styles.bio}> </Text>
+                  <Text style={styles.bio}>{displayBio}</Text>
+                </View>
 
-                  <View style={styles.profilepiccontainer}>
-                    <Image style={styles.profilepic} source={{uri: image}}/>
+                <View style={styles.three}>
+                  <View style={styles.hingeContainerFrom}>
+                    <Text style={styles.hingeTextFrom}>Hey!</Text>
                   </View>
+                  <View style={{marginTop: 10}}></View>
 
-                  <View style={styles.bottomHalf}>
-
-                    <View style={styles.one}>
-                      <Text style={styles.firstName}>{name}, {age}</Text>
-                    </View>
-
-                    <View style={styles.two}>
-                      <Text style={styles.description}>{yearAndMajor}</Text>
-                      <Text style={styles.bio}> </Text>
-                      <Text style={styles.bio}>{displayBio}</Text>
-                    </View>
-
-                    <View style={styles.three}>
-                      <View style={styles.hingeContainerFrom}>
-                        <Text style={styles.hingeTextFrom}>Hey!</Text>
-                      </View>
-                      <View style={{marginTop: 10}}></View>
-
-                      <View style={styles.hingeContainerTo}>
-                        <Text style={styles.hingeTextTo}>{selectedItems[0].fullPrompt}</Text>
-                      </View>
-                      <View style={{marginTop: 10}}></View>
-                      <View style={styles.hingeContainerFrom}>
-                        <Text style={styles.hingeTextFrom}>{hingeResponse1}</Text>
-                      </View>
-                      <View style={{marginTop: 10}}></View>
-
-                      <View style={styles.hingeContainerTo}>
-                        <Text style={styles.hingeTextTo}>{selectedItems[1].fullPrompt}</Text>
-                      </View>
-                      <View style={{marginTop: 10}}></View>
-                      <View style={styles.hingeContainerFrom}>
-                        <Text style={styles.hingeTextFrom}>{hingeResponse2}</Text>
-                      </View>
-                      <View style={{marginTop: 10}}></View>
-
-                      <View style={styles.hingeContainerTo}>
-                        <Text style={styles.hingeTextTo}>{selectedItems[2].fullPrompt}</Text>
-                      </View>
-                      <View style={{marginTop: 10}}></View>
-                      <View style={styles.hingeContainerFrom}>
-                        <Text style={styles.hingeTextFrom}>{hingeResponse3}</Text>
-                      </View>
-                      <View style={{marginTop: 10}}></View>
-
-                    </View>
+                  <View style={styles.hingeContainerTo}>
+                    <Text style={styles.hingeTextTo}>{selectedItems[0].fullPrompt}</Text>
                   </View>
-                </ScrollView>
-              </View>
-          </View>
-          )}
+                  <View style={{marginTop: 10}}></View>
+                  <View style={styles.hingeContainerFrom}>
+                    <Text style={styles.hingeTextFrom}>{hingeResponse1}</Text>
+                  </View>
+                  <View style={{marginTop: 10}}></View>
 
-          {currentGroup === inputPhoneNumberPage && ( // input phone number
-            <View style = {styles.vanish}>
-              <View style={styles.titleContainer}>
-                <Text style={styles.title}>Please Enter Your Phone Number</Text>
-              </View>
+                  <View style={styles.hingeContainerTo}>
+                    <Text style={styles.hingeTextTo}>{selectedItems[1].fullPrompt}</Text>
+                  </View>
+                  <View style={{marginTop: 10}}></View>
+                  <View style={styles.hingeContainerFrom}>
+                    <Text style={styles.hingeTextFrom}>{hingeResponse2}</Text>
+                  </View>
+                  <View style={{marginTop: 10}}></View>
 
-              <View style={styles.inputContainer}>
-                
-                <TextInput
-                  style={styles.input}
-                  placeholder="***-***-***"
-                  // TODO: Add proper data input code
-                />
-              </View>
-            </View>
-          )}
+                  <View style={styles.hingeContainerTo}>
+                    <Text style={styles.hingeTextTo}>{selectedItems[2].fullPrompt}</Text>
+                  </View>
+                  <View style={{marginTop: 10}}></View>
+                  <View style={styles.hingeContainerFrom}>
+                    <Text style={styles.hingeTextFrom}>{hingeResponse3}</Text>
+                  </View>
+                  <View style={{marginTop: 10}}></View>
 
-          <View style = {[styles.buttonContainer, {flex: currentGroup === chooseHingePromptsPage ? 3 : 1}]}>
-
-            {currentGroup === chooseHingePromptsPage && (
-              <View style={styles.promptCard}>
-                <Text style={styles.fullPromptSubtitle}>Full Prompt</Text>
-                <View style={styles.fullPromptContainer}>
-                  <Text adjustsFontSizeToFit style={styles.fullPromptText}>{currentFullPrompt}</Text>
                 </View>
-                <Text style={styles.promptSelection}>{numSelected}/3 SELECTED</Text>
               </View>
-            )}
-
-            {currentGroup === previewProfilePage &&(
-              <View style={styles.previewHeadingContainer}>
-                <Text style={styles.previewHeading}>Scroll to Preview Profile</Text>
-              </View>
-            )}
-
-            {currentGroup !== emailVerificationPage && (
-              <TouchableOpacity
-                style={[
-                  styles.buttonStyle,
-                  {backgroundColor: currentGroup === emailVerificationPage && !emailVerified || currentGroup === chooseHingePromptsPage && numSelected < 3 ? lightGrayStandard : purpleStandard},
-                ]}
-                onPress={formComplete}
-                disabled={currentGroup === emailVerificationPage && !emailVerified || currentGroup === chooseHingePromptsPage && numSelected < 3}
-              >
-                <Text style={styles.buttonText}>{messageTop}</Text>
-              </TouchableOpacity>
-            )}
-
-            {currentGroup !== inputPhoneNumberPage && currentGroup !== emailVerificationPage && (
-              <TouchableOpacity style={styles.buttonStyle} onPress={formEscape}>
-                <Text style={styles.buttonText}>{messageBottom}</Text>
-              </TouchableOpacity>
-            )}
-
-            {currentGroup === emailVerificationPage && (
-              <TouchableOpacity style={styles.buttonStyle} onPress={handleSignUp}>
-                <Text style={styles.buttonText}>Sign Up</Text>
-              </TouchableOpacity>
-            )}
-
+            </ScrollView>
           </View>
         </View>
-      </SafeAreaView>
- 
+      )}
+
+      {currentGroup === inputPhoneNumberPage && ( // input phone number
+        <View style = {styles.vanish}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>Please Enter Your Phone Number</Text>
+          </View>
+
+          <View style={styles.inputContainer}>
+            
+            <TextInput
+              style={styles.input}
+              placeholder="***-***-***"
+              onChangeText={(number) => setPhoneNumber(number)}
+            />
+            <Text style={styles.text}>Only to be used to contact for feedback during app testing. :-)</Text>
+          </View>
+        </View>
+      )}
+
+      <View style = {[styles.buttonContainer, {flex: currentGroup === chooseHingePromptsPage ? 3 : 1}]}>
+
+        {currentGroup === chooseHingePromptsPage && (
+          <View style={styles.promptCard}>
+            <Text style={styles.fullPromptSubtitle}>Full Prompt</Text>
+            <View style={styles.fullPromptContainer}>
+              <Text adjustsFontSizeToFit style={styles.fullPromptText}>{currentFullPrompt}</Text>
+            </View>
+            <Text style={styles.promptSelection}>{numSelected}/3 SELECTED</Text>
+          </View>
+        )}
+
+        {currentGroup === previewProfilePage && (
+          <View style={styles.previewHeadingContainer}>
+            <Text style={styles.previewHeading}>Scroll to Preview Profile</Text>
+          </View>
+        )}
+
+        <TouchableOpacity
+          style={[
+            styles.buttonStyle,
+            {backgroundColor: currentGroup === chooseHingePromptsPage && numSelected < 3 ? lightGrayStandard : purpleStandard},
+          ]}
+          onPress={currentGroup === emailVerificationPage ? handleSignUp : formComplete}
+          disabled={currentGroup === chooseHingePromptsPage && numSelected < 3}
+        >
+          <Text style={styles.buttonText}>{messageTop}</Text>
+        </TouchableOpacity>
+
+        {currentGroup !== inputPhoneNumberPage && (
+          <TouchableOpacity style={styles.buttonStyle} onPress={formEscape}>
+            <Text style={styles.buttonText}>{messageBottom}</Text>
+          </TouchableOpacity>
+        )}
+
+      </View>
+    </View>
   );
 };
 
@@ -822,20 +772,24 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     flex: 1,
     justifyContent: 'center',
-    padding: 20,
+    paddingVertical: '12%',
+    paddingHorizontal: '8%',
   },
-  vanish:{
+  vanish: {
     flex: 3,
   },
-  titleContainer:{
+  titleContainer: {
     flex: 1,
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
-  text:{
+  text: {
     fontSize:"15%",
     color: purpleStandard,
     textAlign: 'center',
+    marginBottom: '2%',
+    width: '80%',
+    lineHeight: '22%',
   },
   title: {
     fontSize: '45%',
@@ -848,7 +802,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'center',
-    marginVertical: '5%'
+    marginVertical: '5%',
   },
   input: {
     borderWidth: 2,
@@ -856,17 +810,17 @@ const styles = StyleSheet.create({
     borderColor: purpleStandard,
     alignContent: 'center',
     fontSize: "20%",
-    padding: '5%',
-    paddingHorizontal: '8%',
-  },
-  emailVerificationInput: {
-    flex: 0.2,
-    borderWidth: 1,
-    borderColor: purpleStandard,
-    borderRadius: 20,
+    padding: '4%',
+    paddingHorizontal: '12%',
     marginBottom: '6%',
-    paddingHorizontal: '16%',
-    color: purpleStandard,
+  },
+  dropdownBox: {
+    borderWidth: 2,
+    borderRadius: 25,
+    borderColor: purpleStandard,
+    fontSize: "20%",
+    paddingHorizontal: '8%',
+    marginBottom: '6%',
   },
   bioInput: {
     height: "80%",
@@ -928,7 +882,8 @@ const styles = StyleSheet.create({
     fontSize: "20%",
     padding:'2%',
     width:'50%',
-    marginBottom:"5%"
+    marginBottom:"5%",
+    padding: '3%',
   },
 
   hingePromptPageContainer: {
