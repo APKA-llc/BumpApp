@@ -1,9 +1,11 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { View, Text, Dimensions, TouchableOpacity, StyleSheet, ScrollView, Image, Button} from 'react-native';
+import { View, Text, Dimensions, TouchableOpacity, StyleSheet, ScrollView, Image,Switch, Button, Settings} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { firestore, storage} from './firebaseConfig';
 import { collection, getDocs, getFirestore, query, orderBy, where, doc, getDoc } from "firebase/firestore"; 
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 //Style Standardization
 const purpleStandard = '#7851A9';
@@ -136,7 +138,79 @@ const HomeScreen = () => {
 
 
 
+// Settings Error Screen
+  const [showError, setShowError] = useState(false)
+
+// Switch Button Functions
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const [locationEnabled, setLocationEnabled] = useState(false);
+
+// Toggle switch functions
+  const toggleNotificationsSwitch = () => {
+  setNotificationsEnabled(previousState => !previousState);};
+
+  const toggleLocationSwitch = () => {
+  setLocationEnabled(previousState => !previousState);};
+  
+
+// Check if both switches are enabled, then store showError in AsyncStorage
+ // useEffect(() => {
+ // if (notificationsEnabled && locationEnabled) {
+ // setShowError(true);
+ // AsyncStorage.setItem('showError', JSON.stringify(showError));
+ // }}, [notificationsEnabled, locationEnabled]);
+
+// Retrieve showError from AsyncStorage on component mount
+  // useEffect(() => {
+  // AsyncStorage.getItem('showError')
+  // .then(value => {
+  // if (value) {
+ // setShowError(JSON.parse(value));
+  //}}); }, []);
+
   return (
+
+    <View style={{flex: 1}}>
+   
+    {showError ? (
+// Render Page if settings not enabled.
+      
+        <View style={styles.parentcontainer}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>Please enable the following settings.</Text>
+          </View>
+          <View style={styles.bodyContainer}>
+            <View style={styles.switchSubContainer}>
+              <Switch
+                trackColor={{false: '#767577', true: purpleStandard}}
+                thumbColor={notificationsEnabled ? '#f4f3f4' : '#f4f3f4'}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={toggleNotificationsSwitch}
+                value={notificationsEnabled}
+              />
+              <Text style={styles.settingsButton}>Push Notifications</Text>
+            </View>
+            <View style={styles.switchSubContainer}>
+              <Switch
+                trackColor={{false: '#767577', true: purpleStandard}}
+                thumbColor={locationEnabled ? '#f4f3f4' : '#f4f3f4'}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={toggleLocationSwitch}
+                value={locationEnabled}
+              />
+              <Text style={styles.settingsButton}>Location Services</Text>
+            </View>
+            <View style={styles.switchSubContainer}>
+              <Ionicons name={'help-circle-outline'} size={40} color={purpleStandard} />
+              <TouchableOpacity onPress={() => navigation.navigate('BumpScreen')}>
+                <Text style={styles.settingsButton}>What is Bump?</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+     
+    ) : (
+
     <ScrollView style={styles.parentcontainer}>
 
       <View style={styles.profilepiccontainer}>
@@ -199,6 +273,10 @@ const HomeScreen = () => {
 
       </View>
     </ScrollView>
+
+            )
+          }
+    </View>
   );
 };
 
@@ -209,6 +287,7 @@ const styles = StyleSheet.create({
   parentcontainer: {
     flex: 1,
     width: '100%',
+    backgroundColor:'white'
   },
   profilepiccontainer: {
     flex: 1,
@@ -315,7 +394,36 @@ const styles = StyleSheet.create({
     fontFamily: 'Arial',
     fontSize: 20,
     color: 'white',
+  },bodyContainer:{
+    //backgroundColor:'green',
+    flex:3,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
+  switchSubContainer: {
+    //backgroundColor:'red',
+    padding: 26,
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  settingsButton: {
+    fontSize: 32,
+    color: purpleStandard,
+    marginLeft: 20,
+  },
+  titleContainer:{
+    //backgroundColor:'yellow',
+    flex:1,
+    alignItems: 'center',
+    justifyContent:'flex-end'
+    
+  },
+  title: {
+    fontWeight: 'bold',
+    textAlign:'center',
+    fontSize:"40",
+    color: purpleStandard,
+  }
 });
 
 export default HomeScreen;
