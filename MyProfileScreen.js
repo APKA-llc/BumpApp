@@ -2,6 +2,10 @@ import React, { useState, useCallback } from 'react';
 import { View, Text, Dimensions, TouchableOpacity, StyleSheet, ScrollView, Image, Button} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
+
+//Style Standardization
+const purpleStandard = '#7851A9';
+
 const matchpic = './assets/alex.jpg';
 const name = 'Alex';
 const age = 19;
@@ -221,7 +225,7 @@ const styles = StyleSheet.create({
     paddingLeft: 16,
     paddingRight: 16,
     borderWidth: 2,
-    borderColor: "purple",
+    borderColor: purpleStandard,
     borderRadius: 20,
     marginTop: 2,
     alignSelf: 'flex-end',
@@ -232,7 +236,7 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
     paddingLeft: 16,
     paddingRight: 16,
-    backgroundColor: "purple",
+    backgroundColor: purpleStandard,
     borderRadius: 20,
     marginTop: 2,
     alignSelf: 'flex-start',
@@ -241,7 +245,7 @@ const styles = StyleSheet.create({
   hingeTextFrom: {
     fontFamily: 'Arial',
     fontSize: 20,
-    color: 'purple',
+    color: purpleStandard,
   },
   hingeTextTo: {
     fontFamily: 'Arial',

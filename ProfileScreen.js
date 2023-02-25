@@ -41,60 +41,70 @@ const hinge = [
     prompt: 'Most British Thing',
     fullPrompt: 'The most british thing I do on the daily ____',
     selected: false,
+    answer: '',
   },
   {
     id: 2,
     prompt: 'I\'m a Hardcore',
     fullPrompt: 'I\'m a hardcore ____',
     selected: false,
+    answer: '',
   },
   {
     id: 3,
     prompt: 'Fan of',
     fullPrompt: 'If ____ has a million fans, I am one of them. If ____ has 10 fans, I am one of them. If ____ only has one fan, then that one fan is me.',
     selected: false,
+    answer: '',
   },
   {
     id: 4,
     prompt: 'Secret Talent',
     fullPrompt: 'My secret talent ____',
     selected: false,
+    answer: '',
   },
   {
     id: 5,
     prompt: 'Dying Wish',
     fullPrompt: 'My dying wish is ____',
     selected: false,
+    answer: '',
   },
   {
     id: 6,
     prompt: 'Most Irrational Fear',
     fullPrompt: 'My most irrational fear ____',
     selected: false,
+    answer: '',
   },
   {
     id: 7,
     prompt: 'Never-ending Nightmare',
     fullPrompt: 'The most british thing I do on the daily____',
     selected: false,
+    answer: '',
   },
   {
     id: 8,
     prompt: 'At a Party',
     fullPrompt: 'If you find me at a party, I\'m the one ____',
     selected: false,
+    answer: '',
   },
   {
     id: 9,
     prompt: 'Geek Out',
     fullPrompt: 'I geek out on ____',
     selected: false,
+    answer: '',
   },
   {
     id: 10,
     prompt: 'Cheddar News',
     fullPrompt: 'Cheddar News is ____',
     selected: false,
+    answer: '',
   },
 ];
 
@@ -111,9 +121,6 @@ const ProfileScreen = () => {
   const [year, setYear] = useState(null);
   const [major, setMajor] = useState(null);
   const [displayBio, setDisplayBio] = useState(null);
-  const [hingeResponse1, setHingeResponse1] = useState(null);
-  const [hingeResponse2, setHingeResponse2] = useState(null);
-  const [hingeResponse3, setHingeResponse3] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState(null);
   const [image, setImage] = useState(null);
 
@@ -134,7 +141,7 @@ const ProfileScreen = () => {
       major: major,
       displayBio: displayBio,
       // Array called QA with 3 'hingePrompt - hingeResponse' strings concatenated
-      QA: [selectedItems[0].fullPrompt + '-' + hingeResponse1, selectedItems[1].fullPrompt + '-' + hingeResponse2, selectedItems[2].fullPrompt + '-' + hingeResponse3],
+      QA: [selectedItems[0].fullPrompt + '-' + selectedItems[0].answer, selectedItems[1].fullPrompt + '-' + selectedItems[1].answer, selectedItems[2].fullPrompt + '-' + selectedItems[2].answer],
       phoneNumber: phoneNumber,
       email: userEmail
     })
@@ -327,22 +334,27 @@ const ProfileScreen = () => {
           Alert.alert('Error', 'Please enter your bio.', [{ text: 'Try Again' }]);
           return;
         }
-        // if the bio is more than 200 characters say its too long
+        // if the bio is less than 100 characters say its too short
+        if(displayBio.length < 100) {
+          Alert.alert('Error', 'Bio is too short. Please enter a bio that is more than 100 characters.', [{ text: 'Try Again' }]);
+          return;
+        }
+        // if the bio is more than 150 characters say its too long
         if(displayBio.length > 150) {
           Alert.alert('Error', 'Bio is too long. Please enter a bio that is less than 150 characters.', [{ text: 'Try Again' }]);
           return;
         }
       }
       else if(currentGroup === answerHingePromptsPage){
-        if(hingeResponse1 == null || hingeResponse1 == '') {
+        if(selectedItems[0].answer == null || selectedItems[0].answer == '') {
           Alert.alert('Error', 'Please enter your answer for the first prompt.', [{ text: 'Try Again' }]);
           return;
         }
-        if(hingeResponse2 == null || hingeResponse2 == '') {
+        if(selectedItems[1].answer == null || selectedItems[1].answer == '') {
           Alert.alert('Error', 'Please enter your answer for the second prompt.', [{ text: 'Try Again' }]);
           return;
         }
-        if(hingeResponse3 == null || hingeResponse3 == '') {
+        if(selectedItems[2].answer == null || selectedItems[2].answer == '') {
           Alert.alert('Error', 'Please enter your answer for the third prompt.', [{ text: 'Try Again' }]);
           return;
         }
@@ -377,6 +389,18 @@ const ProfileScreen = () => {
   // an array containing the hinge prompts the user selects
   const [selectedItems, setSelectedItems] = useState([]);
 
+  const handleInputChange = (id, text) => {
+    setSelectedItems(prevSelectedItems => {
+      const updatedSelectedItems = prevSelectedItems.map(item => {
+        if (item.id === id) {
+          return {...item, answer: text}
+        }
+        return item;
+      });
+      return updatedSelectedItems;
+    });
+  };
+
   const handleOptionPress = (item) => {
     setSelectedItems((selectedItems) => {
       if (selectedItems.find((selectedItem) => selectedItem.id === item.id)) { // check whether the tapped item is already selected
@@ -400,12 +424,8 @@ const ProfileScreen = () => {
     return selectedItems.find((selectedItem) => selectedItem.id === item.id);
   };
 
-  // records the hinge response (INCOMPLETE)
-  // const [hingeResponse1, setHingeResponse1] = useState('');
-  // const [hingeResponse2, setHingeResponse2] = useState('');
-  // const [hingeResponse3, setHingeResponse3] = useState('');
-
   const yearAndMajor = year + " Currently Studying " + major;
+  const [numCharactersBio, setNumCharactersBio] = useState(0);
 
   return (
     <View style={styles.container}>
@@ -535,7 +555,6 @@ const ProfileScreen = () => {
               placeholder="e.g. First-year"
               defaultValue={year ? year : ''}
               onChangeText={(text) => setYear(text)}
-              
             />
           </View>
 
@@ -559,7 +578,7 @@ const ProfileScreen = () => {
         <View style = {styles.vanish}>
         <TouchableWithoutFeedback onPress={dismissKeyboard}>
           <View style={styles.titleContainer}>
-          <Text style={styles.title}>Introduce Yourself</Text>
+            <Text style={styles.title}>Introduce Yourself</Text>
           </View>
         </TouchableWithoutFeedback>
 
@@ -571,8 +590,13 @@ const ProfileScreen = () => {
             numberOfLines={5}
             placeholder="Write Your Bio"
             defaultValue={displayBio ? displayBio : ''}
-            onChangeText={(text) => setDisplayBio(text)}
+            onChangeText={(text) => {
+              setDisplayBio(text)
+              setNumCharactersBio(text.length);
+            }}
+            minLength={100}
           />
+          <Text style={styles.text}>{Math.max(100 - numCharactersBio, 0)} More Characters Needed</Text>
         </View>
       </View>
       )}
@@ -615,35 +639,26 @@ const ProfileScreen = () => {
           <Text style={styles.title}>Answer Prompts</Text>
           </View>
 
-          <View style={styles.answersView}>
-            <View style={styles.answerPromptContainer}>
-              <Text style={[styles.hingePrompt, styles.hingeQuestion]}>{selectedItems[0].fullPrompt}</Text>
-              <TextInput
-                style={styles.hingeInput}
-                placeholder="Enter Response"
-                defaultValue={hingeResponse1 ? hingeResponse1 : ''}
-                onChangeText={(text) => setHingeResponse1(text)}
-              />
-            </View>
-            <View style={styles.answerPromptContainer}>
-              <Text style={[styles.hingePrompt, styles.hingeQuestion]}>{selectedItems[1].fullPrompt}</Text>
-              <TextInput
-                style={styles.hingeInput}
-                placeholder="Enter Response"
-                defaultValue={hingeResponse2 ? hingeResponse2 : ''}
-                onChangeText={(text) => setHingeResponse2(text)}
-              />
-            </View>
-            <View style={styles.answerPromptContainer}>
-              <Text style={[styles.hingePrompt, styles.hingeQuestion]}>{selectedItems[2].fullPrompt}</Text>
-              <TextInput
-                style={styles.hingeInput}
-                placeholder="Enter Response"
-                defaultValue={hingeResponse3 ? hingeResponse3 : ''}
-                onChangeText={(text) => setHingeResponse3(text)}
-              />
-            </View>
-          </View>
+          <KeyboardAvoidingView behavior={'padding'} style={styles.answersView}>
+            <FlatList
+            data={selectedItems}
+            renderItem={({item}) => {
+              return (
+                <View style={styles.answerPromptContainer}>
+                  <Text style={[styles.hingePrompt, styles.hingeQuestion]}>{item.fullPrompt}</Text>
+                  <TextInput
+                    style={styles.hingeInput}
+                    placeholder="Enter Response"
+                    defaultValue={item.answer}
+                    onChangeText={(text) => handleInputChange(item.id, text)}
+                  />
+                </View>
+              )
+            }}
+            keyExtractor={(item) => item.id.toString()}
+            showsVerticalScrollIndicator={false}
+            />
+          </KeyboardAvoidingView>
       </View>
       )}
 
@@ -679,7 +694,7 @@ const ProfileScreen = () => {
                   </View>
                   <View style={{marginTop: 10}}></View>
                   <View style={styles.hingeContainerFrom}>
-                    <Text style={styles.hingeTextFrom}>{hingeResponse1}</Text>
+                    <Text style={styles.hingeTextFrom}>{selectedItems[0].answer}</Text>
                   </View>
                   <View style={{marginTop: 10}}></View>
 
@@ -688,7 +703,7 @@ const ProfileScreen = () => {
                   </View>
                   <View style={{marginTop: 10}}></View>
                   <View style={styles.hingeContainerFrom}>
-                    <Text style={styles.hingeTextFrom}>{hingeResponse2}</Text>
+                    <Text style={styles.hingeTextFrom}>{selectedItems[1].answer}</Text>
                   </View>
                   <View style={{marginTop: 10}}></View>
 
@@ -697,7 +712,7 @@ const ProfileScreen = () => {
                   </View>
                   <View style={{marginTop: 10}}></View>
                   <View style={styles.hingeContainerFrom}>
-                    <Text style={styles.hingeTextFrom}>{hingeResponse3}</Text>
+                    <Text style={styles.hingeTextFrom}>{selectedItems[2].answer}</Text>
                   </View>
                   <View style={{marginTop: 10}}></View>
 
@@ -823,8 +838,9 @@ const styles = StyleSheet.create({
     marginBottom: '6%',
   },
   bioInput: {
-    height: "80%",
+    height: "60%",
     width: "80%",
+    lineHeight: '24%',
     marginVertical: 10,
     marginHorizontal: 20,
     padding: 10,
