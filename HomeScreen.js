@@ -9,7 +9,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 //Style Standardization
 const purpleStandard = '#7851A9';
+const darkGrayStandard = '#9e9e9e';
 const lightGrayStandard = '#d3d3d3';
+
+const fontLight = 'Montserrat-Light';
+const fontRegular = 'Montserrat-Regular';
+const fontMedium = 'Montserrat-Medium';
+const fontSemiBold = 'Montserrat-SemiBold';
+const fontBold = 'Montserrat-Bold';
 
 // Home Screen
 const HomeScreen = () => {
@@ -339,25 +346,25 @@ const styles = StyleSheet.create({
   buttonText: {
     color: purpleStandard,
     fontSize: '20%',
-    fontWeight: '500',
     textAlign: 'center',
+    fontFamily: fontMedium,
   },
 
   firstName: {
     flex: 1,
     fontFamily: 'Baskerville',
     fontSize: 55,
-    fontWeight: '400',
+    fontFamily: fontRegular,
     marginLeft: 10,
   },
   description: {
-    fontFamily: 'Baskerville',
+    fontFamily: fontRegular,
     marginLeft: 10,
     marginTop: '1%',
     fontSize: 25,
   },
   bio: {
-    fontFamily: 'Baskerville',
+    fontFamily: fontRegular,
     marginLeft: 10,
     fontSize: 25,
   },
@@ -386,22 +393,20 @@ const styles = StyleSheet.create({
     maxWidth: '80%',
   },
   hingeTextFrom: {
-    fontFamily: 'Arial',
+    fontFamily: fontRegular,
     fontSize: 20,
     color: purpleStandard,
   },
   hingeTextTo: {
-    fontFamily: 'Arial',
+    fontFamily: fontRegular,
     fontSize: 20,
     color: 'white',
   },bodyContainer:{
-    //backgroundColor:'green',
     flex:3,
     justifyContent: 'center',
     alignItems: 'center',
   },
   switchSubContainer: {
-    //backgroundColor:'red',
     padding: 26,
     flexDirection: 'row',
     justifyContent: 'center',
@@ -410,19 +415,18 @@ const styles = StyleSheet.create({
     fontSize: 32,
     color: purpleStandard,
     marginLeft: 20,
+    fontFamily: fontRegular,
   },
   titleContainer:{
-    //backgroundColor:'yellow',
     flex:1,
     alignItems: 'center',
-    justifyContent:'flex-end'
-    
+    justifyContent: 'flex-end'
   },
   title: {
-    fontWeight: 'bold',
-    textAlign:'center',
-    fontSize:"40",
+    textAlign: 'center',
+    fontSize: "40",
     color: purpleStandard,
+    fontFamily: fontBold,
   }
 });
 

@@ -10,6 +10,14 @@ import {getDatabase, ref, set} from "firebase/database";
 
 //Style Standardization
 const purpleStandard = '#7851A9';
+const darkGrayStandard = '#9e9e9e';
+const lightGrayStandard = '#d3d3d3';
+
+const fontLight = 'Montserrat-Light';
+const fontRegular = 'Montserrat-Regular';
+const fontMedium = 'Montserrat-Medium';
+const fontSemiBold = 'Montserrat-SemiBold';
+const fontBold = 'Montserrat-Bold';
 
 
 // Opening Screen
@@ -58,37 +66,38 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   title: {
-    fontWeight: 'bold',
-    textAlign:'center',
-    top:45,
-    bottom:0,
-    flex:0.7,
-    fontSize:'85',
-    color:"#ffffff",
-    
+    textAlign: 'center',
+    top: 45,
+    bottom: 0,
+    flex: 0.7,
+    fontSize: '85',
+    color: "#ffffff",
+    fontFamily: fontLight,
   },
   subtitle: {
     textAlign:'center',
     justifyContent: 'center',
-    fontSize:25, 
+    fontSize: 25, 
     color: '#ffffff',
-    flex:0.2,
-    bottom:110,
+    flex: 0.2,
+    bottom: 110,
+    fontFamily: fontBold,
   },
   tinyText:{
     color: "#ffff",
-    fontSize:15,
-    textAlign:'center'
+    fontSize: 15,
+    textAlign: 'center',
+    fontFamily: fontLight,
   },
   logoStyle: {
     justifyContent: 'center', 
     alignItems: 'center',
-    height:400,
-    width:400,
-    flex:0.8,
-    bottom:40,
-    alignSelf:'center',
-    resizeMode:'contain'
+    height: 400,
+    width: 400,
+    flex: 0.8,
+    bottom: 40,
+    alignSelf: 'center',
+    resizeMode: 'contain'
   },
   buttonStyle:{
     backgroundColor: "#F8EEFE",
@@ -102,8 +111,8 @@ const styles = StyleSheet.create({
   },
   buttonText:{
     color: purpleStandard,
-    fontWeight:'bold', 
-    fontSize:20
+    fontSize: 20,
+    fontFamily: fontSemiBold,
   },
   
 });

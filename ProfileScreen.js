@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { ScrollView, View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Image, FlatList, Keyboard, TouchableWithoutFeedback, Dimensions, KeyboardAvoidingView} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
@@ -10,6 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
 import Dialog, { DialogContent } from 'react-native-popup-dialog';
 import MainHub from './MainHub';
+import OpeningScreen from './OpeningScreen';
 import { collection, doc, setDoc, addDoc } from "firebase/firestore"; 
 import { getStorage, ref, getDownloadURL, getMetadata, uploadBytes, putFile} from "firebase/storage";
 import SelectDropdown from 'react-native-select-dropdown';
@@ -19,6 +20,13 @@ import SelectDropdown from 'react-native-select-dropdown';
 const purpleStandard = '#7851A9';
 const darkGrayStandard = '#9e9e9e';
 const lightGrayStandard = '#d3d3d3';
+
+const fontLight = 'Montserrat-Light';
+const fontRegular = 'Montserrat-Regular';
+const fontMedium = 'Montserrat-Medium';
+const fontSemiBold = 'Montserrat-SemiBold';
+const fontBold = 'Montserrat-Bold';
+
 
 // page numbers
 const chooseCollegePage = 0;
@@ -228,9 +236,6 @@ const ProfileScreen = () => {
   const handleDismiss = () => Keyboard.dismiss();
 
 
-
-
-
   const [currentGroup, setCurrentGroup] = useState(0);
   const navigation = useNavigation();
   //const [profilePic, setProfilePic] = useState(defaultProfilePic);
@@ -369,7 +374,7 @@ const ProfileScreen = () => {
   // if going "Back" from the first page, then go to the OpeningScreen
   const formEscape = () => {
     if (currentGroup === chooseCollegePage) {
-      navigation.navigate(MainHub);
+      navigation.navigate(OpeningScreen);
     } else {
       setCurrentGroup(currentGroup - 1);
     }
@@ -428,7 +433,7 @@ const ProfileScreen = () => {
   const [numCharactersBio, setNumCharactersBio] = useState(0);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {paddingHorizontal: (currentGroup !== previewProfilePage ? '8%' : '0%'), paddingVertical: (currentGroup !== previewProfilePage ? '12%' : '0%')}]}>
 
       {currentGroup === chooseCollegePage && ( // choose college
         <View style = {styles.vanish}>
@@ -446,7 +451,8 @@ const ProfileScreen = () => {
               defaultButtonText={"Tap to Select"}
               buttonTextAfterSelection={(item, index) => {return college}}
               buttonStyle={styles.dropdownBox}
-              buttonTextStyle={{color: purpleStandard, textAlign: 'center'}}
+              buttonTextStyle={styles.dropdownInput}
+              rowTextStyle={styles.dropdownRow}
             />
             <Text style={styles.text}>More colleges coming soon!</Text>
           </View>
@@ -545,6 +551,7 @@ const ProfileScreen = () => {
 
       {currentGroup === inputYearAndMajorPage && ( // input year and major
         <View style = {styles.vanish}>
+
           <View style={styles.titleContainer}>
             <Text style={styles.title}>Enter Your Year in College</Text>
           </View>
@@ -741,7 +748,11 @@ const ProfileScreen = () => {
         </View>
       )}
 
-      <View style = {[styles.buttonContainer, {flex: currentGroup === chooseHingePromptsPage ? 3 : 1}]}>
+      <View style = {[styles.buttonContainer, {
+          flex: currentGroup === chooseHingePromptsPage ? 3 : 1,
+          marginHorizontal: currentGroup === previewProfilePage ? '8%' : '0%',
+          marginBottom: currentGroup === previewProfilePage ? '12%' : '0%',
+        }]}>
 
         {currentGroup === chooseHingePromptsPage && (
           <View style={styles.promptCard}>
@@ -762,7 +773,7 @@ const ProfileScreen = () => {
         <TouchableOpacity
           style={[
             styles.buttonStyle,
-            {backgroundColor: currentGroup === chooseHingePromptsPage && numSelected < 3 ? lightGrayStandard : purpleStandard},
+            {backgroundColor: currentGroup === chooseHingePromptsPage && numSelected < 3 ? lightGrayStandard : purpleStandard,},
           ]}
           onPress={currentGroup === emailVerificationPage ? handleSignUp : formComplete}
           disabled={currentGroup === chooseHingePromptsPage && numSelected < 3}
@@ -787,8 +798,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     flex: 1,
     justifyContent: 'center',
-    paddingVertical: '12%',
-    paddingHorizontal: '8%',
   },
   vanish: {
     flex: 3,
@@ -803,15 +812,16 @@ const styles = StyleSheet.create({
     color: purpleStandard,
     textAlign: 'center',
     marginBottom: '2%',
-    width: '80%',
+    width: '84%',
     lineHeight: '22%',
+    fontFamily: fontRegular,
   },
   title: {
-    fontSize: '45%',
+    fontSize: '38%',
     textAlign: 'center',
-    fontWeight: 'bold',
     color: purpleStandard,
-    marginBottom: '5%'
+    marginBottom: '5%',
+    fontFamily: fontBold,
   },
   inputContainer: {
     flex: 1,
@@ -828,6 +838,12 @@ const styles = StyleSheet.create({
     padding: '4%',
     paddingHorizontal: '12%',
     marginBottom: '6%',
+    fontFamily: fontMedium,
+  },
+  dropdownInput: {
+    color: purpleStandard,
+    textAlign: 'center',
+    fontFamily: fontMedium,
   },
   dropdownBox: {
     borderWidth: 2,
@@ -836,6 +852,10 @@ const styles = StyleSheet.create({
     fontSize: "20%",
     paddingHorizontal: '8%',
     marginBottom: '6%',
+  },
+  dropdownRow: {
+    color: purpleStandard,
+    fontFamily: fontMedium,
   },
   bioInput: {
     height: "60%",
@@ -850,6 +870,7 @@ const styles = StyleSheet.create({
     borderColor: purpleStandard,
     fontSize: 16,
     textAlignVertical: 'top',
+    fontFamily: fontRegular,
   },
 
   buttonContainer:{
@@ -863,9 +884,9 @@ const styles = StyleSheet.create({
   },
   buttonText:{
     color: "white",
-    fontWeight:'bold', 
-    fontSize:20,
-    textAlign:'center'
+    fontSize: 20,
+    textAlign:'center',
+    fontFamily: fontSemiBold,
   },
   choosePhoto:{
     backgroundColor: purpleStandard,
@@ -875,7 +896,7 @@ const styles = StyleSheet.create({
   },
   hingeQuestion:{
     fontSize:'18%',
-    fontWeight: '500',
+    fontFamily: fontMedium,
   },
   promptContainer: {
     alignItems: 'center',
@@ -889,17 +910,19 @@ const styles = StyleSheet.create({
   hingePrompt: {
     textAlign: 'center',
     marginBottom: '5%',
+    fontFamily: fontRegular,
   },
   hingeInput:{
     borderWidth: 2,
     borderRadius: 25,
     borderColor: purpleStandard,
-    alignContent:'center',
+    textAlign: 'center',
     fontSize: "20%",
     padding:'2%',
-    width:'50%',
+    width:'66%',
     marginBottom:"5%",
     padding: '3%',
+    fontFamily: fontRegular,
   },
 
   hingePromptPageContainer: {
@@ -932,6 +955,7 @@ const styles = StyleSheet.create({
     flex: 1,
     color: darkGrayStandard,
     marginTop: '2%',
+    fontFamily: fontRegular,
   },
   fullPromptContainer: {
     flex: 4,
@@ -947,14 +971,14 @@ const styles = StyleSheet.create({
   fullPromptText: {
     color: purpleStandard,
     fontSize: 18,
-    fontWeight: '700',
+    fontFamily: fontSemiBold,
   },
   promptSelection: {
     flex: 1,
     color: darkGrayStandard,
-    fontWeight: '700',
     fontSize: '16%',
     marginTop: '2%',
+    fontFamily: fontBold,
   },
   imageStyle: {
     aspectRatio: 4/5,
@@ -975,6 +999,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: '14%',
     color: darkGrayStandard,
+    fontFamily: fontRegular,
   },
   previewProfileContainer: {
     flex: 5,
@@ -1008,19 +1033,19 @@ const styles = StyleSheet.create({
 
   firstName: {
     flex: 1,
-    fontFamily: 'Baskerville',
+    fontFamily: fontRegular,
     fontSize: 55,
     fontWeight: '400',
     marginLeft: 10,
   },
   description: {
-    fontFamily: 'Baskerville',
+    fontFamily: fontRegular,
     marginLeft: 10,
     marginTop: '1%',
     fontSize: 25,
   },
   bio: {
-    fontFamily: 'Baskerville',
+    fontFamily: fontRegular,
     marginLeft: 10,
     fontSize: 25,
   },
