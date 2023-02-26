@@ -218,11 +218,11 @@ const HomeScreen = () => {
 
   const verifyUserisReady = async () => {
     if(notificationsEnabled && locationEnabled) {
-      await AsyncStorage.setItem('setUserNotReady', JSON.stringify(false));
+      await AsyncStorage.setItem('userNotReady', JSON.stringify(false));
       setUserNotReady(false);
     }
     else{
-      await AsyncStorage.setItem('setUserNotReady', JSON.stringify(true));
+      await AsyncStorage.setItem('userNotReady', JSON.stringify(true));
       setUserNotReady(true);
     }
   }
@@ -236,6 +236,7 @@ const HomeScreen = () => {
       } else {
         // The user has fullfiled the requirements to use the app
         setUserNotReady(false);
+        
       }
     } catch (error) {
       console.log(error);
@@ -246,6 +247,7 @@ const HomeScreen = () => {
   }, []);
   
   if (userNotReady === null) {
+    console.log(userNotReady);
     return null;
   }
   //onsole.log(userNotReady);
