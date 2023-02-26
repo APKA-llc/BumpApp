@@ -221,6 +221,7 @@ const ProfileScreen = () => {
   const handleDismiss = () => Keyboard.dismiss();
 
 
+  const [showErrorDialog, setShowErrorDialog] = useState(false);
 
 
 
@@ -279,6 +280,16 @@ const ProfileScreen = () => {
         Alert.alert('Error', 'Please enter a valid phone number.', [{ text: 'Try Again' }]);
         return;
       }
+
+      const seenProfiles = [];
+      const likedProfiles = [];
+      try {
+        await AsyncStorage.setItem('seenProfiles', JSON.stringify(seenProfiles));
+        await AsyncStorage.setItem('likedProfiles', JSON.stringify(likedProfiles));
+      } catch (error) {
+        console.log(error);
+      }
+
       await createNewUser();
       navigation.navigate(MainHub);
       
