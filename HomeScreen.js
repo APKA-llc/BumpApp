@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { View, Text, Dimensions, TouchableOpacity, StyleSheet, ScrollView, Image,Switch, Button, Settings} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { firestore, storage} from './firebaseConfig';
@@ -10,6 +10,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 //Style Standardization
 const purpleStandard = '#7851A9';
 const lightGrayStandard = '#d3d3d3';
+
+
 
 // Home Screen
 const HomeScreen = () => {
@@ -25,6 +27,9 @@ const HomeScreen = () => {
   const [photoURL, setPhotoURL] = useState('');
   const [photoName, setPhotoName] = useState('');
   const [photoLoaded, setPhotoLoaded] = useState(false);
+  const [randomIndex, setRandomIndex] = useState(0);
+  const scrollViewRef = useRef();
+  
 
 
   const navigation = useNavigation();
@@ -56,9 +61,38 @@ const HomeScreen = () => {
   
     const querySnapshot = await getDocs(usersRef);
     const numUsers = querySnapshot.size;
-  
-    // Generate a random number between 0 and numUsers - 1
+
+    // Get array of profiles that have already been seen
+    const seenProfiles = await AsyncStorage.getItem('seenProfiles');
+    const likedProfiles = await AsyncStorage.getItem('likedProfiles');
+    let likedUsersArray = JSON.parse(likedProfiles);
+    let seenUsersArray = JSON.parse(seenProfiles);
+    if (seenUsersArray == null) {
+      seenUsersArray = [];
+    }
+    if (likedUsersArray == null) {
+      likedUsersArray = [];
+    }
     const randomIndex = Math.floor(Math.random() * numUsers);
+    setRandomIndex(randomIndex);
+    if (seenUsersArray.includes(randomIndex) || likedUsersArray.includes(randomIndex)) {
+      // If the randomly generated user is in the array of seen or liked users, call the function recursively to generate a new user
+      return getRandomUser();
+    }
+
+    // reset seenUsersArray if it is 75% of the users
+    if (seenUsersArray.length >= numUsers * 0.75) {
+      seenUsersArray = [];
+    }
+
+    seenUsersArray.push(randomIndex);
+    //seenUsersArray = []; // test reset
+    //likedUsersArray = []; // test reset
+    console.log('Seen Users List:' + JSON.stringify(seenUsersArray));
+    console.log('Liked Users List:' + JSON.stringify(likedUsersArray));
+    await AsyncStorage.setItem('seenProfiles', JSON.stringify(seenUsersArray));
+    //await AsyncStorage.setItem('likedProfiles', JSON.stringify(likedUsersArray)); //test
+  
     
     // Get the document at the randomly generated index
     const randomDoc = querySnapshot.docs[randomIndex];
@@ -74,6 +108,27 @@ const HomeScreen = () => {
     
     return userDoc.data();
   };
+
+  const handleLike = async () => {
+    const likedProfiles = await AsyncStorage.getItem('likedProfiles');
+    let likedUsersArray = JSON.parse(likedProfiles);
+    if (likedUsersArray == null) {
+      likedUsersArray = [];
+    }
+    likedUsersArray.push(randomIndex);
+    await AsyncStorage.setItem('likedProfiles', JSON.stringify(likedUsersArray));
+    console.log(likedUsersArray);
+    setData();
+    // scroll back to the top of the screen
+    scrollViewRef.current.scrollTo({ y: 0, animated: true });
+  }
+
+  // handle dislike button
+  const handleDislike = async () => {
+    setData();
+    // scroll back to the top of the screen
+    scrollViewRef.current.scrollTo({ y: 0, animated: true });
+  }
   
   // create function set data not async
   const setData = async () => {
@@ -211,7 +266,7 @@ const HomeScreen = () => {
      
     ) : (
 
-    <ScrollView style={styles.parentcontainer}>
+    <ScrollView style={styles.parentcontainer} ref={scrollViewRef}>
 
       <View style={styles.profilepiccontainer}>
         <Image style={styles.profilepic} source={{ uri: photoURL }}/>
@@ -261,11 +316,11 @@ const HomeScreen = () => {
         
         <View style={styles.four}>
           <View style={styles.swipebuttons}>
-            <TouchableOpacity style={styles.buttonStyle} onPress={() => navigation.navigate('BumpScreen')}>
+            <TouchableOpacity style={styles.buttonStyle} onPress={() => handleDislike()}>
               <Text style={styles.buttonText}>Maybe Later</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.buttonStyle} onPress={() => navigation.navigate('BumpScreen')}>
+            <TouchableOpacity style={styles.buttonStyle} onPress={() => handleLike()}>
               <Text style={styles.buttonText}>Sure!</Text>
             </TouchableOpacity>
           </View>
