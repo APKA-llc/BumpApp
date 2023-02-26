@@ -21,7 +21,7 @@ const fontBold = 'Montserrat-Bold';
 
 
 // Home Screen
-const HomeScreen = () => {
+const HomeScreen = async () => {
 
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
@@ -201,7 +201,30 @@ const HomeScreen = () => {
 
 
 // Settings Error Screen
-  const [showError, setShowError] = useState(false)
+
+await AsyncStorage.setItem('showError', 'true');
+
+  const [showError, setShowError] = useState(true)
+
+  const toggleShowError = async () => {
+    const ErrorScreen = await AsyncStorage.getItem('showError');
+    let errorScreen1 = JSON.parse(ErrorScreen);
+    if (ErrorScreen){
+      if (errorScreen1 === 'true'){
+        setShowError(true)
+        await AsyncStorage.setItem('showError','true');
+      }
+      else{
+        setShowError(false)
+        await AsyncStorage.setItem('showError','false');
+      }
+    } 
+    else{
+      await AsyncStorage.setItem('showError','true');
+    }
+  }
+
+
 
 // Switch Button Functions
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
@@ -213,22 +236,10 @@ const HomeScreen = () => {
 
   const toggleLocationSwitch = () => {
   setLocationEnabled(previousState => !previousState);};
+
+ 
   
 
-// Check if both switches are enabled, then store showError in AsyncStorage
- // useEffect(() => {
- // if (notificationsEnabled && locationEnabled) {
- // setShowError(true);
- // AsyncStorage.setItem('showError', JSON.stringify(showError));
- // }}, [notificationsEnabled, locationEnabled]);
-
-// Retrieve showError from AsyncStorage on component mount
-  // useEffect(() => {
-  // AsyncStorage.getItem('showError')
-  // .then(value => {
-  // if (value) {
- // setShowError(JSON.parse(value));
-  //}}); }, []);
 
   return (
 
@@ -237,39 +248,48 @@ const HomeScreen = () => {
     {showError ? (
 // Render Page if settings not enabled.
       
-        <View style={styles.parentcontainer}>
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>Please enable the following settings.</Text>
-          </View>
-          <View style={styles.bodyContainer}>
-            <View style={styles.switchSubContainer}>
-              <Switch
-                trackColor={{false: '#767577', true: purpleStandard}}
-                thumbColor={notificationsEnabled ? '#f4f3f4' : '#f4f3f4'}
-                ios_backgroundColor="#3e3e3e"
-                onValueChange={toggleNotificationsSwitch}
-                value={notificationsEnabled}
-              />
-              <Text style={styles.settingsButton}>Push Notifications</Text>
-            </View>
-            <View style={styles.switchSubContainer}>
-              <Switch
-                trackColor={{false: '#767577', true: purpleStandard}}
-                thumbColor={locationEnabled ? '#f4f3f4' : '#f4f3f4'}
-                ios_backgroundColor="#3e3e3e"
-                onValueChange={toggleLocationSwitch}
-                value={locationEnabled}
-              />
-              <Text style={styles.settingsButton}>Location Services</Text>
-            </View>
-            <View style={styles.switchSubContainer}>
-              <Ionicons name={'help-circle-outline'} size={40} color={purpleStandard} />
-              <TouchableOpacity onPress={() => navigation.navigate('BumpScreen')}>
-                <Text style={styles.settingsButton}>What is Bump?</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
+<View style={styles.parentcontainer}>
+
+  <View style={styles.titleContainer}>
+    <Text style={styles.title}>Please enable the following settings.</Text>
+  </View>
+
+  <View style={styles.bodyContainer}>
+    <View style={styles.switchSubContainer}>
+      <Switch
+        trackColor={{false: '#767577', true: purpleStandard}}
+        thumbColor={notificationsEnabled ? '#f4f3f4' : '#f4f3f4'}
+        ios_backgroundColor="#3e3e3e"
+        onValueChange={toggleNotificationsSwitch}
+        value={notificationsEnabled}
+      />
+      <Text style={styles.settingsButton}>Push Notifications</Text>
+    </View>
+    <View style={styles.switchSubContainer}>
+      <Switch
+        trackColor={{false: '#767577', true: purpleStandard}}
+        thumbColor={locationEnabled ? '#f4f3f4' : '#f4f3f4'}
+        ios_backgroundColor="#3e3e3e"
+        onValueChange={toggleLocationSwitch}
+        value={locationEnabled}
+      />
+      <Text style={styles.settingsButton}>Location Services</Text>
+    </View>
+    <View style={styles.switchSubContainer}>
+      <Ionicons name={'help-circle-outline'} size={40} color={purpleStandard} />
+      <TouchableOpacity onPress={() => navigation.navigate('')}>
+        <Text style={styles.settingsButton}>What is Bump?</Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+
+  <View style = {styles.exitErrorContainer}>
+    <TouchableOpacity style={styles.exitErrorButton} onPress={toggleShowError}>
+      <Text style = {styles.exitErrorText}>Continue</Text>
+    </TouchableOpacity>
+  </View>
+
+</View>
      
     ) : (
 
@@ -462,6 +482,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   switchSubContainer: {
+    //backgroundColor:"blue",
     padding: 26,
     flexDirection: 'row',
     justifyContent: 'center',
@@ -473,6 +494,7 @@ const styles = StyleSheet.create({
     fontFamily: fontRegular,
   },
   titleContainer:{
+    //backgroundColor:"red",
     flex:1,
     alignItems: 'center',
     justifyContent: 'flex-end'
@@ -482,6 +504,26 @@ const styles = StyleSheet.create({
     fontSize: "40",
     color: purpleStandard,
     fontFamily: fontBold,
+  },
+  exitErrorContainer:{
+    //backgroundColor:'green',
+    flex:1,
+    justifyContent:'center',
+    alignItems:'center',
+  },
+  exitErrorButton:{
+    borderRadius: '100%',
+    borderWidth: 4,
+    backgroundColor: purpleStandard,
+    borderColor: purpleStandard,
+    width: '40%',
+  
+  },
+  exitErrorText:{
+    fontSize: '30%',
+    color:'white',
+    fontFamily: fontMedium,
+    alignSelf:'center'
   }
 });
 
