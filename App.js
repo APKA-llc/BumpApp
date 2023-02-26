@@ -1,7 +1,3 @@
-//App.JS is the main file where the navigator will be. The screens will all connect here. No need to edit this
-
-// To see your specific screen that you are working on just change the initialRouteName to your screens name
-
 import { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';

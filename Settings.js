@@ -24,6 +24,9 @@ const SettingsScreen = () => {
     //Remove User From Storage
     try {
       AsyncStorage.removeItem('user');
+      AsyncStorage.removeItem('seenProfiles');
+      AsyncStorage.removeItem('likedProfiles');
+      AsyncStorage.removeItem('userNotReady');
     } catch (error) {
       console.log(error);
     }
@@ -31,7 +34,6 @@ const SettingsScreen = () => {
 
   };
 
-  
 
 return (
     

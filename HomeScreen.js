@@ -21,7 +21,7 @@ const fontBold = 'Montserrat-Bold';
 
 
 // Home Screen
-const HomeScreen = async () => {
+const HomeScreen = () => {
 
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
@@ -200,164 +200,165 @@ const HomeScreen = async () => {
 
 
 
-// Settings Error Screen
+  
+  const [userNotReady , setUserNotReady] = useState(null);
 
-await AsyncStorage.setItem('showError', 'true');
-
-  const [showError, setShowError] = useState(true)
-
-  const toggleShowError = async () => {
-    const ErrorScreen = await AsyncStorage.getItem('showError');
-    let errorScreen1 = JSON.parse(ErrorScreen);
-    if (ErrorScreen){
-      if (errorScreen1 === 'true'){
-        setShowError(true)
-        await AsyncStorage.setItem('showError','true');
-      }
-      else{
-        setShowError(false)
-        await AsyncStorage.setItem('showError','false');
-      }
-    } 
-    else{
-      await AsyncStorage.setItem('showError','true');
-    }
-  }
-
-
-
-// Switch Button Functions
+  // Switch Button Functions
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [locationEnabled, setLocationEnabled] = useState(false);
 
-// Toggle switch functions
+  // Toggle switch functions
   const toggleNotificationsSwitch = () => {
-  setNotificationsEnabled(previousState => !previousState);};
+    setNotificationsEnabled(previousState => !previousState);
+  };
 
   const toggleLocationSwitch = () => {
-  setLocationEnabled(previousState => !previousState);};
+    setLocationEnabled(previousState => !previousState);
+  };
 
- 
+  const verifyUserisReady = async () => {
+    if(notificationsEnabled && locationEnabled) {
+      await AsyncStorage.setItem('setUserNotReady', JSON.stringify(false));
+      setUserNotReady(false);
+    }
+    else{
+      await AsyncStorage.setItem('setUserNotReady', JSON.stringify(true));
+      setUserNotReady(true);
+    }
+  }
+  const checkIfUserReady = async () => {
+    try {
+      const userNotReady = await AsyncStorage.getItem('userNotReady');
+      console.log(userNotReady);
+      if (userNotReady === 'true') {
+        // The user has not fullfilled the requirements to use the app
+        setUserNotReady(true);
+      } else {
+        // The user has fullfiled the requirements to use the app
+        setUserNotReady(false);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  useEffect(() => {
+    checkIfUserReady();
+  }, []);
+  
+  if (userNotReady === null) {
+    return null;
+  }
+  //onsole.log(userNotReady);
   
 
-
   return (
-
     <View style={{flex: 1}}>
    
-    {showError ? (
-// Render Page if settings not enabled.
-      
-<View style={styles.parentcontainer}>
+    {userNotReady ? (
+      <View style={styles.parentcontainer}>
 
-  <View style={styles.titleContainer}>
-    <Text style={styles.title}>Please enable the following settings.</Text>
-  </View>
-
-  <View style={styles.bodyContainer}>
-    <View style={styles.switchSubContainer}>
-      <Switch
-        trackColor={{false: '#767577', true: purpleStandard}}
-        thumbColor={notificationsEnabled ? '#f4f3f4' : '#f4f3f4'}
-        ios_backgroundColor="#3e3e3e"
-        onValueChange={toggleNotificationsSwitch}
-        value={notificationsEnabled}
-      />
-      <Text style={styles.settingsButton}>Push Notifications</Text>
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>Please enable the following settings.</Text>
+      </View>
+    
+      <View style={styles.bodyContainer}>
+        <View style={styles.switchSubContainer}>
+          <Switch
+            trackColor={{false: '#767577', true: purpleStandard}}
+            thumbColor={notificationsEnabled ? '#f4f3f4' : '#f4f3f4'}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={toggleNotificationsSwitch}
+            value={notificationsEnabled}
+          />
+          <Text style={styles.settingsButton}>Push Notifications</Text>
+        </View>
+        <View style={styles.switchSubContainer}>
+          <Switch
+            trackColor={{false: '#767577', true: purpleStandard}}
+            thumbColor={locationEnabled ? '#f4f3f4' : '#f4f3f4'}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={toggleLocationSwitch}
+            value={locationEnabled}
+          />
+          <Text style={styles.settingsButton}>Location Services</Text>
+        </View>
+        <View style={styles.switchSubContainer}>
+          <Ionicons name={'help-circle-outline'} size={40} color={purpleStandard} />
+          <TouchableOpacity onPress={() => navigation.navigate('')}>
+            <Text style={styles.settingsButton}>What is Bump?</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    
+      <View style = {styles.exitErrorContainer}>
+        <TouchableOpacity style={styles.exitErrorButton} onPress={verifyUserisReady}>
+          <Text style = {styles.exitErrorText}>Continue</Text>
+        </TouchableOpacity>
+      </View>
+    
     </View>
-    <View style={styles.switchSubContainer}>
-      <Switch
-        trackColor={{false: '#767577', true: purpleStandard}}
-        thumbColor={locationEnabled ? '#f4f3f4' : '#f4f3f4'}
-        ios_backgroundColor="#3e3e3e"
-        onValueChange={toggleLocationSwitch}
-        value={locationEnabled}
-      />
-      <Text style={styles.settingsButton}>Location Services</Text>
-    </View>
-    <View style={styles.switchSubContainer}>
-      <Ionicons name={'help-circle-outline'} size={40} color={purpleStandard} />
-      <TouchableOpacity onPress={() => navigation.navigate('')}>
-        <Text style={styles.settingsButton}>What is Bump?</Text>
-      </TouchableOpacity>
-    </View>
-  </View>
-
-  <View style = {styles.exitErrorContainer}>
-    <TouchableOpacity style={styles.exitErrorButton} onPress={toggleShowError}>
-      <Text style = {styles.exitErrorText}>Continue</Text>
-    </TouchableOpacity>
-  </View>
-
-</View>
-     
     ) : (
+      <ScrollView style={styles.parentcontainer} ref={scrollViewRef}>
 
-    <ScrollView style={styles.parentcontainer} ref={scrollViewRef}>
-
-      <View style={styles.profilepiccontainer}>
-        <Image style={styles.profilepic} source={{ uri: photoURL }}/>
-      </View>
-
-      <View style={styles.bottomHalf}>
-
-        <View style={styles.one}>
-          <Text style={styles.firstName}>{name}, {age}</Text>
+        <View style={styles.profilepiccontainer}>
+          <Image style={styles.profilepic} source={{ uri: photoURL }}/>
         </View>
 
-        <View style={styles.two}>
-          <Text style={styles.description}>{yearAndMajor}</Text>
-          <Text style={styles.bio}> </Text>
-          <Text style={styles.bio}>{displayBio}</Text>
-        </View>
-        <View style={styles.three}>
-          <View style={styles.hingeContainerTo}>
-            <Text style={styles.hingeTextTo}>Hey!</Text>
-          </View>
-          <View style={{marginTop: 10}}></View>
-          <View style={styles.hingeContainerFrom}>
-            <Text style={styles.hingeTextFrom}>Tell me about yourself!</Text>
-          </View>
-          <View style={{marginTop: 10}}></View>
-          <View style={styles.hingeContainerFrom}>
-            <Text style={styles.hingeTextFrom}>{hingePrompt1}</Text>
-          </View>
-          <View style={{marginTop: 10}}></View>
-          <View style={styles.hingeContainerTo}>
-            <Text style={styles.hingeTextTo}>{hingeAnswer1}</Text>
-          </View>
-          <View style={{marginTop: 10}}></View>
-          
-          <View style={styles.hingeContainerFrom}>
-            <Text style={styles.hingeTextFrom}>{hingePrompt2}</Text>
-          </View>
-          <View style={{marginTop: 10}}></View>
-          <View style={styles.hingeContainerTo}>
-            <Text style={styles.hingeTextTo}>{hingeAnswer2}</Text>
-          </View>
-          <View style={{marginTop: 10}}></View>
-          <View style={styles.hingeContainerTo}>
-            <Text style={styles.hingeTextTo}>Nice to meet you! Do you want to hang out?</Text>
-          </View>
-        </View>
-        
-        <View style={styles.four}>
-          <View style={styles.swipebuttons}>
-            <TouchableOpacity style={styles.buttonStyle} onPress={() => handleDislike()}>
-              <Text style={styles.buttonText}>Maybe Later</Text>
-            </TouchableOpacity>
+        <View style={styles.bottomHalf}>
 
-            <TouchableOpacity style={styles.buttonStyle} onPress={() => handleLike()}>
-              <Text style={styles.buttonText}>Sure!</Text>
-            </TouchableOpacity>
+          <View style={styles.one}>
+            <Text style={styles.firstName}>{name}, {age}</Text>
+          </View>
+
+          <View style={styles.two}>
+            <Text style={styles.description}>{yearAndMajor}</Text>
+            <Text style={styles.bio}> </Text>
+            <Text style={styles.bio}>{displayBio}</Text>
+          </View>
+          <View style={styles.three}>
+            <View style={styles.hingeContainerTo}>
+              <Text style={styles.hingeTextTo}>Hey!</Text>
+            </View>
+            <View style={{marginTop: 10}}></View>
+            <View style={styles.hingeContainerFrom}>
+              <Text style={styles.hingeTextFrom}>Tell me about yourself!</Text>
+            </View>
+            <View style={{marginTop: 10}}></View>
+            <View style={styles.hingeContainerFrom}>
+              <Text style={styles.hingeTextFrom}>{hingePrompt1}</Text>
+            </View>
+            <View style={{marginTop: 10}}></View>
+            <View style={styles.hingeContainerTo}>
+              <Text style={styles.hingeTextTo}>{hingeAnswer1}</Text>
+            </View>
+            <View style={{marginTop: 10}}></View>
+            
+            <View style={styles.hingeContainerFrom}>
+              <Text style={styles.hingeTextFrom}>{hingePrompt2}</Text>
+            </View>
+            <View style={{marginTop: 10}}></View>
+            <View style={styles.hingeContainerTo}>
+              <Text style={styles.hingeTextTo}>{hingeAnswer2}</Text>
+            </View>
+            <View style={{marginTop: 10}}></View>
+            <View style={styles.hingeContainerTo}>
+              <Text style={styles.hingeTextTo}>Nice to meet you! Do you want to hang out?</Text>
+            </View>
+          </View>
+          <View style={styles.four}>
+            <View style={styles.swipebuttons}>
+              <TouchableOpacity style={styles.buttonStyle} onPress={() => handleDislike()}>
+                <Text style={styles.buttonText}>Maybe Later</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.buttonStyle} onPress={() => handleLike()}>
+                <Text style={styles.buttonText}>Sure!</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-
-      </View>
-    </ScrollView>
-
-            )
-          }
+      </ScrollView>
+      )}
     </View>
   );
 };
@@ -482,7 +483,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   switchSubContainer: {
-    //backgroundColor:"blue",
     padding: 26,
     flexDirection: 'row',
     justifyContent: 'center',
@@ -494,7 +494,6 @@ const styles = StyleSheet.create({
     fontFamily: fontRegular,
   },
   titleContainer:{
-    //backgroundColor:"red",
     flex:1,
     alignItems: 'center',
     justifyContent: 'flex-end'
@@ -517,7 +516,7 @@ const styles = StyleSheet.create({
     backgroundColor: purpleStandard,
     borderColor: purpleStandard,
     width: '40%',
-  
+
   },
   exitErrorText:{
     fontSize: '30%',

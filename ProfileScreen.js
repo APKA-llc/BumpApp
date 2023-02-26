@@ -297,6 +297,7 @@ const ProfileScreen = () => {
       try {
         await AsyncStorage.setItem('seenProfiles', JSON.stringify(seenProfiles));
         await AsyncStorage.setItem('likedProfiles', JSON.stringify(likedProfiles));
+        await AsyncStorage.setItem('userNotReady', JSON.stringify(true));
       } catch (error) {
         console.log(error);
       }
