@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { ScrollView, View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Image, FlatList, Keyboard, TouchableWithoutFeedback, Dimensions, KeyboardAvoidingView} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
@@ -10,6 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
 import Dialog, { DialogContent } from 'react-native-popup-dialog';
 import MainHub from './MainHub';
+import OpeningScreen from './OpeningScreen';
 import { collection, doc, setDoc, addDoc } from "firebase/firestore"; 
 import { getStorage, ref, getDownloadURL, getMetadata, uploadBytes, putFile} from "firebase/storage";
 import SelectDropdown from 'react-native-select-dropdown';
@@ -19,6 +20,13 @@ import SelectDropdown from 'react-native-select-dropdown';
 const purpleStandard = '#7851A9';
 const darkGrayStandard = '#9e9e9e';
 const lightGrayStandard = '#d3d3d3';
+
+const fontLight = 'Montserrat-Light';
+const fontRegular = 'Montserrat-Regular';
+const fontMedium = 'Montserrat-Medium';
+const fontSemiBold = 'Montserrat-SemiBold';
+const fontBold = 'Montserrat-Bold';
+
 
 // page numbers
 const chooseCollegePage = 0;
@@ -41,60 +49,70 @@ const hinge = [
     prompt: 'Most British Thing',
     fullPrompt: 'The most british thing I do on the daily ____',
     selected: false,
+    answer: '',
   },
   {
     id: 2,
     prompt: 'I\'m a Hardcore',
     fullPrompt: 'I\'m a hardcore ____',
     selected: false,
+    answer: '',
   },
   {
     id: 3,
     prompt: 'Fan of',
     fullPrompt: 'If ____ has a million fans, I am one of them. If ____ has 10 fans, I am one of them. If ____ only has one fan, then that one fan is me.',
     selected: false,
+    answer: '',
   },
   {
     id: 4,
     prompt: 'Secret Talent',
     fullPrompt: 'My secret talent ____',
     selected: false,
+    answer: '',
   },
   {
     id: 5,
     prompt: 'Dying Wish',
     fullPrompt: 'My dying wish is ____',
     selected: false,
+    answer: '',
   },
   {
     id: 6,
     prompt: 'Most Irrational Fear',
     fullPrompt: 'My most irrational fear ____',
     selected: false,
+    answer: '',
   },
   {
     id: 7,
     prompt: 'Never-ending Nightmare',
     fullPrompt: 'The most british thing I do on the daily____',
     selected: false,
+    answer: '',
   },
   {
     id: 8,
     prompt: 'At a Party',
     fullPrompt: 'If you find me at a party, I\'m the one ____',
     selected: false,
+    answer: '',
   },
   {
     id: 9,
     prompt: 'Geek Out',
     fullPrompt: 'I geek out on ____',
     selected: false,
+    answer: '',
   },
   {
     id: 10,
     prompt: 'Cheddar News',
     fullPrompt: 'Cheddar News is ____',
     selected: false,
+    answer: '',
   },
 ];
 
@@ -111,9 +129,6 @@ const ProfileScreen = () => {
   const [year, setYear] = useState(null);
   const [major, setMajor] = useState(null);
   const [displayBio, setDisplayBio] = useState(null);
-  const [hingeResponse1, setHingeResponse1] = useState(null);
-  const [hingeResponse2, setHingeResponse2] = useState(null);
-  const [hingeResponse3, setHingeResponse3] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState(null);
   const [image, setImage] = useState(null);
 
@@ -134,7 +149,7 @@ const ProfileScreen = () => {
       major: major,
       displayBio: displayBio,
       // Array called QA with 3 'hingePrompt - hingeResponse' strings concatenated
-      QA: [selectedItems[0].fullPrompt + '-' + hingeResponse1, selectedItems[1].fullPrompt + '-' + hingeResponse2, selectedItems[2].fullPrompt + '-' + hingeResponse3],
+      QA: [selectedItems[0].fullPrompt + '-' + selectedItems[0].answer, selectedItems[1].fullPrompt + '-' + selectedItems[1].answer, selectedItems[2].fullPrompt + '-' + selectedItems[2].answer],
       phoneNumber: phoneNumber,
       email: userEmail
     })
@@ -219,10 +234,6 @@ const ProfileScreen = () => {
   };
 
   const handleDismiss = () => Keyboard.dismiss();
-
-
-  const [showErrorDialog, setShowErrorDialog] = useState(false);
-
 
 
   const [currentGroup, setCurrentGroup] = useState(0);
@@ -338,22 +349,27 @@ const ProfileScreen = () => {
           Alert.alert('Error', 'Please enter your bio.', [{ text: 'Try Again' }]);
           return;
         }
-        // if the bio is more than 200 characters say its too long
+        // if the bio is less than 100 characters say its too short
+        if(displayBio.length < 100) {
+          Alert.alert('Error', 'Bio is too short. Please enter a bio that is more than 100 characters.', [{ text: 'Try Again' }]);
+          return;
+        }
+        // if the bio is more than 150 characters say its too long
         if(displayBio.length > 150) {
           Alert.alert('Error', 'Bio is too long. Please enter a bio that is less than 150 characters.', [{ text: 'Try Again' }]);
           return;
         }
       }
       else if(currentGroup === answerHingePromptsPage){
-        if(hingeResponse1 == null || hingeResponse1 == '') {
+        if(selectedItems[0].answer == null || selectedItems[0].answer == '') {
           Alert.alert('Error', 'Please enter your answer for the first prompt.', [{ text: 'Try Again' }]);
           return;
         }
-        if(hingeResponse2 == null || hingeResponse2 == '') {
+        if(selectedItems[1].answer == null || selectedItems[1].answer == '') {
           Alert.alert('Error', 'Please enter your answer for the second prompt.', [{ text: 'Try Again' }]);
           return;
         }
-        if(hingeResponse3 == null || hingeResponse3 == '') {
+        if(selectedItems[2].answer == null || selectedItems[2].answer == '') {
           Alert.alert('Error', 'Please enter your answer for the third prompt.', [{ text: 'Try Again' }]);
           return;
         }
@@ -368,7 +384,7 @@ const ProfileScreen = () => {
   // if going "Back" from the first page, then go to the OpeningScreen
   const formEscape = () => {
     if (currentGroup === chooseCollegePage) {
-      navigation.navigate(MainHub);
+      navigation.navigate(OpeningScreen);
     } else {
       setCurrentGroup(currentGroup - 1);
     }
@@ -387,6 +403,18 @@ const ProfileScreen = () => {
 
   // an array containing the hinge prompts the user selects
   const [selectedItems, setSelectedItems] = useState([]);
+
+  const handleInputChange = (id, text) => {
+    setSelectedItems(prevSelectedItems => {
+      const updatedSelectedItems = prevSelectedItems.map(item => {
+        if (item.id === id) {
+          return {...item, answer: text}
+        }
+        return item;
+      });
+      return updatedSelectedItems;
+    });
+  };
 
   const handleOptionPress = (item) => {
     setSelectedItems((selectedItems) => {
@@ -411,15 +439,11 @@ const ProfileScreen = () => {
     return selectedItems.find((selectedItem) => selectedItem.id === item.id);
   };
 
-  // records the hinge response (INCOMPLETE)
-  // const [hingeResponse1, setHingeResponse1] = useState('');
-  // const [hingeResponse2, setHingeResponse2] = useState('');
-  // const [hingeResponse3, setHingeResponse3] = useState('');
-
   const yearAndMajor = year + " Currently Studying " + major;
+  const [numCharactersBio, setNumCharactersBio] = useState(0);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {paddingHorizontal: (currentGroup !== previewProfilePage ? '8%' : '0%'), paddingVertical: (currentGroup !== previewProfilePage ? '12%' : '0%')}]}>
 
       {currentGroup === chooseCollegePage && ( // choose college
         <View style = {styles.vanish}>
@@ -437,7 +461,8 @@ const ProfileScreen = () => {
               defaultButtonText={"Tap to Select"}
               buttonTextAfterSelection={(item, index) => {return college}}
               buttonStyle={styles.dropdownBox}
-              buttonTextStyle={{color: purpleStandard, textAlign: 'center'}}
+              buttonTextStyle={styles.dropdownInput}
+              rowTextStyle={styles.dropdownRow}
             />
             <Text style={styles.text}>More colleges coming soon!</Text>
           </View>
@@ -536,6 +561,7 @@ const ProfileScreen = () => {
 
       {currentGroup === inputYearAndMajorPage && ( // input year and major
         <View style = {styles.vanish}>
+
           <View style={styles.titleContainer}>
             <Text style={styles.title}>Enter Your Year in College</Text>
           </View>
@@ -546,7 +572,6 @@ const ProfileScreen = () => {
               placeholder="e.g. First-year"
               defaultValue={year ? year : ''}
               onChangeText={(text) => setYear(text)}
-              
             />
           </View>
 
@@ -570,7 +595,7 @@ const ProfileScreen = () => {
         <View style = {styles.vanish}>
         <TouchableWithoutFeedback onPress={dismissKeyboard}>
           <View style={styles.titleContainer}>
-          <Text style={styles.title}>Introduce Yourself</Text>
+            <Text style={styles.title}>Introduce Yourself</Text>
           </View>
         </TouchableWithoutFeedback>
 
@@ -582,8 +607,13 @@ const ProfileScreen = () => {
             numberOfLines={5}
             placeholder="Write Your Bio"
             defaultValue={displayBio ? displayBio : ''}
-            onChangeText={(text) => setDisplayBio(text)}
+            onChangeText={(text) => {
+              setDisplayBio(text)
+              setNumCharactersBio(text.length);
+            }}
+            minLength={100}
           />
+          <Text style={styles.text}>{Math.max(100 - numCharactersBio, 0)} More Characters Needed</Text>
         </View>
       </View>
       )}
@@ -626,35 +656,26 @@ const ProfileScreen = () => {
           <Text style={styles.title}>Answer Prompts</Text>
           </View>
 
-          <View style={styles.answersView}>
-            <View style={styles.answerPromptContainer}>
-              <Text style={[styles.hingePrompt, styles.hingeQuestion]}>{selectedItems[0].fullPrompt}</Text>
-              <TextInput
-                style={styles.hingeInput}
-                placeholder="Enter Response"
-                defaultValue={hingeResponse1 ? hingeResponse1 : ''}
-                onChangeText={(text) => setHingeResponse1(text)}
-              />
-            </View>
-            <View style={styles.answerPromptContainer}>
-              <Text style={[styles.hingePrompt, styles.hingeQuestion]}>{selectedItems[1].fullPrompt}</Text>
-              <TextInput
-                style={styles.hingeInput}
-                placeholder="Enter Response"
-                defaultValue={hingeResponse2 ? hingeResponse2 : ''}
-                onChangeText={(text) => setHingeResponse2(text)}
-              />
-            </View>
-            <View style={styles.answerPromptContainer}>
-              <Text style={[styles.hingePrompt, styles.hingeQuestion]}>{selectedItems[2].fullPrompt}</Text>
-              <TextInput
-                style={styles.hingeInput}
-                placeholder="Enter Response"
-                defaultValue={hingeResponse3 ? hingeResponse3 : ''}
-                onChangeText={(text) => setHingeResponse3(text)}
-              />
-            </View>
-          </View>
+          <KeyboardAvoidingView behavior={'padding'} style={styles.answersView}>
+            <FlatList
+            data={selectedItems}
+            renderItem={({item}) => {
+              return (
+                <View style={styles.answerPromptContainer}>
+                  <Text style={[styles.hingePrompt, styles.hingeQuestion]}>{item.fullPrompt}</Text>
+                  <TextInput
+                    style={styles.hingeInput}
+                    placeholder="Enter Response"
+                    defaultValue={item.answer}
+                    onChangeText={(text) => handleInputChange(item.id, text)}
+                  />
+                </View>
+              )
+            }}
+            keyExtractor={(item) => item.id.toString()}
+            showsVerticalScrollIndicator={false}
+            />
+          </KeyboardAvoidingView>
       </View>
       )}
 
@@ -690,7 +711,7 @@ const ProfileScreen = () => {
                   </View>
                   <View style={{marginTop: 10}}></View>
                   <View style={styles.hingeContainerFrom}>
-                    <Text style={styles.hingeTextFrom}>{hingeResponse1}</Text>
+                    <Text style={styles.hingeTextFrom}>{selectedItems[0].answer}</Text>
                   </View>
                   <View style={{marginTop: 10}}></View>
 
@@ -699,7 +720,7 @@ const ProfileScreen = () => {
                   </View>
                   <View style={{marginTop: 10}}></View>
                   <View style={styles.hingeContainerFrom}>
-                    <Text style={styles.hingeTextFrom}>{hingeResponse2}</Text>
+                    <Text style={styles.hingeTextFrom}>{selectedItems[1].answer}</Text>
                   </View>
                   <View style={{marginTop: 10}}></View>
 
@@ -708,7 +729,7 @@ const ProfileScreen = () => {
                   </View>
                   <View style={{marginTop: 10}}></View>
                   <View style={styles.hingeContainerFrom}>
-                    <Text style={styles.hingeTextFrom}>{hingeResponse3}</Text>
+                    <Text style={styles.hingeTextFrom}>{selectedItems[2].answer}</Text>
                   </View>
                   <View style={{marginTop: 10}}></View>
 
@@ -737,7 +758,11 @@ const ProfileScreen = () => {
         </View>
       )}
 
-      <View style = {[styles.buttonContainer, {flex: currentGroup === chooseHingePromptsPage ? 3 : 1}]}>
+      <View style = {[styles.buttonContainer, {
+          flex: currentGroup === chooseHingePromptsPage ? 3 : 1,
+          marginHorizontal: currentGroup === previewProfilePage ? '8%' : '0%',
+          marginBottom: currentGroup === previewProfilePage ? '12%' : '0%',
+        }]}>
 
         {currentGroup === chooseHingePromptsPage && (
           <View style={styles.promptCard}>
@@ -758,7 +783,7 @@ const ProfileScreen = () => {
         <TouchableOpacity
           style={[
             styles.buttonStyle,
-            {backgroundColor: currentGroup === chooseHingePromptsPage && numSelected < 3 ? lightGrayStandard : purpleStandard},
+            {backgroundColor: currentGroup === chooseHingePromptsPage && numSelected < 3 ? lightGrayStandard : purpleStandard,},
           ]}
           onPress={currentGroup === emailVerificationPage ? handleSignUp : formComplete}
           disabled={currentGroup === chooseHingePromptsPage && numSelected < 3}
@@ -783,8 +808,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     flex: 1,
     justifyContent: 'center',
-    paddingVertical: '12%',
-    paddingHorizontal: '8%',
   },
   vanish: {
     flex: 3,
@@ -799,15 +822,16 @@ const styles = StyleSheet.create({
     color: purpleStandard,
     textAlign: 'center',
     marginBottom: '2%',
-    width: '80%',
+    width: '84%',
     lineHeight: '22%',
+    fontFamily: fontRegular,
   },
   title: {
-    fontSize: '45%',
+    fontSize: '38%',
     textAlign: 'center',
-    fontWeight: 'bold',
     color: purpleStandard,
-    marginBottom: '5%'
+    marginBottom: '5%',
+    fontFamily: fontBold,
   },
   inputContainer: {
     flex: 1,
@@ -824,6 +848,12 @@ const styles = StyleSheet.create({
     padding: '4%',
     paddingHorizontal: '12%',
     marginBottom: '6%',
+    fontFamily: fontMedium,
+  },
+  dropdownInput: {
+    color: purpleStandard,
+    textAlign: 'center',
+    fontFamily: fontMedium,
   },
   dropdownBox: {
     borderWidth: 2,
@@ -833,9 +863,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: '8%',
     marginBottom: '6%',
   },
+  dropdownRow: {
+    color: purpleStandard,
+    fontFamily: fontMedium,
+  },
   bioInput: {
-    height: "80%",
+    height: "60%",
     width: "80%",
+    lineHeight: '24%',
     marginVertical: 10,
     marginHorizontal: 20,
     padding: 10,
@@ -845,6 +880,7 @@ const styles = StyleSheet.create({
     borderColor: purpleStandard,
     fontSize: 16,
     textAlignVertical: 'top',
+    fontFamily: fontRegular,
   },
 
   buttonContainer:{
@@ -858,9 +894,9 @@ const styles = StyleSheet.create({
   },
   buttonText:{
     color: "white",
-    fontWeight:'bold', 
-    fontSize:20,
-    textAlign:'center'
+    fontSize: 20,
+    textAlign:'center',
+    fontFamily: fontSemiBold,
   },
   choosePhoto:{
     backgroundColor: purpleStandard,
@@ -870,7 +906,7 @@ const styles = StyleSheet.create({
   },
   hingeQuestion:{
     fontSize:'18%',
-    fontWeight: '500',
+    fontFamily: fontMedium,
   },
   promptContainer: {
     alignItems: 'center',
@@ -884,17 +920,19 @@ const styles = StyleSheet.create({
   hingePrompt: {
     textAlign: 'center',
     marginBottom: '5%',
+    fontFamily: fontRegular,
   },
   hingeInput:{
     borderWidth: 2,
     borderRadius: 25,
     borderColor: purpleStandard,
-    alignContent:'center',
+    textAlign: 'center',
     fontSize: "20%",
     padding:'2%',
-    width:'50%',
+    width:'66%',
     marginBottom:"5%",
     padding: '3%',
+    fontFamily: fontRegular,
   },
 
   hingePromptPageContainer: {
@@ -927,6 +965,7 @@ const styles = StyleSheet.create({
     flex: 1,
     color: darkGrayStandard,
     marginTop: '2%',
+    fontFamily: fontRegular,
   },
   fullPromptContainer: {
     flex: 4,
@@ -942,14 +981,14 @@ const styles = StyleSheet.create({
   fullPromptText: {
     color: purpleStandard,
     fontSize: 18,
-    fontWeight: '700',
+    fontFamily: fontSemiBold,
   },
   promptSelection: {
     flex: 1,
     color: darkGrayStandard,
-    fontWeight: '700',
     fontSize: '16%',
     marginTop: '2%',
+    fontFamily: fontBold,
   },
   imageStyle: {
     aspectRatio: 4/5,
@@ -970,6 +1009,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: '14%',
     color: darkGrayStandard,
+    fontFamily: fontRegular,
   },
   previewProfileContainer: {
     flex: 5,
@@ -1003,19 +1043,19 @@ const styles = StyleSheet.create({
 
   firstName: {
     flex: 1,
-    fontFamily: 'Baskerville',
+    fontFamily: fontRegular,
     fontSize: 55,
     fontWeight: '400',
     marginLeft: 10,
   },
   description: {
-    fontFamily: 'Baskerville',
+    fontFamily: fontRegular,
     marginLeft: 10,
     marginTop: '1%',
     fontSize: 25,
   },
   bio: {
-    fontFamily: 'Baskerville',
+    fontFamily: fontRegular,
     marginLeft: 10,
     fontSize: 25,
   },

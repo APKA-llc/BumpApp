@@ -157,14 +157,16 @@ const styles = StyleSheet.create({
     textAlign:'center'
   },
   input: {
-    flex: 0.2,
-    borderWidth: 1,
-    borderColor: purpleStandard,
-    borderRadius:20,
+    textAlign: 'center',
     marginVertical: 10,
-    paddingHorizontal: 10,
-    bottom:100,
-    color: purpleStandard,
+    borderWidth: 2,
+    borderRadius: 25,
+    borderColor: purpleStandard,
+    alignContent: 'center',
+    fontSize: "20%",
+    padding: '4%',
+    paddingHorizontal: '12%',
+    marginBottom: '6%',
   },
   buttonContainer: {
     flex: 1,
