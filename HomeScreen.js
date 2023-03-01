@@ -349,12 +349,12 @@ const HomeScreen = () => {
           </View>
           <View style={styles.four}>
             <View style={styles.swipebuttons}>
-              <TouchableOpacity style={styles.buttonStyle} onPress={() => handleDislike()}>
-                <Text style={styles.buttonText}>Maybe Later</Text>
+              <TouchableOpacity style={styles.buttonStyleDislike} onPress={() => handleDislike()}>
+                <Text style={styles.buttonTextDislike}>Maybe Later</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.buttonStyle} onPress={() => handleLike()}>
-                <Text style={styles.buttonText}>Sure!</Text>
+              <TouchableOpacity style={styles.buttonStyleLike} onPress={() => handleLike()}>
+                <Text style={styles.buttonTextLike}>Sure!</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -371,7 +371,7 @@ const win = Dimensions.get('window');
 const styles = StyleSheet.create({
   parentcontainer: {
     flex: 1,
-    width: '100%',
+    width: "100%",
     backgroundColor:'white'
   },
   profilepiccontainer: {
@@ -412,7 +412,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: '5%',
   },
-  buttonStyle: {
+  buttonStyleLike: {
+    borderRadius: '100%',
+    borderWidth: 3,
+    borderColor: purpleStandard,
+    backgroundColor:purpleStandard,
+    width: '40%',
+    height: 88,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonStyleDislike: {
     borderRadius: '100%',
     borderWidth: 3,
     borderColor: purpleStandard,
@@ -421,13 +431,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  buttonText: {
+  buttonTextDislike: {
     color: purpleStandard,
     fontSize: '20%',
     textAlign: 'center',
-    fontFamily: fontMedium,
+    fontFamily: fontSemiBold,
   },
-
+  buttonTextLike: {
+    color: 'white',
+    fontSize: '20%',
+    textAlign: 'center',
+    fontFamily: fontSemiBold,
+  },
   firstName: {
     flex: 1,
     fontFamily: 'Baskerville',

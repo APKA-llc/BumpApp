@@ -184,6 +184,7 @@ const styles = StyleSheet.create({
   parentcontainer: {
     flex: 1,
     width: '100%',
+    backgroundColor:'white'
   },
   profilepiccontainer: {
     flex: 1,
