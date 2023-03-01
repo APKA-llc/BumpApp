@@ -1,7 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Image, Button} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { LinearGradient } from 'expo-linear-gradient';
 import * as Location from 'expo-location';
 
 import { firestore} from './firebaseConfig';
@@ -9,7 +8,7 @@ import {getDatabase, ref, set} from "firebase/database";
 
 
 //Style Standardization
-const purpleStandard = '#7851A9';
+const purpleStandard = '#7851A9'; //orange: #f2af58, brown: #70452a, turquoise: #008d8c, magenta: #962c4f, blue: #2a2ab0
 const darkGrayStandard = '#9e9e9e';
 const lightGrayStandard = '#d3d3d3';
 

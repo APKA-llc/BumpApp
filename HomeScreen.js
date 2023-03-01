@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { View, Text, Dimensions, TouchableOpacity, StyleSheet, ScrollView, Image,Switch, Button, Settings} from 'react-native';
+import { View, Text, Dimensions, TouchableOpacity, StyleSheet, ScrollView, Image,Switch, Button, Settings, FlatList} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { firestore, storage} from './firebaseConfig';
 import { collection, getDocs, getFirestore, query, orderBy, where, doc, getDoc } from "firebase/firestore"; 
@@ -31,11 +31,77 @@ const HomeScreen = () => {
   const [hingeAnswer1, setHingeAnswer1] = useState('');
   const [hingePrompt2, setHingePrompt2] = useState('');
   const [hingeAnswer2, setHingeAnswer2] = useState('');
+  const [hingePrompt3, setHingePrompt3] = useState('');
+  const [hingeAnswer3, setHingeAnswer3] = useState('');
   const [photoURL, setPhotoURL] = useState('');
   const [photoName, setPhotoName] = useState('');
   const [photoLoaded, setPhotoLoaded] = useState(false);
   const [randomIndex, setRandomIndex] = useState(0);
   const scrollViewRef = useRef();
+
+  // "text" conversation
+  const mockConversation = [
+    {
+      id: 1,
+      text: "Hey! My name is " + name,
+      direction: "to",
+    },
+    {
+      id: 2,
+      text: "I am " + age + " years old and I'm a " + yearAndMajor,
+      direction: "to",
+    },
+    {
+      id: 3,
+      text: "Tell me more about yourself!",
+      direction: "from",
+    },
+    {
+      id: 4,
+      text: displayBio,
+      direction: "to",
+    },
+    {
+      id: 5,
+      text: "Alrighty, whenever I meet someone new I like playing this game. It's like 21 questions, but better. I'll say a prompt, you respond.",
+      direction: "from",
+    },
+    {
+      id: 6,
+      text: hingePrompt1,
+      direction: "from",
+    },
+    {
+      id: 7,
+      text: hingeAnswer1,
+      direction: "to",
+    },
+    {
+      id: 8,
+      text: hingePrompt2,
+      direction: "from",
+    },
+    {
+      id: 9,
+      text: hingeAnswer2,
+      direction: "to",
+    },
+    {
+      id: 10,
+      text: hingePrompt3,
+      direction: "from",
+    },
+    {
+      id: 11,
+      text: hingeAnswer3,
+      direction: "to",
+    },
+    {
+      id: 12,
+      text: "Nice to meet you! Do you want to hang out?",
+      direction: "from",
+    },
+  ];
   
 
 
@@ -151,16 +217,22 @@ const HomeScreen = () => {
     const dashIndex1 = QA1.indexOf('-');
     const QA2 = user.QA[Math.floor(Math.random() * 3)];
     const dashIndex2 = QA2.indexOf('-');
+    const QA3 = user.QA[Math.floor(Math.random() * 3)];
+    const dashIndex3 = QA3.indexOf('-');
     
     const question1 = QA1.substring(0, dashIndex1).trim();
     const answer1 = QA1.substring(dashIndex1 + 1).trim();
     const question2 = QA2.substring(0, dashIndex2).trim();
     const answer2 = QA2.substring(dashIndex2 + 1).trim();
+    const question3 = QA3.substring(0, dashIndex3).trim();
+    const answer3 = QA3.substring(dashIndex3 + 1).trim();
     
     setHingePrompt1(question1);
     setHingeAnswer1(answer1);
     setHingePrompt2(question2);
     setHingeAnswer2(answer2);
+    setHingePrompt3(question3);
+    setHingeAnswer3(answer3);
   
     
   
@@ -307,46 +379,24 @@ const HomeScreen = () => {
         </View>
 
         <View style={styles.bottomHalf}>
-
           <View style={styles.one}>
-            <Text style={styles.firstName}>{name}, {age}</Text>
+            <Text style={styles.firstName}>{name}</Text>
           </View>
 
-          <View style={styles.two}>
-            <Text style={styles.description}>{yearAndMajor}</Text>
-            <Text style={styles.bio}> </Text>
-            <Text style={styles.bio}>{displayBio}</Text>
-          </View>
-          <View style={styles.three}>
-            <View style={styles.hingeContainerTo}>
-              <Text style={styles.hingeTextTo}>Hey!</Text>
-            </View>
-            <View style={{marginTop: 10}}></View>
-            <View style={styles.hingeContainerFrom}>
-              <Text style={styles.hingeTextFrom}>Tell me about yourself!</Text>
-            </View>
-            <View style={{marginTop: 10}}></View>
-            <View style={styles.hingeContainerFrom}>
-              <Text style={styles.hingeTextFrom}>{hingePrompt1}</Text>
-            </View>
-            <View style={{marginTop: 10}}></View>
-            <View style={styles.hingeContainerTo}>
-              <Text style={styles.hingeTextTo}>{hingeAnswer1}</Text>
-            </View>
-            <View style={{marginTop: 10}}></View>
-            
-            <View style={styles.hingeContainerFrom}>
-              <Text style={styles.hingeTextFrom}>{hingePrompt2}</Text>
-            </View>
-            <View style={{marginTop: 10}}></View>
-            <View style={styles.hingeContainerTo}>
-              <Text style={styles.hingeTextTo}>{hingeAnswer2}</Text>
-            </View>
-            <View style={{marginTop: 10}}></View>
-            <View style={styles.hingeContainerTo}>
-              <Text style={styles.hingeTextTo}>Nice to meet you! Do you want to hang out?</Text>
-            </View>
-          </View>
+          <FlatList
+            data={mockConversation}
+            renderItem={({item}) => {
+              return (
+                <View style={item.direction === "to" ? styles.hingeContainerTo : styles.hingeContainerFrom}>
+                  <Text style={item.direction === "to" ? styles.hingeTextTo : styles.hingeTextFrom}>{item.text}</Text>
+                </View>
+              )
+            }}
+            keyExtractor={(item) => item.id.toString()}
+            showsVerticalScrollIndicator={false}
+            scrollEnabled={false}
+          />
+
           <View style={styles.four}>
             <View style={styles.swipebuttons}>
               <TouchableOpacity style={styles.buttonStyleDislike} onPress={() => handleDislike()}>
@@ -385,17 +435,12 @@ const styles = StyleSheet.create({
 
   bottomHalf: {
     flex: 1,
+    paddingHorizontal: '1%',
   },
   one: {
     justifyContent: 'center',
-  },
-  two: {
-    flexDirection: 'column',
-    padding: 10,
-  },
-  three: {
-    padding: 10,
-    marginBottom: 24,
+    alignItems: 'center',
+    marginBottom: '5%',
   },
   four: {
     alignItems: 'center',
@@ -445,21 +490,8 @@ const styles = StyleSheet.create({
   },
   firstName: {
     flex: 1,
-    fontFamily: 'Baskerville',
-    fontSize: 55,
-    fontFamily: fontRegular,
-    marginLeft: 10,
-  },
-  description: {
-    fontFamily: fontRegular,
-    marginLeft: 10,
-    marginTop: '1%',
-    fontSize: 25,
-  },
-  bio: {
-    fontFamily: fontRegular,
-    marginLeft: 10,
-    fontSize: 25,
+    fontSize: '40%',
+    fontFamily: fontMedium,
   },
   hingeContainerFrom: {
     alignItems: 'flex-end',
@@ -468,11 +500,12 @@ const styles = StyleSheet.create({
     paddingLeft: 16,
     paddingRight: 16,
     borderWidth: 2,
-    borderColor: "purple",
+    borderColor: purpleStandard,
     borderRadius: 20,
     marginTop: 2,
     alignSelf: 'flex-end',
     maxWidth: '80%',
+    marginBottom: "2%",
   },
   hingeContainerTo: {
     paddingTop: 12,
@@ -484,6 +517,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
     alignSelf: 'flex-start',
     maxWidth: '80%',
+    marginBottom: "2%",
   },
   hingeTextFrom: {
     fontFamily: fontRegular,
@@ -494,8 +528,9 @@ const styles = StyleSheet.create({
     fontFamily: fontRegular,
     fontSize: 20,
     color: 'white',
-  },bodyContainer:{
-    flex:3,
+  },
+  bodyContainer:{
+    flex: 3,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -522,7 +557,6 @@ const styles = StyleSheet.create({
     fontFamily: fontBold,
   },
   exitErrorContainer:{
-    //backgroundColor:'green',
     flex:1,
     justifyContent:'center',
     alignItems:'center',
