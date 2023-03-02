@@ -105,7 +105,7 @@ const BumpScreen = ({ navigation }) => {
       setButtonMessage("Back");
     } else {
       setCurrentGroup(youveBumpedScreen);
-      setButtonMessage("Learn More!");
+      setButtonMessage("Continue");
     }
   }
 
@@ -145,15 +145,18 @@ const BumpScreen = ({ navigation }) => {
                   </View>
                 )
               }}
+              style={{marginHorizontal: '0.2%'}}
               keyExtractor={(item) => item.id.toString()}
               showsVerticalScrollIndicator={false}
             />
 
           </View>
         )}
-        <TouchableOpacity style={styles.buttonStyle} onPress={handlePress}>
-          <Text style={styles.buttonText}>{buttonMessage}</Text>
-        </TouchableOpacity>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.buttonStyle} onPress={handlePress}>
+            <Text style={styles.buttonText}>{buttonMessage}</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -214,14 +217,19 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   nameContainer: {
-    height: '7%',
+    height: '8%',
     justifyContent: 'center',
     alignItems: 'center',
+    width: '100%',
+    backgroundColor: purpleStandard,
+    borderColor: 'white',
+    borderBottomWidth: '3%',
   },
   firstName: {
     flex: 1,
     fontSize: '40%',
     fontFamily: fontMedium,
+    color: 'white',
   },
   hingeContainerFrom: {
     alignItems: 'flex-end',
@@ -260,6 +268,12 @@ const styles = StyleSheet.create({
     color: 'white',
   },
 
+  buttonContainer: {
+    justifyContent: 'flex-end',
+    width: '100%',
+    alignItems: 'center',
+    padding: '8%',
+  },
   buttonStyle: {
     backgroundColor: 'white',
     borderRadius: 25,

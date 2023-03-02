@@ -98,8 +98,8 @@ const HomeScreen = () => {
     },
     {
       id: 12,
-      text: "Nice to meet you! Do you want to hang out?",
-      direction: "from",
+      text: "Great talking to you! Do you want to hang out?",
+      direction: "to",
     },
   ];
   
@@ -392,6 +392,7 @@ const HomeScreen = () => {
                 </View>
               )
             }}
+            style={{marginHorizontal: '0.2%'}}
             keyExtractor={(item) => item.id.toString()}
             showsVerticalScrollIndicator={false}
             scrollEnabled={false}
