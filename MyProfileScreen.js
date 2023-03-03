@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, Dimensions, TouchableOpacity, StyleSheet, ScrollView, Image, Button} from 'react-native';
+import { View, Text, Dimensions, TouchableOpacity, StyleSheet, ScrollView, Image, FlatList} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 
@@ -56,6 +56,135 @@ const hingeAnswer10 = 'a reputable and prestigious news source';
 const MyProfileScreen = () => {
   const navigation = useNavigation();
 
+  // "text" conversation
+  const mockConversation = [
+    {
+      id: 1,
+      text: "Hey!",
+      direction: "from",
+    },
+    {
+      id: 2,
+      text: "I am " + age + " years old and I'm a " + yearAndMajor,
+      direction: "from",
+    },
+    {
+      id: 3,
+      text: "Tell me more about yourself!",
+      direction: "to",
+    },
+    {
+      id: 4,
+      text: displayBio,
+      direction: "from",
+    },
+    {
+      id: 5,
+      text: "Alrighty, whenever I meet someone new I like playing this game. It's like 21 questions, but better. I'll say a prompt, you respond.",
+      direction: "to",
+    },
+    {
+      id: 6,
+      text: hingePrompt1,
+      direction: "to",
+    },
+    {
+      id: 7,
+      text: hingeAnswer1,
+      direction: "from",
+    },
+    {
+      id: 8,
+      text: hingePrompt2,
+      direction: "to",
+    },
+    {
+      id: 9,
+      text: hingeAnswer2,
+      direction: "from",
+    },
+    {
+      id: 10,
+      text: hingePrompt3,
+      direction: "to",
+    },
+    {
+      id: 11,
+      text: hingeAnswer3,
+      direction: "from",
+    },
+    {
+      id: 12,
+      text: hingePrompt4,
+      direction: "to",
+    },
+    {
+      id: 13,
+      text: hingeAnswer4,
+      direction: "from",
+    },
+    {
+      id: 14,
+      text: hingePrompt5,
+      direction: "to",
+    },
+    {
+      id: 15,
+      text: hingeAnswer5,
+      direction: "from",
+    },
+    {
+      id: 16,
+      text: hingePrompt6,
+      direction: "to",
+    },
+    {
+      id: 17,
+      text: hingeAnswer6,
+      direction: "from",
+    },
+    {
+      id: 18,
+      text: hingePrompt7,
+      direction: "to",
+    },
+    {
+      id: 19,
+      text: hingeAnswer7,
+      direction: "from",
+    },
+    {
+      id: 20,
+      text: hingePrompt8,
+      direction: "to",
+    },
+    {
+      id: 21,
+      text: hingeAnswer8,
+      direction: "from",
+    },
+    {
+      id: 22,
+      text: hingePrompt9,
+      direction: "to",
+    },
+    {
+      id: 23,
+      text: hingeAnswer9,
+      direction: "from",
+    },
+    {
+      id: 24,
+      text: hingePrompt10,
+      direction: "to",
+    },
+    {
+      id: 25,
+      text: hingeAnswer10,
+      direction: "from",
+    },
+  ];
+
   return (
     <ScrollView style={styles.parentcontainer}>
 
@@ -65,113 +194,25 @@ const MyProfileScreen = () => {
 
       <View style={styles.bottomHalf}>
 
-        <View style={styles.one}>
-          <Text style={styles.firstName}>{name}, {age}</Text>
+        <View style={styles.nameContainer}>
+          <Text style={styles.firstName}>{name}</Text>
         </View>
 
-        <View style={styles.two}>
-          <Text style={styles.description}>{yearAndMajor}</Text>
-          <Text style={styles.bio}> </Text>
-          <Text style={styles.bio}>{displayBio}</Text>
-        </View>
+        <FlatList
+          data={mockConversation}
+          renderItem={({item}) => {
+            return (
+              <View style={item.direction === "to" ? styles.hingeContainerTo : styles.hingeContainerFrom}>
+                <Text style={item.direction === "to" ? styles.hingeTextTo : styles.hingeTextFrom}>{item.text}</Text>
+              </View>
+            )
+          }}
+          style={{marginHorizontal: '0.2%', paddingHorizontal: '1%'}}
+          keyExtractor={(item) => item.id.toString()}
+          showsVerticalScrollIndicator={false}
+          scrollEnabled={false}
+        />
 
-        <View style={styles.three}>
-          <View style={styles.hingeContainerFrom}>
-            <Text style={styles.hingeTextFrom}>Hey!</Text>
-          </View>
-          <View style={{marginTop: 10}}></View>
-
-          <View style={styles.hingeContainerTo}>
-            <Text style={styles.hingeTextTo}>{hingePrompt1}</Text>
-          </View>
-          <View style={{marginTop: 10}}></View>
-          <View style={styles.hingeContainerFrom}>
-            <Text style={styles.hingeTextFrom}>{hingeAnswer1}</Text>
-          </View>
-          <View style={{marginTop: 10}}></View>
-          
-          <View style={styles.hingeContainerTo}>
-            <Text style={styles.hingeTextTo}>{hingePrompt2}</Text>
-          </View>
-          <View style={{marginTop: 10}}></View>
-          <View style={styles.hingeContainerFrom}>
-            <Text style={styles.hingeTextFrom}>{hingeAnswer2}</Text>
-          </View>
-          <View style={{marginTop: 10}}></View>
-
-          <View style={styles.hingeContainerTo}>
-            <Text style={styles.hingeTextTo}>{hingePrompt3}</Text>
-          </View>
-          <View style={{marginTop: 10}}></View>
-          <View style={styles.hingeContainerFrom}>
-            <Text style={styles.hingeTextFrom}>{hingeAnswer3}</Text>
-          </View>
-          <View style={{marginTop: 10}}></View>
-
-          <View style={styles.hingeContainerTo}>
-            <Text style={styles.hingeTextTo}>{hingePrompt4}</Text>
-          </View>
-          <View style={{marginTop: 10}}></View>
-          <View style={styles.hingeContainerFrom}>
-            <Text style={styles.hingeTextFrom}>{hingeAnswer4}</Text>
-          </View>
-          <View style={{marginTop: 10}}></View>
-
-          <View style={styles.hingeContainerTo}>
-            <Text style={styles.hingeTextTo}>{hingePrompt5}</Text>
-          </View>
-          <View style={{marginTop: 10}}></View>
-          <View style={styles.hingeContainerFrom}>
-            <Text style={styles.hingeTextFrom}>{hingeAnswer5}</Text>
-          </View>
-          <View style={{marginTop: 10}}></View>
-
-          <View style={styles.hingeContainerTo}>
-            <Text style={styles.hingeTextTo}>{hingePrompt6}</Text>
-          </View>
-          <View style={{marginTop: 10}}></View>
-          <View style={styles.hingeContainerFrom}>
-            <Text style={styles.hingeTextFrom}>{hingeAnswer6}</Text>
-          </View>
-          <View style={{marginTop: 10}}></View>
-
-          <View style={styles.hingeContainerTo}>
-            <Text style={styles.hingeTextTo}>{hingePrompt7}</Text>
-          </View>
-          <View style={{marginTop: 10}}></View>
-          <View style={styles.hingeContainerFrom}>
-            <Text style={styles.hingeTextFrom}>{hingeAnswer7}</Text>
-          </View>
-          <View style={{marginTop: 10}}></View>
-
-          <View style={styles.hingeContainerTo}>
-            <Text style={styles.hingeTextTo}>{hingePrompt8}</Text>
-          </View>
-          <View style={{marginTop: 10}}></View>
-          <View style={styles.hingeContainerFrom}>
-            <Text style={styles.hingeTextFrom}>{hingeAnswer8}</Text>
-          </View>
-          <View style={{marginTop: 10}}></View>
-
-          <View style={styles.hingeContainerTo}>
-            <Text style={styles.hingeTextTo}>{hingePrompt9}</Text>
-          </View>
-          <View style={{marginTop: 10}}></View>
-          <View style={styles.hingeContainerFrom}>
-            <Text style={styles.hingeTextFrom}>{hingeAnswer9}</Text>
-          </View>
-          <View style={{marginTop: 10}}></View>
-
-          <View style={styles.hingeContainerTo}>
-            <Text style={styles.hingeTextTo}>{hingePrompt10}</Text>
-          </View>
-          <View style={{marginTop: 10}}></View>
-          <View style={styles.hingeContainerFrom}>
-            <Text style={styles.hingeTextFrom}>{hingeAnswer10}</Text>
-          </View>
-          <View style={{marginTop: 10}}></View>
-
-        </View>
       </View>
     </ScrollView>
   );
@@ -198,8 +239,12 @@ const styles = StyleSheet.create({
   bottomHalf: {
     flex: 1,
   },
-  one: {
+  nameContainer: {
     justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: '1%',
+    backgroundColor: '#E1E1E1',
+    paddingVertical: '2%',
   },
   two: {
     flexDirection: 'column',
@@ -212,21 +257,8 @@ const styles = StyleSheet.create({
 
   firstName: {
     flex: 1,
-    fontFamily: fontLight,
-    fontSize: 55,
-    fontFamily: fontMedium,
-    marginLeft: 10,
-  },
-  description: {
-    fontFamily: fontRegular,
-    marginLeft: 10,
-    marginTop: '1%',
-    fontSize: 25,
-  },
-  bio: {
-    fontFamily: fontRegular,
-    marginLeft: 10,
-    fontSize: 25,
+    fontSize: '35%',
+    fontFamily: fontBold,
   },
   hingeContainerFrom: {
     alignItems: 'flex-end',
@@ -240,6 +272,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
     alignSelf: 'flex-end',
     maxWidth: '80%',
+    marginBottom: "2%",
   },
   hingeContainerTo: {
     paddingTop: 12,
@@ -251,6 +284,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
     alignSelf: 'flex-start',
     maxWidth: '80%',
+    marginBottom: "2%",
   },
   hingeTextFrom: {
     fontFamily: fontRegular,

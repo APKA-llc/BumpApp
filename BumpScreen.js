@@ -33,7 +33,7 @@ const BumpScreen = ({ navigation }) => {
   const mockConversation = [
     {
       id: 1,
-      text: "Hey! My name is " + name,
+      text: "Hey!",
       direction: "to",
     },
     {
@@ -221,15 +221,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    backgroundColor: purpleStandard,
-    borderColor: 'white',
-    borderBottomWidth: '3%',
+    backgroundColor: '#E1E1E1',
+    marginBottom: '1%',
   },
   firstName: {
     flex: 1,
     fontSize: '40%',
     fontFamily: fontMedium,
-    color: 'white',
   },
   hingeContainerFrom: {
     alignItems: 'flex-end',

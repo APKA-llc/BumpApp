@@ -89,7 +89,7 @@ const hinge = [
   {
     id: 7,
     prompt: 'Never-ending Nightmare',
-    fullPrompt: 'The most british thing I do on the daily____',
+    fullPrompt: 'My never-ending nightmare ____',
     selected: false,
     answer: '',
   },
@@ -443,6 +443,70 @@ const ProfileScreen = () => {
   const yearAndMajor = year + " Currently Studying " + major;
   const [numCharactersBio, setNumCharactersBio] = useState(0);
 
+  // "text" conversation
+  const mockConversation = currentGroup === previewProfilePage ? [
+    {
+      id: 1,
+      text: "Hey!",
+      direction: "to",
+    },
+    {
+      id: 2,
+      text: "I am " + age + " years old and I'm a " + yearAndMajor,
+      direction: "to",
+    },
+    {
+      id: 3,
+      text: "Tell me more about yourself!",
+      direction: "from",
+    },
+    {
+      id: 4,
+      text: displayBio,
+      direction: "to",
+    },
+    {
+      id: 5,
+      text: "Alrighty, whenever I meet someone new I like playing this game. It's like 21 questions, but better. I'll say a prompt, you respond.",
+      direction: "from",
+    },
+    {
+      id: 6,
+      text: selectedItems[0].fullPrompt,
+      direction: "from",
+    },
+    {
+      id: 7,
+      text: selectedItems[0].answer,
+      direction: "to",
+    },
+    {
+      id: 8,
+      text: selectedItems[1].fullPrompt,
+      direction: "from",
+    },
+    {
+      id: 9,
+      text: selectedItems[1].answer,
+      direction: "to",
+    },
+    {
+      id: 10,
+      text: selectedItems[2].fullPrompt,
+      direction: "from",
+    },
+    {
+      id: 11,
+      text: selectedItems[2].answer,
+      direction: "to",
+    },
+    {
+      id: 12,
+      text: "Let's hang out!",
+      direction: "from",
+    },
+  ] : [];
+
   return (
     <View style={[styles.container, {paddingHorizontal: (currentGroup !== previewProfilePage ? '8%' : '0%'), paddingVertical: (currentGroup !== previewProfilePage ? '12%' : '0%')}]}>
 
@@ -691,50 +755,24 @@ const ProfileScreen = () => {
 
               <View style={styles.bottomHalf}>
 
-                <View style={styles.one}>
-                  <Text style={styles.firstName}>{name}, {age}</Text>
+                <View style={styles.nameContainer}>
+                  <Text style={styles.firstName}>{name}</Text>
                 </View>
 
-                <View style={styles.two}>
-                  <Text style={styles.description}>{yearAndMajor}</Text>
-                  <Text style={styles.bio}> </Text>
-                  <Text style={styles.bio}>{displayBio}</Text>
-                </View>
-
-                <View style={styles.three}>
-                  <View style={styles.hingeContainerFrom}>
-                    <Text style={styles.hingeTextFrom}>Hey!</Text>
-                  </View>
-                  <View style={{marginTop: 10}}></View>
-
-                  <View style={styles.hingeContainerTo}>
-                    <Text style={styles.hingeTextTo}>{selectedItems[0].fullPrompt}</Text>
-                  </View>
-                  <View style={{marginTop: 10}}></View>
-                  <View style={styles.hingeContainerFrom}>
-                    <Text style={styles.hingeTextFrom}>{selectedItems[0].answer}</Text>
-                  </View>
-                  <View style={{marginTop: 10}}></View>
-
-                  <View style={styles.hingeContainerTo}>
-                    <Text style={styles.hingeTextTo}>{selectedItems[1].fullPrompt}</Text>
-                  </View>
-                  <View style={{marginTop: 10}}></View>
-                  <View style={styles.hingeContainerFrom}>
-                    <Text style={styles.hingeTextFrom}>{selectedItems[1].answer}</Text>
-                  </View>
-                  <View style={{marginTop: 10}}></View>
-
-                  <View style={styles.hingeContainerTo}>
-                    <Text style={styles.hingeTextTo}>{selectedItems[2].fullPrompt}</Text>
-                  </View>
-                  <View style={{marginTop: 10}}></View>
-                  <View style={styles.hingeContainerFrom}>
-                    <Text style={styles.hingeTextFrom}>{selectedItems[2].answer}</Text>
-                  </View>
-                  <View style={{marginTop: 10}}></View>
-
-                </View>
+                <FlatList
+                  data={mockConversation}
+                  renderItem={({item}) => {
+                    return (
+                      <View style={item.direction === "to" ? styles.hingeContainerTo : styles.hingeContainerFrom}>
+                        <Text style={item.direction === "to" ? styles.hingeTextTo : styles.hingeTextFrom}>{item.text}</Text>
+                      </View>
+                    )
+                  }}
+                  style={{marginHorizontal: '0.2%'}}
+                  keyExtractor={(item) => item.id.toString()}
+                  showsVerticalScrollIndicator={false}
+                  scrollEnabled={false}
+                />
               </View>
             </ScrollView>
           </View>
@@ -1030,8 +1068,13 @@ const styles = StyleSheet.create({
   bottomHalf: {
     flex: 1,
   },
-  one: {
+  nameContainer: {
     justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    backgroundColor: '#E1E1E1',
+    padding: '1%',
+    marginBottom: '1%',
   },
   two: {
     flexDirection: 'column',
@@ -1044,9 +1087,8 @@ const styles = StyleSheet.create({
 
   firstName: {
     flex: 1,
-    fontFamily: fontRegular,
+    fontFamily: fontBold,
     fontSize: 55,
-    fontWeight: '400',
     marginLeft: 10,
   },
   description: {
@@ -1072,6 +1114,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
     alignSelf: 'flex-end',
     maxWidth: '80%',
+    marginBottom: "2%",
   },
   hingeContainerTo: {
     paddingTop: 12,
@@ -1083,14 +1126,15 @@ const styles = StyleSheet.create({
     marginTop: 2,
     alignSelf: 'flex-start',
     maxWidth: '80%',
+    marginBottom: "2%",
   },
   hingeTextFrom: {
-    fontFamily: 'Arial',
+    fontFamily: fontRegular,
     fontSize: 20,
     color: purpleStandard,
   },
   hingeTextTo: {
-    fontFamily: 'Arial',
+    fontFamily: fontRegular,
     fontSize: 20,
     color: 'white',
   },

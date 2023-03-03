@@ -379,7 +379,7 @@ const HomeScreen = () => {
         </View>
 
         <View style={styles.bottomHalf}>
-          <View style={styles.one}>
+          <View style={styles.nameContainer}>
             <Text style={styles.firstName}>{name}</Text>
           </View>
 
@@ -437,10 +437,10 @@ const styles = StyleSheet.create({
   bottomHalf: {
     flex: 1,
   },
-  one: {
+  nameContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: '5%',
+    marginBottom: '1%',
     backgroundColor: '#E1E1E1',
     paddingVertical: '2%',
   },
