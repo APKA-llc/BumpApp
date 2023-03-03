@@ -5,6 +5,8 @@ import {signOut} from "firebase/auth";
 import {auth} from "./firebaseConfig";
 import OpeningScreen from './OpeningScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {Dimensions} from 'react-native';
+
 
 //Style Standardization
 let purpleStandard = '#7851A9'
@@ -33,7 +35,6 @@ const SettingsScreen = () => {
     navigation.navigate(OpeningScreen);
 
   };
-
 
 return (
     
@@ -83,6 +84,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
+  },
+  container:{
+    padding:'5%',
   },
   settingsButtonContainer: {
     padding: 26,

@@ -98,8 +98,8 @@ const HomeScreen = () => {
     },
     {
       id: 12,
-      text: "Great talking to you! Do you want to hang out?",
-      direction: "to",
+      text: "Nice to meet you! Do you want to hang out?",
+      direction: "from",
     },
   ];
   
@@ -330,46 +330,46 @@ const HomeScreen = () => {
    
     {userNotReady ? (
       <View style={styles.parentcontainer}>
-
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>Please enable the following settings.</Text>
+        <View style={styles.errormsgcontainer}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>Please enable the following settings.</Text>
+          </View>
+        
+          <View style={styles.bodyContainer}>
+            <View style={styles.switchSubContainer}>
+              <Switch
+                trackColor={{false: '#767577', true: purpleStandard}}
+                thumbColor={notificationsEnabled ? '#f4f3f4' : '#f4f3f4'}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={toggleNotificationsSwitch}
+                value={notificationsEnabled}
+              />
+              <Text style={styles.settingsButton}>Push Notifications</Text>
+            </View>
+            <View style={styles.switchSubContainer}>
+              <Switch
+                trackColor={{false: '#767577', true: purpleStandard}}
+                thumbColor={locationEnabled ? '#f4f3f4' : '#f4f3f4'}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={toggleLocationSwitch}
+                value={locationEnabled}
+              />
+              <Text style={styles.settingsButton}>Location Services</Text>
+            </View>
+            <View style={styles.switchSubContainer}>
+              <Ionicons name={'help-circle-outline'} size={40} color={purpleStandard} />
+              <TouchableOpacity onPress={() => navigation.navigate('')}>
+                <Text style={styles.settingsButton}>What is Bump?</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        
+          <View style = {styles.exitErrorContainer}>
+            <TouchableOpacity style={styles.exitErrorButton} onPress={verifyUserisReady}>
+              <Text style = {styles.exitErrorText}>Continue</Text>
+            </TouchableOpacity>
+          </View>
       </View>
-    
-      <View style={styles.bodyContainer}>
-        <View style={styles.switchSubContainer}>
-          <Switch
-            trackColor={{false: '#767577', true: purpleStandard}}
-            thumbColor={notificationsEnabled ? '#f4f3f4' : '#f4f3f4'}
-            ios_backgroundColor="#3e3e3e"
-            onValueChange={toggleNotificationsSwitch}
-            value={notificationsEnabled}
-          />
-          <Text style={styles.settingsButton}>Push Notifications</Text>
-        </View>
-        <View style={styles.switchSubContainer}>
-          <Switch
-            trackColor={{false: '#767577', true: purpleStandard}}
-            thumbColor={locationEnabled ? '#f4f3f4' : '#f4f3f4'}
-            ios_backgroundColor="#3e3e3e"
-            onValueChange={toggleLocationSwitch}
-            value={locationEnabled}
-          />
-          <Text style={styles.settingsButton}>Location Services</Text>
-        </View>
-        <View style={styles.switchSubContainer}>
-          <Ionicons name={'help-circle-outline'} size={40} color={purpleStandard} />
-          <TouchableOpacity onPress={() => navigation.navigate('')}>
-            <Text style={styles.settingsButton}>What is Bump?</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    
-      <View style = {styles.exitErrorContainer}>
-        <TouchableOpacity style={styles.exitErrorButton} onPress={verifyUserisReady}>
-          <Text style = {styles.exitErrorText}>Continue</Text>
-        </TouchableOpacity>
-      </View>
-    
     </View>
     ) : (
       <ScrollView style={styles.parentcontainer} ref={scrollViewRef}>
@@ -424,6 +424,10 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     backgroundColor:'white'
+  },
+  errormsgcontainer:{
+    flex:1,
+    padding:'5%'
   },
   profilepiccontainer: {
     flex: 1,
