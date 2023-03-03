@@ -33,16 +33,16 @@ const OpeningScreen = () => {
           
           <Text style={styles.title}>Bump</Text>
 
-          <Text style={styles.subtitle}>Real connections start with a Bump.</Text>
+          <Text style={styles.subtitle}>Real connections start with a bump.</Text>
 
           <Image style={styles.logoStyle} source={require('./assets/bumplogo.png')}/>
           
-          <TouchableOpacity onPress={()=> navigation.navigate('SignInScreen')} style={styles.buttonStyle}>
+          <TouchableOpacity onPress={() => navigation.navigate('SignInScreen')} style={styles.buttonStyle}>
             <Text style={styles.buttonText}>{'Sign In'}</Text>
             
           </TouchableOpacity>
         
-          <TouchableOpacity onPress={()=> navigation.navigate('ProfileScreen')} style={styles.buttonStyle}>
+          <TouchableOpacity onPress={() => navigation.navigate('ProfileScreen')} style={styles.buttonStyle}>
             <Text style={styles.buttonText}>{'Create Account'}</Text>
           </TouchableOpacity>
   

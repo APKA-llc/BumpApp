@@ -43,7 +43,7 @@ const HomeScreen = () => {
   const mockConversation = [
     {
       id: 1,
-      text: "Hey! My name is " + name,
+      text: "Hey!",
       direction: "to",
     },
     {
@@ -392,7 +392,7 @@ const HomeScreen = () => {
                 </View>
               )
             }}
-            style={{marginHorizontal: '0.2%'}}
+            style={{marginHorizontal: '0.2%', paddingHorizontal: '1%'}}
             keyExtractor={(item) => item.id.toString()}
             showsVerticalScrollIndicator={false}
             scrollEnabled={false}
@@ -436,12 +436,13 @@ const styles = StyleSheet.create({
 
   bottomHalf: {
     flex: 1,
-    paddingHorizontal: '1%',
   },
   one: {
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: '5%',
+    backgroundColor: '#E1E1E1',
+    paddingVertical: '2%',
   },
   four: {
     alignItems: 'center',
@@ -491,8 +492,8 @@ const styles = StyleSheet.create({
   },
   firstName: {
     flex: 1,
-    fontSize: '40%',
-    fontFamily: fontMedium,
+    fontSize: '35%',
+    fontFamily: fontBold,
   },
   hingeContainerFrom: {
     alignItems: 'flex-end',
