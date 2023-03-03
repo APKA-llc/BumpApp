@@ -806,12 +806,13 @@ const ProfileScreen = () => {
 //Styles Sheet Please try to Label Descriptively,
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'transparent',
+    backgroundColor: 'white',
     flex: 1,
     justifyContent: 'center',
   },
   vanish: {
     flex: 3,
+    
   },
   titleContainer: {
     flex: 1,
