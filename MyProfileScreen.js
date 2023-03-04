@@ -59,6 +59,11 @@ const MyProfileScreen = () => {
   // "text" conversation
   const mockConversation = [
     {
+      id: 100,
+      text: "Introductions",
+      direction: "subheading",
+    },
+    {
       id: 1,
       text: "Hey!",
       direction: "from",
@@ -79,9 +84,9 @@ const MyProfileScreen = () => {
       direction: "from",
     },
     {
-      id: 5,
-      text: "Alrighty, whenever I meet someone new I like playing this game. It's like 21 questions, but better. I'll say a prompt, you respond.",
-      direction: "to",
+      id: 200,
+      text: "Prompt Time",
+      direction: "subheading",
     },
     {
       id: 6,
@@ -202,8 +207,8 @@ const MyProfileScreen = () => {
           data={mockConversation}
           renderItem={({item}) => {
             return (
-              <View style={item.direction === "to" ? styles.hingeContainerTo : styles.hingeContainerFrom}>
-                <Text style={item.direction === "to" ? styles.hingeTextTo : styles.hingeTextFrom}>{item.text}</Text>
+              <View style={item.direction === "to" ? styles.hingeContainerTo : item.direction === "from" ? styles.hingeContainerFrom : styles.hingeContainerSubheading}>
+                <Text style={item.direction === "to" ? styles.hingeTextTo : item.direction === "from" ? styles.hingeTextFrom : styles.hingeTextSubheading}>{item.text}</Text>
               </View>
             )
           }}
@@ -295,6 +300,22 @@ const styles = StyleSheet.create({
     fontFamily: fontRegular,
     fontSize: 20,
     color: 'white',
+  },
+  hingeContainerSubheading: {
+    alignItems: 'center',
+    paddingTop: '1%',
+    paddingBottom: '1%',
+    paddingLeft: 16,
+    paddingRight: 16,
+    marginTop: 2,
+    alignSelf: 'center',
+    maxWidth: '80%',
+    marginBottom: "2%",
+  },
+  hingeTextSubheading: {
+    fontFamily: fontSemiBold,
+    fontSize: 13,
+    color: darkGrayStandard,
   },
 });
 
