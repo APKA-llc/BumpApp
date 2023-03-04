@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { View, Image, StyleSheet, Dimensions } from 'react-native';
+
 import OpeningScreen from './OpeningScreen';
 import SignInScreen from './SignInScreen';
 import ProfileScreen from './ProfileScreen';
@@ -13,7 +15,15 @@ import * as Font from 'expo-font';
 
 
 const Stack = createStackNavigator();
+const SplashScreen = () => {
+  const { width, height } = Dimensions.get('window');
 
+  return (
+    <View style={styles.container}>
+      <Image source={require('./assets/apka_splash.png')} style={[styles.image, { width, height }]} />
+    </View>
+  );
+};
 
 
 const App = () => {
@@ -51,6 +61,8 @@ const App = () => {
   
   const [loggedIn, setLoggedInStatus] = useState(null);
 
+
+
   const checkUser = async () => {
     try {
       const user = await AsyncStorage.getItem('user');
@@ -73,7 +85,7 @@ const App = () => {
   }, []);
   
   if (loggedIn === null || !isReady) {
-    return null;
+    return <SplashScreen />;
   }
   
   return (
@@ -112,5 +124,13 @@ const App = () => {
     </NavigationContainer>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
 
 export default App;
