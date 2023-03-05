@@ -15,6 +15,8 @@ import { collection, doc, setDoc, addDoc } from "firebase/firestore";
 import { getStorage, ref, getDownloadURL, getMetadata, uploadBytes, putFile} from "firebase/storage";
 import SelectDropdown from 'react-native-select-dropdown';
 
+const windowHeight = Dimensions.get('window').height;
+
 
 //Style Standardization
 const purpleStandard = '#7851A9';
@@ -863,16 +865,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   text: {
-    fontSize:"15%",
+    fontSize:windowHeight*0.02,
     color: purpleStandard,
     textAlign: 'center',
     marginBottom: '2%',
     width: '84%',
-    lineHeight: '22%',
+    lineHeight: windowHeight * 0.03,
     fontFamily: fontRegular,
   },
   title: {
-    fontSize: '38%',
+    fontSize: windowHeight*0.044,
     textAlign: 'center',
     color: purpleStandard,
     marginBottom: '5%',
@@ -889,8 +891,10 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     borderColor: purpleStandard,
     alignContent: 'center',
-    fontSize: "20%",
+    textAlign: 'center',
+    fontSize: windowHeight * 0.02,
     padding: '4%',
+    width: '80%',
     paddingHorizontal: '12%',
     marginBottom: '6%',
     fontFamily: fontMedium,
@@ -916,7 +920,7 @@ const styles = StyleSheet.create({
   bioInput: {
     height: "60%",
     width: "80%",
-    lineHeight: '24%',
+    lineHeight: windowHeight*0.03,
     marginVertical: 10,
     marginHorizontal: 20,
     padding: 10,
@@ -951,7 +955,7 @@ const styles = StyleSheet.create({
     marginVertical:"1%"
   },
   hingeQuestion:{
-    fontSize:'18%',
+    fontSize:windowHeight*0.02,
     fontFamily: fontMedium,
   },
   promptContainer: {
@@ -960,7 +964,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderWidth: 3,
     borderColor: purpleStandard,
-    borderRadius: '24%',
+    borderRadius: 24,
     marginBottom: '8.25%',
   },
   hingePrompt: {
@@ -973,7 +977,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     borderColor: purpleStandard,
     textAlign: 'center',
-    fontSize: "20%",
+    fontSize: windowHeight * 0.021,
     padding:'2%',
     width:'66%',
     marginBottom:"5%",
@@ -1032,7 +1036,7 @@ const styles = StyleSheet.create({
   promptSelection: {
     flex: 1,
     color: darkGrayStandard,
-    fontSize: '16%',
+    fontSize: windowHeight*0.016,
     marginTop: '2%',
     fontFamily: fontBold,
   },
@@ -1053,7 +1057,7 @@ const styles = StyleSheet.create({
   },
   previewHeading: {
     textAlign: 'center',
-    fontSize: '14%',
+    fontSize: windowHeight * 0.014,
     color: darkGrayStandard,
     fontFamily: fontRegular,
   },

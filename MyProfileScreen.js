@@ -2,7 +2,8 @@ import React, { useState, useCallback } from 'react';
 import { View, Text, Dimensions, TouchableOpacity, StyleSheet, ScrollView, Image, FlatList} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-
+const windowHeight = Dimensions.get('window').height;
+const windowWidth = Dimensions.get('window').width;
 //Style Standardization
 const purpleStandard = '#7851A9';
 const darkGrayStandard = '#9e9e9e';
@@ -262,7 +263,7 @@ const styles = StyleSheet.create({
 
   firstName: {
     flex: 1,
-    fontSize: '35%',
+    fontSize: windowHeight*0.04,
     fontFamily: fontBold,
   },
   hingeContainerFrom: {

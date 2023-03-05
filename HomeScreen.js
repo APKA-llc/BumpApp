@@ -1,11 +1,13 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { View, Text, Dimensions, TouchableOpacity, StyleSheet, ScrollView, Image,Switch, Button, Settings, FlatList} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { firestore, storage} from './firebaseConfig';
+import { firestore, storage, db} from './firebaseConfig';
 import { collection, getDocs, getFirestore, query, orderBy, where, doc, getDoc } from "firebase/firestore"; 
-import { getStorage, ref, getDownloadURL } from "firebase/storage";
+import { getStorage, getDownloadURL } from "firebase/storage";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getDatabase, ref, update, child, get } from 'firebase/database';
+
 
 //Style Standardization
 const purpleStandard = '#7851A9';
@@ -17,6 +19,9 @@ const fontRegular = 'Montserrat-Regular';
 const fontMedium = 'Montserrat-Medium';
 const fontSemiBold = 'Montserrat-SemiBold';
 const fontBold = 'Montserrat-Bold';
+
+const windowHeight = Dimensions.get('window').height;
+const windowWidth = Dimensions.get('window').width;
 
 
 
@@ -108,7 +113,50 @@ const HomeScreen = () => {
     },
   ];
   
+  const likeUser = async (myID, theirID) => {
+    try {
+      const likes_ref = ref(db, 'bumpapp-be48a/likes');
+      const users_ref = ref(db, 'bumpapp-be48a/users');
+  
+      const match_ref = child(likes_ref, `${theirID}-${myID}`);
+      const match_snapshot = await get(match_ref);
+  
+      if (match_snapshot.exists()) {
+        // Get MY list of matches
+        const my_matches_ref = ref(db, `bumpapp-be48a/users/${myID}/Matches`);
+        const my_matches_snapshot = await get(my_matches_ref);
+        let my_matches = my_matches_snapshot.val();
+  
+        if (my_matches == null) {
+          await update(child(users_ref, myID), { Matches: [theirID] });
+        } else {
+          await update(child(users_ref, myID), { Matches: [...my_matches, theirID] });
+        }
+  
+        // Get THEIR list of matches
+        const their_matches_ref = ref(db, `bumpapp-be48a/users/${theirID}/Matches`);
+        const their_matches_snapshot = await get(their_matches_ref);
+        let their_matches = their_matches_snapshot.val();
+  
+        if (their_matches == null) {
+          await update(child(users_ref, theirID), { Matches: [myID] });
+        } else {
+          await update(child(users_ref, theirID), { Matches: [...their_matches, myID] });
+        }
+  
+        await update(match_ref, { matched: true });
+      } else {
+        await update(match_ref, { matched: false, matchDistance: 0 });
+        console.log('Added child to likes_ref');
+      }
+    } catch (error) {
+      console.error(error);
+      throw new Error('An error occurred while liking user.');
+    }
+  };
+  
 
+  likeUser('132', '223');
 
   const navigation = useNavigation();
 
@@ -427,7 +475,7 @@ const win = Dimensions.get('window');
 const styles = StyleSheet.create({
   parentcontainer: {
     flex: 1,
-    width: "100%",
+    width: windowWidth,
     backgroundColor:'white'
   },
   errormsgcontainer:{
@@ -439,7 +487,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   profilepic: {
-    width: '100%',
+    width: windowWidth,
     height: win.height*(9/16),
   },
 
@@ -469,7 +517,7 @@ const styles = StyleSheet.create({
     marginTop: '5%',
   },
   buttonStyleLike: {
-    borderRadius: '100%',
+    borderRadius: 100,
     borderWidth: 3,
     borderColor: purpleStandard,
     backgroundColor:purpleStandard,
@@ -479,7 +527,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   buttonStyleDislike: {
-    borderRadius: '100%',
+    borderRadius: 100,
     borderWidth: 3,
     borderColor: purpleStandard,
     width: '40%',
@@ -489,19 +537,19 @@ const styles = StyleSheet.create({
   },
   buttonTextDislike: {
     color: purpleStandard,
-    fontSize: '20%',
+    fontSize: windowHeight * 0.021,
     textAlign: 'center',
     fontFamily: fontSemiBold,
   },
   buttonTextLike: {
     color: 'white',
-    fontSize: '20%',
+    fontSize: windowHeight * 0.021,
     textAlign: 'center',
     fontFamily: fontSemiBold,
   },
   firstName: {
     flex: 1,
-    fontSize: '35%',
+    fontSize: windowHeight * 0.04,
     fontFamily: fontBold,
   },
   hingeContainerFrom: {
@@ -579,7 +627,7 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: 'center',
-    fontSize: "40",
+    fontSize: 40,
     color: purpleStandard,
     fontFamily: fontBold,
   },
@@ -589,7 +637,7 @@ const styles = StyleSheet.create({
     alignItems:'center',
   },
   exitErrorButton:{
-    borderRadius: '100%',
+    borderRadius: windowHeight,
     borderWidth: 4,
     backgroundColor: purpleStandard,
     borderColor: purpleStandard,
@@ -597,7 +645,7 @@ const styles = StyleSheet.create({
 
   },
   exitErrorText:{
-    fontSize: '30%',
+    fontSize: windowHeight * 0.03,
     color:'white',
     fontFamily: fontMedium,
     alignSelf:'center'

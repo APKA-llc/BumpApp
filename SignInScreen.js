@@ -9,6 +9,10 @@ import OpeningScreen from './OpeningScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
 import Dialog, { DialogContent } from 'react-native-popup-dialog';
+import {Dimensions} from 'react-native';
+
+const windowHeight = Dimensions.get('window').height;
+
 
 
 //Style Standardization
@@ -163,7 +167,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     borderColor: purpleStandard,
     alignContent: 'center',
-    fontSize: "20%",
+    fontSize: windowHeight * 0.02,
     padding: '4%',
     paddingHorizontal: '12%',
     marginBottom: '6%',

@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     top: 45,
     bottom: 0,
     flex: 0.7,
-    fontSize: '85',
+    fontSize: 85, // change string to number
     color: "#ffffff",
     fontFamily: fontLight,
   },
